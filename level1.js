@@ -189,7 +189,7 @@ function move() {
   
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)]==4){
-  	alert("You win!");
+  	//alert("You win!");
   }
   
   //move the guide
