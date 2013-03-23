@@ -28,19 +28,20 @@ var map = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-function Zombie(startx, starty){
+function Zombie(startx, starty, startNumCycles){
 	this.x = startx;
 	this.y = starty;
 	this.rot = 0;
 	this.moveSpeed = 0.4; // How far zombie moves in one move
 	this.moveTime = 5; //How many game cycles it takes for the zombie to move
-	this.numCycles = 0; //The number of cycles since the zombie last moved
+	this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
+	this.intelligence = 5; //A ratio of how much the zombie follows the player, >1 required
 }
 
 var zombies = [];
-var NUMBER_OF_ZOMBIES = 2;
+var NUMBER_OF_ZOMBIES = 3;
 for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-	zombies[i] = new Zombie(Math.random()*(map[0].length-2)+1, Math.random()*(map.length-2)+1);
+	zombies[i] = new Zombie(Math.random()*(map[0].length-4)+3, Math.random()*(map.length-4)+3, Math.floor(Math.random()*3));
 }
 
 //console.log(zombies[0].x);
@@ -54,7 +55,9 @@ var player = {
   rot : 0,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
   moveSpeed : 0.5, // how far (in map units) does the player move each step/update
-  rotSpeed : 30 * Math.PI / 180  // how much does the player rotate each step/update (in radians)
+  rotSpeed : 30 * Math.PI / 180,  // how much does the player rotate each step/update (in radians)
+  eaten: false, //Whether or not the player has been attacked by a zombie
+  winner: false, //Whether the player has made it to the level's goal
 }
 
 var soundSource = {
@@ -182,6 +185,8 @@ function gameCycle() {
   move();
   
   moveZombies();
+  
+  detectZombieCollision();
 
   updateMiniMap();
 
@@ -190,7 +195,15 @@ function gameCycle() {
 
   updateConsoleLog();
 
-  setTimeout(gameCycle,1000/15);
+  if (player.eaten){
+  	alert("You've been eaten!");
+  }
+  else if(player.winner){
+  	alert("YOU WIN! You've successfully avoided zombies!")
+  }
+  else {
+    setTimeout(gameCycle,1000/15);
+  }
 }
 
 // display user coordinates
@@ -224,6 +237,7 @@ function move() {
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)]==4){
   	//alert("You win!");
+  	player.winner = true;
   }
   
   //move the guide
@@ -258,12 +272,14 @@ function move() {
 
 function moveZombies(){
 	var length = zombies.length;
-	for(var i = 0 ; i < length ; i++){
+	for(var i = 0 ; i < length ; i++){ 
 		var z = zombies[i];
 		z.numCycles = (z.numCycles+1)%z.moveTime;
 		//console.log(z.numCycles);
-		if (z.numCycles==0){
-	  		z.rot += Math.random()*twoPI/4 - twoPI/8;
+		if (z.numCycles==0){   // only move every once in a while
+	  		var randChase = Math.floor(Math.random()*z.intelligence);
+	  		if(randChase==0) z.rot = Math.round(Math.atan2(player.y-z.y, player.x-z.x)*10)/10.0;
+	  		else  z.rot += Math.random()*twoPI/4 - twoPI/8;
 	  		var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
 	
 	  		// make sure the angle is between 0 and 360 degrees
@@ -290,6 +306,15 @@ function isBlocking(x,y) {
 
   // return true if the map block is not 0, ie. if there is a blocking wall.
   return (map[Math.floor(y)][Math.floor(x)] == 1);
+}
+
+function detectZombieCollision(){
+	var length = zombies.length;
+	for (var i = 0 ; i < length ; i++){
+		if (Math.abs(zombies[i].x-player.x) < 0.5 && Math.abs(zombies[i].y-player.y)<0.5){
+			player.eaten=true;
+		}
+	}
 }
 
 function updateMiniMap() {
@@ -327,8 +352,8 @@ function updateMiniMap() {
 	  objectCtx.beginPath();
 	  objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
 	  objectCtx.lineTo(
-	    (z.x + Math.cos(z.rot) * 2) * miniMapScale,
-	    (z.y + Math.sin(z.rot) * 2) * miniMapScale
+	    (z.x + Math.cos(z.rot) * 1) * miniMapScale,
+	    (z.y + Math.sin(z.rot) * 1) * miniMapScale
 	  );
 	  
       objectCtx.strokeStyle = 'red';
