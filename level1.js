@@ -31,8 +31,8 @@ var map = [
 var lvl1;
 
 var player = {
-  x : 2,     // current x, y position
-  y : 2,
+  x : 1.5,     // current x, y position
+  y : 1.5,
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
   rot : 0,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
@@ -75,6 +75,10 @@ function generateMap() {
   }
 
   lvl1[i][j] = 4;
+  lvl1[i+1][j] = lvl1[i+1][j]!=0 ? lvl1[i+1][j] : 4;
+  lvl1[i-1][j] = lvl1[i-1][j]!=0 ? lvl1[i-1][j] : 4;
+  lvl1[i][j+1] = lvl1[i][j+1]!=0 ? lvl1[i][j+1] : 4;
+  lvl1[i][j-1] = lvl1[i][j-1]!=0 ? lvl1[i][j-1] : 4;
 }
 
 function init() {
@@ -157,6 +161,7 @@ function bindKeys(context) {
 }
 
 function gameCycle() {
+	
   move();
 
   updateMiniMap();
@@ -197,6 +202,10 @@ function move() {
   player.x = newX; 
   player.y = newY;
   
+  // Check the win condition
+  if (map[Math.floor(newY)][Math.floor(newX)]==4){
+  	//alert("You win!");
+  }
   
   //move the guide
   var minDist = Math.min(soundSource.x - newX, soundSource.y - newY);
@@ -298,7 +307,7 @@ function drawMiniMap() {
 
   var ctx = miniMap.getContext("2d");
 
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "rgb(50, 150, 50)";
   ctx.fillRect(0,0,miniMap.width,miniMap.height);
 
   // loop through all blocks on the map
@@ -308,7 +317,7 @@ function drawMiniMap() {
       var wall = map[y][x];
 
       if (wall == 1) { // if there is a wall block at this (x,y) ...
-        ctx.fillStyle = "rgb(200,200,200)";
+        ctx.fillStyle = "rgb(80,80,80)";
         ctx.fillRect(       // ... then draw a block on the minimap
           x * miniMapScale,
           y * miniMapScale,
@@ -317,7 +326,7 @@ function drawMiniMap() {
 
       }
       if (wall == 2) { // if there is a wall block at this (x,y) ...
-        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillStyle = "rgb(255, 150, 150)";
         ctx.fillRect(       // ... then draw a block on the minimap
           x * miniMapScale,
           y * miniMapScale,
@@ -325,15 +334,16 @@ function drawMiniMap() {
         );
       }
       if (wall == 3) { // if there is a wall block at this (x,y) ...
-        ctx.fillStyle = "rgb(255, 255, 0)";
+        ctx.fillStyle = "rgb(180, 180, 180)";
         ctx.fillRect(       // ... then draw a block on the minimap
           x * miniMapScale,
           y * miniMapScale,
           miniMapScale,miniMapScale
         );
+        ctx.stroke();
       }
       if (wall == 4) { // if there is a wall block at this (x,y) ...
-        ctx.fillStyle = "rgb(0, 0, 255)";
+        ctx.fillStyle = "rgb(255, 255, 100)";
         ctx.fillRect(       // ... then draw a block on the minimap
           x * miniMapScale,
           y * miniMapScale,
@@ -347,8 +357,8 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
-    //var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
+    var urls = ['http://www.dropbox.com/s/woardfr3dhw7ps9/footsteps_forest_pathway.ogg'];
+    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
