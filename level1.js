@@ -28,6 +28,23 @@ var map = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
+function Zombie(startx, starty){
+	this.x = startx;
+	this.y = starty;
+	this.rot = 0;
+	this.moveSpeed = 0.4; // How far zombie moves in one move
+	this.moveTime = 5; //How many game cycles it takes for the zombie to move
+	this.numCycles = 0; //The number of cycles since the zombie last moved
+}
+
+var zombies = [];
+var NUMBER_OF_ZOMBIES = 2;
+for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+	zombies[i] = new Zombie(Math.random()*(map[0].length-2)+1, Math.random()*(map.length-2)+1);
+}
+
+//console.log(zombies[0].x);
+
 var lvl1;
 
 var player = {
@@ -163,6 +180,8 @@ function bindKeys(context) {
 function gameCycle() {
 	
   move();
+  
+  moveZombies();
 
   updateMiniMap();
 
@@ -237,6 +256,33 @@ function move() {
   positionSample.changePosition(player);
 }
 
+function moveZombies(){
+	var length = zombies.length;
+	for(var i = 0 ; i < length ; i++){
+		var z = zombies[i];
+		z.numCycles = (z.numCycles+1)%z.moveTime;
+		//console.log(z.numCycles);
+		if (z.numCycles==0){
+	  		z.rot += Math.random()*twoPI/4 - twoPI/8;
+	  		var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
+	
+	  		// make sure the angle is between 0 and 360 degrees
+	  		while (player.rot < 0) player.rot += twoPI;
+	  		while (player.rot >= twoPI) player.rot -= twoPI;
+	  		
+	  		var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
+			var newY = z.y + Math.sin(z.rot) * moveStep;
+			
+			if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
+			  return; // no, bail out.
+			}
+	  		
+	  		z.x = newX;
+	  		z.y = newY;
+  		}
+	}
+}
+
 function isBlocking(x,y) {
   // first make sure that we cannot move outside the boundaries of the level
   if (y < 0 || y > mapHeight || x < 0 || x > mapWidth)
@@ -266,7 +312,31 @@ function updateMiniMap() {
   );
   objectCtx.closePath();
   objectCtx.stroke();
+  
+  //Draw the zombies
+  var l = zombies.length
+  for (var i = 0 ; i < l ; i++){
+  	//console.log("x: " + z.x + "; y: " + z.y);
+  	z = zombies[i];
+	objectCtx.fillStyle = "red";
+  	objectCtx.fillRect(   // draw a dot at the current zombie position
+	    z.x * miniMapScale - 2,
+	    z.y * miniMapScale - 2,
+	    4, 4
+	  );
+	  objectCtx.beginPath();
+	  objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
+	  objectCtx.lineTo(
+	    (z.x + Math.cos(z.rot) * 2) * miniMapScale,
+	    (z.y + Math.sin(z.rot) * 2) * miniMapScale
+	  );
+	  
+      objectCtx.strokeStyle = 'red';
+	  objectCtx.closePath();
+	  objectCtx.stroke();
+  }
 
+  objectCtx.fillStyle = "black";
   objectCtx.fillRect(   // draw a dot at the current soundSource position
     soundSource.x * miniMapScale - 2,
     soundSource.y * miniMapScale - 2,
@@ -278,6 +348,7 @@ function updateMiniMap() {
     (soundSource.x + Math.cos(soundSource.rot) * 2) * miniMapScale,
     (soundSource.y + Math.sin(soundSource.rot) * 2) * miniMapScale
   );
+  objectCtx.strokeStyle = 'black';
   objectCtx.closePath();
   objectCtx.stroke();
 }
@@ -357,8 +428,7 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ['http://www.dropbox.com/s/woardfr3dhw7ps9/footsteps_forest_pathway.ogg'];
-    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
@@ -579,3 +649,6 @@ function drawRay(rayX, rayY, source) {
   objectCtx.closePath();
   objectCtx.stroke();
 }
+
+
+
