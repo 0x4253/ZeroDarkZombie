@@ -332,11 +332,9 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
-    //var urls = ['/home/blaine/ZeroDarkZombie/footsteps_forest_pathway.ogg'];
-    //var urls = ['http://cs.unc.edu/~stancill/comp585/footsteps_forest_pathway.ogg'];
-    //var urls = ['http://audio.ibeat.org/content/p1rj1s/p1rj1s_-_rockGuitar.mp3'];
     var source = context.createBufferSource();
     this.isPlaying = false;
     var loader = new BufferLoader(context, urls, function (buffers) {
