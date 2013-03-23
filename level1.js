@@ -28,6 +28,24 @@ var map = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
+function Zombie(startx, starty, startNumCycles){
+	this.x = startx;
+	this.y = starty;
+	this.rot = 0;
+	this.moveSpeed = 0.4; // How far zombie moves in one move
+	this.moveTime = 5; //How many game cycles it takes for the zombie to move
+	this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
+	this.intelligence = 5; //A ratio of how much the zombie follows the player, >1 required
+}
+
+var zombies = [];
+var NUMBER_OF_ZOMBIES = 2;
+for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+	zombies[i] = new Zombie(Math.random()*(map[0].length-4)+3, Math.random()*(map.length-4)+3, Math.floor(Math.random()*3));
+}
+
+//console.log(zombies[0].x);
+
 var lvl1;
 
 var player = {
@@ -36,8 +54,10 @@ var player = {
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
   rot : 120,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
-  moveSpeed : 0.5, // how far (in map units) does the player move each step/update
-  rotSpeed : 30 * Math.PI / 180  // how much does the player rotate each step/update (in radians)
+  moveSpeed : 0.2, // how far (in map units) does the player move each step/update
+  rotSpeed : 15 * Math.PI / 180,  // how much does the player rotate each step/update (in radians)
+  eaten: false, //Whether or not the player has been attacked by a zombie
+  winner: false, //Whether the player has made it to the level's goal
 }
 
 var soundSource = {
@@ -57,6 +77,8 @@ var coneInnerAngle = 60;
 var twoPI = Math.PI * 2;
 
 setTimeout(init, 1);
+var d = new Date();
+var lastFootTime = 0;
 
 function generateMap() {
   lvl1 = map.slice(0);
@@ -99,23 +121,58 @@ function init() {
 
   drawMiniMap();
 
-  gameCycle();
+  gameCycle(context);
 }
 
 function footStep(context) {
-  var urls = ['http://upload.wikimedia.org/wikipedia/commons/7/7d/Single_step_wood_floor.ogg'];
-  var source = context.createBufferSource();
-  var loader = new BufferLoader(context, urls, function (buffers) {
-      source.buffer = buffers[0];
-  });
-  loader.load();
-  var compressor = context.createDynamicsCompressor();
-  var gain = context.createGainNode();
-  gain.gain.value = 1;
-  source.connect(gain);
-  gain.connect(compressor);
-  compressor.connect(context.destination);
-  source.noteOn(0);
+	var rand = Math.floor(Math.random()*10);
+	//return a random number up to 10
+	var soundNum = rand%5;
+	//return a remainder between 0 and 4
+	/*switch (soundNum) {
+
+      case 0:
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_steps_1.mp3'];
+        break;
+
+      case 1: 
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.mp3'];
+        break;
+
+      case 2:
+       var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_3.mp3'];
+        break;
+
+      case 3:
+        var urls = ['http://www.unc.edu/home/trivazul/Concete_Steps_4.mp3'];
+        break;
+        
+      case 4:
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_5.mp3'];
+        break;
+    } */
+    var urls = ['http://www.unc.edu/home/trivazul/Hay_steps_2.ogg'];
+    var xblock = Math.floor(player.x);
+    var yblock = Math.floor(player.y);
+    var floorType = map[yblock][xblock];
+    if(floorType == 3)
+    	urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.ogg'];
+    
+    var source = context.createBufferSource();
+    var loader = new BufferLoader(context, urls, function (buffers) {
+        source.buffer = buffers[0];
+    });
+    loader.load();
+    var compressor = context.createDynamicsCompressor();
+    var gain = context.createGainNode();
+    gain.gain.value = 0.5;
+    source.connect(gain);
+    var randSpeed = 0.3;
+    source.playbackRate.value = 1.5+randSpeed*Math.random();
+    gain.connect(compressor);
+    compressor.connect(context.destination);
+    source.noteOn(0);
+  }
 }
 
 var lastWallBump = 0;
@@ -133,8 +190,10 @@ function wallBump(context) {
     loader.load();
     var compressor = context.createDynamicsCompressor();
     var gain = context.createGainNode();
-    gain.gain.value = 1;
+    gain.gain.value = 0.5;
     source.connect(gain);
+    var randSpeed = 0.3;
+    source.playbackRate.value = 1.5+randSpeed*Math.random();
     gain.connect(compressor);
     compressor.connect(context.destination);
     source.noteOn(0);
@@ -160,8 +219,6 @@ function bindKeys(context) {
         var newX = player.x + Math.cos(rot) * moveStep;  // calculate new player position with simple trigonometry
         var newY = player.y + Math.sin(rot) * moveStep;
         checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, true);
-
-//        footStep(context);
         break;
 
       case 40: // down, move player backward, set negative speed
@@ -195,17 +252,35 @@ function bindKeys(context) {
 }
 
 function gameCycle(context) {
-	
-  move(context);
-
-  updateMiniMap();
+    move(context);
+  	
+  	moveZombies();
+  	
+  	detectZombieCollision();
+  	
+	var randSpeed2 = .2;
+	var interval = 0.32;
+	if(Math.abs(player.speed) == 1 && context.currentTime - lastFootTime > 2*interval+randSpeed2*Math.random()){
+        footStep(context);
+        lastFootTime = context.currentTime;
+        }
+        
+  	updateMiniMap();
 
   // display sound cones
   castRays(soundSource, mapWidth*miniMapScale, coneInnerAngle);
 
   updateConsoleLog();
 
-  setTimeout(function() {gameCycle(context);},1000/15);
+  if (player.eaten){
+  	alert("You've been eaten!");
+  }
+  else if(player.winner){
+  	alert("YOU WIN! You've successfully avoided zombies!")
+  }
+  else {
+    setTimeout(function(){gameCycle(context);},1000/15);
+  }
 }
 
 // display user coordinates
@@ -213,7 +288,7 @@ function updateConsoleLog() {
   var miniMapObjects = $("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
   objectCtx.fillText("(" + Math.floor(player.x).toString() + ", " +
-   Math.floor(player.y).toString() + ")", 5, 10);
+   Math.floor(player.y).toString() + ")" + " - " + map[Math.floor(player.y)][Math.floor(player.x)].toString(), 5, 10);
 }
 
 function move(context) {
@@ -237,6 +312,7 @@ function move(context) {
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)]==4){
   	//alert("You win!");
+  	player.winner = true;
   }
   
   //move the guide
@@ -269,6 +345,7 @@ function move(context) {
   positionSample.changePosition(player);
 }
 
+<<<<<<< HEAD
 
 function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 	var pos = {
@@ -357,6 +434,35 @@ function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 	return pos;
 }
 
+function moveZombies(){
+	var length = zombies.length;
+	for(var i = 0 ; i < length ; i++){ 
+		var z = zombies[i];
+		z.numCycles = (z.numCycles+1)%z.moveTime;
+		//console.log(z.numCycles);
+		if (z.numCycles==0){   // only move every once in a while
+	  		var randChase = Math.floor(Math.random()*z.intelligence);
+	  		if(randChase==0) z.rot = Math.round(Math.atan2(player.y-z.y, player.x-z.x)*10)/10.0;
+	  		else  z.rot += Math.random()*twoPI/4 - twoPI/8;
+	  		var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
+	
+	  		// make sure the angle is between 0 and 360 degrees
+	  		while (player.rot < 0) player.rot += twoPI;
+	  		while (player.rot >= twoPI) player.rot -= twoPI;
+	  		
+	  		var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
+			var newY = z.y + Math.sin(z.rot) * moveStep;
+			
+			if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
+			  return; // no, bail out.
+			}
+	  		
+	  		z.x = newX;
+	  		z.y = newY;
+  		}
+	}
+}
+
 function isBlocking(x,y, play) {
   // first make sure that we cannot move outside the boundaries of the level
   if (y < 0 || y > mapHeight || x < 0 || x > mapWidth) {
@@ -373,6 +479,15 @@ function isBlocking(x,y, play) {
   } else {
     return false;
   }
+}
+
+function detectZombieCollision(){
+	var length = zombies.length;
+	for (var i = 0 ; i < length ; i++){
+		if (Math.abs(zombies[i].x-player.x) < 0.5 && Math.abs(zombies[i].y-player.y)<0.5){
+			player.eaten=true;
+		}
+	}
 }
 
 function updateMiniMap() {
@@ -395,7 +510,31 @@ function updateMiniMap() {
   );
   objectCtx.closePath();
   objectCtx.stroke();
+  
+  //Draw the zombies
+  var l = zombies.length
+  for (var i = 0 ; i < l ; i++){
+  	//console.log("x: " + z.x + "; y: " + z.y);
+  	z = zombies[i];
+	objectCtx.fillStyle = "red";
+  	objectCtx.fillRect(   // draw a dot at the current zombie position
+	    z.x * miniMapScale - 2,
+	    z.y * miniMapScale - 2,
+	    4, 4
+	  );
+	  objectCtx.beginPath();
+	  objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
+	  objectCtx.lineTo(
+	    (z.x + Math.cos(z.rot) * 1) * miniMapScale,
+	    (z.y + Math.sin(z.rot) * 1) * miniMapScale
+	  );
+	  
+      objectCtx.strokeStyle = 'red';
+	  objectCtx.closePath();
+	  objectCtx.stroke();
+  }
 
+  objectCtx.fillStyle = "black";
   objectCtx.fillRect(   // draw a dot at the current soundSource position
     soundSource.x * miniMapScale - 2,
     soundSource.y * miniMapScale - 2,
@@ -407,6 +546,7 @@ function updateMiniMap() {
     (soundSource.x + Math.cos(soundSource.rot) * 2) * miniMapScale,
     (soundSource.y + Math.sin(soundSource.rot) * 2) * miniMapScale
   );
+  objectCtx.strokeStyle = 'black';
   objectCtx.closePath();
   objectCtx.stroke();
 }
@@ -486,7 +626,9 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    var urls = ["http://upload.wikimedia.org/wikipedia/commons/0/0e/FollowMyVoice2.ogg"];
+    //var urls = ["http://upload.wikimedia.org/wikipedia/commons/8/8f/FollowMyVoice.ogg"];
+    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
@@ -707,3 +849,6 @@ function drawRay(rayX, rayY, source) {
   objectCtx.closePath();
   objectCtx.stroke();
 }
+
+
+
