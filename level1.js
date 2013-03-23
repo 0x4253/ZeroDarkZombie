@@ -198,6 +198,14 @@ function move() {
   		soundSource.y += 1;
   	}
   }
+  else if (minDist > 7 && maxDist > 7){
+  	if (map[gy][gx-1]>=3){
+  		soundSource.x -= 1;
+  	}
+  	else if (map[gy-1][gx]>=3){
+  		soundSource.y -= 1;
+  	}
+  }
   
   //soundSource.rot += 6;
   soundSource.rot = Math.round(Math.atan2(newY-soundSource.y, newX-soundSource.x)*10)/10.0;
