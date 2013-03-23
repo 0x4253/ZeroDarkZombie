@@ -99,7 +99,7 @@ function init() {
 }
 
 function footStep(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
+    var urls = ['http://upload.wikimedia.org/wikipedia/commons/7/7d/Single_step_wood_floor.ogg'];
     var source = context.createBufferSource();
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
