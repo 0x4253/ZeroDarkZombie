@@ -147,7 +147,6 @@ function gameCycle() {
   updateMiniMap();
 
   // display sound cones
-  castRays(soundSource, mapWidth*miniMapScale, coneOuterAngle);
   castRays(soundSource, mapWidth*miniMapScale, coneInnerAngle);
 
   updateConsoleLog();
