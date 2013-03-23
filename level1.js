@@ -200,7 +200,7 @@ function move() {
   }
   
   //soundSource.rot += 6;
-  soundSource.rot = Math.round(Math.atan2(newY-soundSource.y, newX-soundSource.x)*100)/100.0;
+  soundSource.rot = Math.round(Math.atan2(newY-soundSource.y, newX-soundSource.x)*10)/10.0;
   //console.log(soundSource.rot);
   
   positionSample.changePosition(player);
@@ -474,7 +474,7 @@ function castSingleRay(rayAngle, stripIdx, source) {
     var wallY = Math.floor(y);
 
     // is this point inside a wall block?
-    if (map[wallY][wallX] > 0) {
+    if (map[wallY][wallX] == 1) {
 
       var distX = x - source.x;
       var distY = y - source.y;
@@ -508,7 +508,7 @@ function castSingleRay(rayAngle, stripIdx, source) {
   while (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
     var wallY = Math.floor(y + (up ? -1 : 0));
     var wallX = Math.floor(x);
-    if (map[wallY][wallX] > 0) {
+    if (map[wallY][wallX] == 1) {
       var distX = x - source.x;
       var distY = y - source.y;
       var blockDist = distX*distX + distY*distY;
