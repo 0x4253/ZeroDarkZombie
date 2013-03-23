@@ -36,8 +36,8 @@ var player = {
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
   rot : 0,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
-  moveSpeed : 0.5, // how far (in map units) does the player move each step/update
-  rotSpeed : 30 * Math.PI / 180  // how much does the player rotate each step/update (in radians)
+  moveSpeed : 0.2, // how far (in map units) does the player move each step/update
+  rotSpeed : 15 * Math.PI / 180  // how much does the player rotate each step/update (in radians)
 }
 
 var soundSource = {
@@ -57,6 +57,8 @@ var coneInnerAngle = 60;
 var twoPI = Math.PI * 2;
 
 setTimeout(init, 1);
+var d = new Date();
+var lastFootTime = 0;
 
 function generateMap() {
   lvl1 = map.slice(0);
@@ -95,11 +97,43 @@ function init() {
 
   drawMiniMap();
 
-  gameCycle();
+  gameCycle(context);
 }
 
 function footStep(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
+	var rand = Math.floor(Math.random()*10);
+	//return a random number up to 10
+	var soundNum = rand%5;
+	//return a remainder between 0 and 4
+	/*switch (soundNum) {
+
+      case 0:
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_steps_1.mp3'];
+        break;
+
+      case 1: 
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.mp3'];
+        break;
+
+      case 2:
+       var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_3.mp3'];
+        break;
+
+      case 3:
+        var urls = ['http://www.unc.edu/home/trivazul/Concete_Steps_4.mp3'];
+        break;
+        
+      case 4:
+        var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_5.mp3'];
+        break;
+    } */
+    var urls = ['http://www.unc.edu/home/trivazul/Hay_steps_2.ogg'];
+    var xblock = Math.floor(player.x);
+    var yblock = Math.floor(player.y);
+    var floorType = map[yblock][xblock];
+    if(floorType == 3)
+    	urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.ogg'];
+    
     var source = context.createBufferSource();
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
@@ -107,8 +141,10 @@ function footStep(context) {
     loader.load();
     var compressor = context.createDynamicsCompressor();
     var gain = context.createGainNode();
-    gain.gain.value = 1;
+    gain.gain.value = 0.5;
     source.connect(gain);
+    var randSpeed = 0.3;
+    source.playbackRate.value = 1.5+randSpeed*Math.random();
     gain.connect(compressor);
     compressor.connect(context.destination);
     source.noteOn(0);
@@ -123,7 +159,7 @@ function bindKeys(context) {
 
       case 38: // up, move player forward, ie. increase speed
         player.speed = 1;
-        footStep(context);
+        
         break;
 
       case 40: // down, move player backward, set negative speed
@@ -156,17 +192,22 @@ function bindKeys(context) {
   }
 }
 
-function gameCycle() {
-  move();
-
-  updateMiniMap();
+function gameCycle(context) {
+  	move();
+	var randSpeed2 = .2;
+	var interval = 0.32;
+	if(Math.abs(player.speed) == 1 && context.currentTime - lastFootTime > 2*interval+randSpeed2*Math.random()){
+        footStep(context);
+        lastFootTime = context.currentTime;
+        }
+  	updateMiniMap();
 
   // display sound cones
   castRays(soundSource, mapWidth*miniMapScale, coneInnerAngle);
 
   updateConsoleLog();
 
-  setTimeout(gameCycle,1000/15);
+  setTimeout(function(){gameCycle(context);},1000/15);
 }
 
 // display user coordinates
@@ -174,7 +215,7 @@ function updateConsoleLog() {
   var miniMapObjects = $("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
   objectCtx.fillText("(" + Math.floor(player.x).toString() + ", " +
-   Math.floor(player.y).toString() + ")", 5, 10);
+   Math.floor(player.y).toString() + ")" + " - " + map[Math.floor(player.y)][Math.floor(player.x)].toString(), 5, 10);
 }
 
 function move() {
@@ -352,7 +393,7 @@ function PositionSampleTest(context) {
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
-    gain.value = 0.2;
+    gain.gain.value = 0;
     this.isPlaying = false;
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
