@@ -41,8 +41,8 @@ var player = {
 }
 
 var soundSource = {
-  x : 16,
-  y : 10,
+  x : 1.5,
+  y : 1.5,
   rot : -120 * Math.PI / 180
 }
 
@@ -64,12 +64,13 @@ function generateMap() {
   lvl1[1][1] = 2;  // starting position for player
   var i = 1;
   var j = 1; 
+  var totalSpots = map.length + map[0].length-4;
 
-  while (i < map.length-2 && j < map[0].length-1) {
-    var rand = Math.floor(Math.random() * 2);
+  while (i < map.length-2 && j < map[0].length-2) {
+    var rand = Math.floor(Math.random() * totalSpots);
     // if rand is 1 increase i, if rand is 0 increase j
-    i += rand;
-    j += (rand + 1) % 2;
+    i += rand < map.length-2 ? 1 : 0;
+    j += rand >= map.length-2 ? 1 : 0;
     lvl1[i][j] = 3;
   }
 
@@ -151,7 +152,7 @@ function gameCycle() {
 
   updateConsoleLog();
 
-  setTimeout(gameCycle,1000/30);
+  setTimeout(gameCycle,1000/15);
 }
 
 // display user coordinates
@@ -181,6 +182,27 @@ function move() {
   // set new position
   player.x = newX; 
   player.y = newY;
+  
+  
+  //move the guide
+  var minDist = Math.min(soundSource.x - newX, soundSource.y - newY);
+  var maxDist = Math.max(soundSource.x - newX, soundSource.y - newY);
+  //console.log("min: " + minDist + "; max: " + maxDist);
+  var gx = Math.floor(soundSource.x);
+  var gy = Math.floor(soundSource.y);
+  if ((minDist < 0 && maxDist < 8) || (minDist<3 && maxDist<3)	){
+  	if (map[gy][gx+1]>=3){
+  		soundSource.x += 1;
+  	}
+  	else if (map[gy+1][gx]>=3){
+  		soundSource.y += 1;
+  	}
+  }
+  
+  //soundSource.rot += 6;
+  soundSource.rot = Math.round(Math.atan2(newY-soundSource.y, newX-soundSource.x)*100)/100.0;
+  //console.log(soundSource.rot);
+  
   positionSample.changePosition(player);
 }
 
@@ -323,7 +345,7 @@ function PositionSampleTest(context) {
     source.loop = true;
 
     soundSource.panner = context.createPanner();
-    soundSource.panner.coneOuterGain = 0.05;
+    soundSource.panner.coneOuterGain = 0.005;
     soundSource.panner.coneOuterAngle = coneOuterAngle;
     soundSource.panner.coneInnerAngle = coneInnerAngle;
     soundSource.panner.connect(context.destination);
@@ -333,6 +355,8 @@ function PositionSampleTest(context) {
     soundSource.panner.setPosition(soundSource.x, soundSource.y, 0);
 }
 PositionSampleTest.prototype.changePosition = function (position) {
+	
+    soundSource.panner.setPosition(soundSource.x, soundSource.y, 0); // Change the soundSource position
     context.listener.setPosition(position.x, position.y, 0);
     context.listener.setOrientation(Math.cos(player.rot),
       Math.sin(player.rot), -1, 0,0,-1);
