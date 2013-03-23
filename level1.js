@@ -91,16 +91,30 @@ function init() {
 
   positionSample = new PositionSampleTest(context);
 
-  bindKeys();
-
+  bindKeys(context);
 
   drawMiniMap();
 
   gameCycle();
 }
 
+function footStep(context) {
+    var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
+    var source = context.createBufferSource();
+    var loader = new BufferLoader(context, urls, function (buffers) {
+        source.buffer = buffers[0];
+    });
+    loader.load();
+    var compressor = context.createDynamicsCompressor();
+    var gain = context.createGainNode();
+    gain.gain.value = 1;
+    source.connect(gain);
+    gain.connect(compressor);
+    compressor.connect(context.destination);
+    source.noteOn(0);
+}
 // bind keyboard events to game functions (movement, etc)
-function bindKeys() {
+function bindKeys(context) {
 
   document.onkeydown = function(e) {
     e = e || window.event;
@@ -109,6 +123,7 @@ function bindKeys() {
 
       case 38: // up, move player forward, ie. increase speed
         player.speed = 1;
+        footStep(context);
         break;
 
       case 40: // down, move player backward, set negative speed
@@ -332,10 +347,12 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
-    var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
+    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    //var urls = ['http://upload.wikimedia.org/wikipedia/commons/9/9e/Footsteps_forest_pathway.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
+    var gain = context.createGainNode();
+    gain.value = 0.2;
     this.isPlaying = false;
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
@@ -353,8 +370,9 @@ function PositionSampleTest(context) {
     soundSource.panner.coneOuterGain = 0.005;
     soundSource.panner.coneOuterAngle = coneOuterAngle;
     soundSource.panner.coneInnerAngle = coneInnerAngle;
-    soundSource.panner.connect(context.destination);
+    soundSource.panner.connect(gain);
     source.connect(soundSource.panner);
+    gain.connect(context.destination);
     source.noteOn(0);
     context.listener.setPosition(player.x, player.y, 0);
     soundSource.panner.setPosition(soundSource.x, soundSource.y, 0);
