@@ -39,7 +39,7 @@ function Zombie(startx, starty, startNumCycles){
 }
 
 var zombies = [];
-var NUMBER_OF_ZOMBIES = 3;
+var NUMBER_OF_ZOMBIES = 2;
 for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
 	zombies[i] = new Zombie(Math.random()*(map[0].length-4)+3, Math.random()*(map.length-4)+3, Math.floor(Math.random()*3));
 }
@@ -453,7 +453,9 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
+    var urls = ["http://upload.wikimedia.org/wikipedia/commons/0/0e/FollowMyVoice2.ogg"];
+    //var urls = ["http://upload.wikimedia.org/wikipedia/commons/8/8f/FollowMyVoice.ogg"];
+    //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
