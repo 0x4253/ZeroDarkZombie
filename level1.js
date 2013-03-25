@@ -1,33 +1,6 @@
 var $ = function(id) { return document.getElementById(id); };
 var dc = function(tag) { return document.createElement(tag); };
 
-var map = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
-
 function Zombie(startx, starty, startNumCycles){
 	this.x = startx;
 	this.y = starty;
@@ -80,29 +53,6 @@ setTimeout(init, 1);
 var d = new Date();
 var lastFootTime = 0;
 
-function generateMap() {
-  lvl1 = map.slice(0);
-
-  lvl1[1][1] = 2;  // starting position for player
-  var i = 1;
-  var j = 1; 
-  var totalSpots = map.length + map[0].length-4;
-
-  while (i < map.length-2 && j < map[0].length-2) {
-    var rand = Math.floor(Math.random() * totalSpots);
-    // if rand is 1 increase i, if rand is 0 increase j
-    i += rand < map.length-2 ? 1 : 0;
-    j += rand >= map.length-2 ? 1 : 0;
-    lvl1[i][j] = 3;
-  }
-
-  lvl1[i][j] = 4;
-  lvl1[i+1][j] = lvl1[i+1][j]!=0 ? lvl1[i+1][j] : 4;
-  lvl1[i-1][j] = lvl1[i-1][j]!=0 ? lvl1[i-1][j] : 4;
-  lvl1[i][j+1] = lvl1[i][j+1]!=0 ? lvl1[i][j+1] : 4;
-  lvl1[i][j-1] = lvl1[i][j-1]!=0 ? lvl1[i][j-1] : 4;
-}
-
 function init() {
   mapWidth = map[0].length;
   mapHeight = map.length;
@@ -151,12 +101,12 @@ function footStep(context) {
         var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_5.mp3'];
         break;
     } */
-    var urls = ['http://www.unc.edu/home/trivazul/Hay_steps_2.ogg'];
+    var urls = ['http://upload.wikimedia.org/wikipedia/commons/8/8c/Hay_steps_2.ogg'];
     var xblock = Math.floor(player.x);
     var yblock = Math.floor(player.y);
     var floorType = map[yblock][xblock];
     if(floorType == 3)
-    	urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.ogg'];
+    	urls = ['http://upload.wikimedia.org/wikipedia/commons/b/bf/Concrete_Steps_2.ogg'];
     
     var source = context.createBufferSource();
     var loader = new BufferLoader(context, urls, function (buffers) {
@@ -422,7 +372,7 @@ function updateMiniMap() {
 
 function drawMiniMap() {
   // generate level map
-  generateMap();
+  generateLevelOneMap();
 
   // draw the topdown view minimap
   var miniMap = $("minimap");     // the actual map
@@ -501,7 +451,7 @@ function PositionSampleTest(context) {
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
     var source = context.createBufferSource();
     var gain = context.createGainNode();
-    gain.gain.value = 0;
+    gain.gain.value = 2;
     this.isPlaying = false;
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
