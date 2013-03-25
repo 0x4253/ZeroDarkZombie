@@ -22,10 +22,10 @@ for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
 var lvl1;
 
 var player = {
-  x : 1.5,     // current x, y position
-  y : 1.5,
+  x : 2,     // current x, y position
+  y : 2,
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
-  rot : 0,    // the current angle of rotation
+  rot : 120,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
   moveSpeed : 0.2, // how far (in map units) does the player move each step/update
   rotSpeed : 15 * Math.PI / 180,  // how much does the player rotate each step/update (in radians)
@@ -122,7 +122,34 @@ function footStep(context) {
     gain.connect(compressor);
     compressor.connect(context.destination);
     source.noteOn(0);
+  }
 }
+
+var lastWallBump = 0;
+var wallDelay = 200;
+
+function wallBump(context) {
+  var now = new Date().getTime();
+  if ((lastWallBump == 0) || ((now - lastWallBump) > wallDelay)) {
+    lastWallBump = now;
+    var urls = ['http://cs.unc.edu/~stancill/comp585/bump.wav'];
+    var source = context.createBufferSource();
+    var loader = new BufferLoader(context, urls, function (buffers) {
+        source.buffer = buffers[0];
+    });
+    loader.load();
+    var compressor = context.createDynamicsCompressor();
+    var gain = context.createGainNode();
+    gain.gain.value = 0.5;
+    source.connect(gain);
+    var randSpeed = 0.3;
+    source.playbackRate.value = 1.5+randSpeed*Math.random();
+    gain.connect(compressor);
+    compressor.connect(context.destination);
+    source.noteOn(0);
+  }
+}
+
 // bind keyboard events to game functions (movement, etc)
 function bindKeys(context) {
 
@@ -133,7 +160,15 @@ function bindKeys(context) {
 
       case 38: // up, move player forward, ie. increase speed
         player.speed = 1;
-        
+
+        // Testing wall bump
+        var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
+        rot = player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+        while (rot < 0) rot += twoPI;
+        while (rot >= twoPI) rot -= twoPI;
+        var newX = player.x + Math.cos(rot) * moveStep;  // calculate new player position with simple trigonometry
+        var newY = player.y + Math.sin(rot) * moveStep;
+        checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, true);
         break;
 
       case 40: // down, move player backward, set negative speed
@@ -167,7 +202,7 @@ function bindKeys(context) {
 }
 
 function gameCycle(context) {
-  	move();
+    move(context);
   	
   	moveZombies();
   	
@@ -206,7 +241,7 @@ function updateConsoleLog() {
    Math.floor(player.y).toString() + ")" + " - " + map[Math.floor(player.y)][Math.floor(player.x)].toString(), 5, 10);
 }
 
-function move() {
+function move(context) {
   var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
 
   player.rot += player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
@@ -218,13 +253,11 @@ function move() {
   var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
   var newY = player.y + Math.sin(player.rot) * moveStep;
 
-  if (isBlocking(newX, newY)) { // are we allowed to move to the new position?
-    return; // no, bail out.
-  }
+  var pos = checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, false);
 
   // set new position
-  player.x = newX; 
-  player.y = newY;
+  player.x = pos.x; 
+  player.y = pos.y;
   
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)]==4){
@@ -262,6 +295,95 @@ function move() {
   positionSample.changePosition(player);
 }
 
+<<<<<<< HEAD
+
+function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
+	var pos = {
+		x : fromX,
+		y : fromY
+	};
+
+	if (toY < 0 || toY >= mapHeight || toX < 0 || toX >= mapWidth) {
+		return pos;
+  }
+
+	var blockX = Math.floor(toX);
+	var blockY = Math.floor(toY);
+
+
+	if (isBlocking(blockX,blockY)) {
+		return pos;
+	}
+
+	pos.x = toX;
+	pos.y = toY;
+
+	var blockTop = isBlocking(blockX,blockY-1, play);
+	var blockBottom = isBlocking(blockX,blockY+1, play);
+	var blockLeft = isBlocking(blockX-1,blockY, play);
+	var blockRight = isBlocking(blockX+1,blockY, play);
+
+	if (blockTop != 0 && toY - blockY < radius) {
+		toY = pos.y = blockY + radius;
+	}
+	if (blockBottom != 0 && blockY+1 - toY < radius) {
+		toY = pos.y = blockY + 1 - radius;
+	}
+	if (blockLeft != 0 && toX - blockX < radius) {
+		toX = pos.x = blockX + radius;
+	}
+	if (blockRight != 0 && blockX+1 - toX < radius) {
+		toX = pos.x = blockX + 1 - radius;
+	}
+
+	// is tile to the top-left a wall
+	if (isBlocking(blockX-1,blockY-1, false) != 0 && !(blockTop != 0 && blockLeft != 0)) {
+		var dx = toX - blockX;
+		var dy = toY - blockY;
+		if (dx*dx+dy*dy < radius*radius) {
+			if (dx*dx > dy*dy)
+				toX = pos.x = blockX + radius;
+			else
+				toY = pos.y = blockY + radius;
+		}
+	}
+	// is tile to the top-right a wall
+	if (isBlocking(blockX+1,blockY-1, false) != 0 && !(blockTop != 0 && blockRight != 0)) {
+		var dx = toX - (blockX+1);
+		var dy = toY - blockY;
+		if (dx*dx+dy*dy < radius*radius) {
+			if (dx*dx > dy*dy)
+				toX = pos.x = blockX + 1 - radius;
+			else
+				toY = pos.y = blockY + radius;
+		}
+	}
+	// is tile to the bottom-left a wall
+	if (isBlocking(blockX-1,blockY+1, false) != 0 && !(blockBottom != 0 && blockBottom != 0)) {
+		var dx = toX - blockX;
+		var dy = toY - (blockY+1);
+		if (dx*dx+dy*dy < radius*radius) {
+			if (dx*dx > dy*dy)
+				toX = pos.x = blockX + radius;
+			else
+				toY = pos.y = blockY + 1 - radius;
+		}
+	}
+	// is tile to the bottom-right a wall
+	if (isBlocking(blockX+1,blockY+1, false) != 0 && !(blockBottom != 0 && blockRight != 0)) {
+		var dx = toX - (blockX+1);
+		var dy = toY - (blockY+1);
+		if (dx*dx+dy*dy < radius*radius) {
+			if (dx*dx > dy*dy)
+				toX = pos.x = blockX + 1 - radius;
+			else
+				toY = pos.y = blockY + 1 - radius;
+		}
+	}
+
+	return pos;
+}
+
 function moveZombies(){
 	var length = zombies.length;
 	for(var i = 0 ; i < length ; i++){ 
@@ -291,13 +413,22 @@ function moveZombies(){
 	}
 }
 
-function isBlocking(x,y) {
+function isBlocking(x,y, play) {
   // first make sure that we cannot move outside the boundaries of the level
-  if (y < 0 || y > mapHeight || x < 0 || x > mapWidth)
+  if (y < 0 || y > mapHeight || x < 0 || x > mapWidth) {
+    if (play)
+      wallBump(context);
     return true;
+  }
 
   // return true if the map block is not 0, ie. if there is a blocking wall.
-  return (map[Math.floor(y)][Math.floor(x)] == 1);
+  if (map[Math.floor(y)][Math.floor(x)] == 1) {
+    if (play)
+      wallBump(context);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function detectZombieCollision(){
