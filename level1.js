@@ -39,7 +39,7 @@ function Zombie(startx, starty, startNumCycles){
 }
 
 var zombies = [];
-var NUMBER_OF_ZOMBIES = 2;
+var NUMBER_OF_ZOMBIES = 1;
 for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
 	zombies[i] = new Zombie(Math.random()*(map[0].length-4)+3, Math.random()*(map.length-4)+3, Math.floor(Math.random()*3));
 }
@@ -54,8 +54,8 @@ var player = {
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
   rot : 120,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
-  moveSpeed : 0.2, // how far (in map units) does the player move each step/update
-  rotSpeed : 15 * Math.PI / 180,  // how much does the player rotate each step/update (in radians)
+  moveSpeed : 0.5, // how far (in map units) does the player move each step/update
+  rotSpeed : 30 * Math.PI / 180,  // how much does the player rotate each step/update (in radians)
   eaten: false, //Whether or not the player has been attacked by a zombie
   winner: false, //Whether the player has made it to the level's goal
 }
@@ -125,9 +125,9 @@ function init() {
 }
 
 function footStep(context) {
-	var rand = Math.floor(Math.random()*10);
+	var rand = Math.floor(Math.random() * 10);
 	//return a random number up to 10
-	var soundNum = rand%5;
+	var soundNum = rand % 5;
 	//return a remainder between 0 and 4
 	/*switch (soundNum) {
 
@@ -151,12 +151,12 @@ function footStep(context) {
         var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_5.mp3'];
         break;
     } */
-    var urls = ['http://www.unc.edu/home/trivazul/Hay_steps_2.ogg'];
+    var urls = ['http://www.cs.unc.edu/~stancill/comp585/Hay_steps_2.ogg'];
     var xblock = Math.floor(player.x);
     var yblock = Math.floor(player.y);
     var floorType = map[yblock][xblock];
     if(floorType == 3)
-    	urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.ogg'];
+    	urls = ['http://www.cs.unc.edu/~stancill/comp585/Concrete_Steps_2.ogg'];
     
     var source = context.createBufferSource();
     var loader = new BufferLoader(context, urls, function (buffers) {
@@ -168,11 +168,10 @@ function footStep(context) {
     gain.gain.value = 0.5;
     source.connect(gain);
     var randSpeed = 0.3;
-    source.playbackRate.value = 1.5+randSpeed*Math.random();
+    source.playbackRate.value = 1.5 + randSpeed * Math.random();
     gain.connect(compressor);
     compressor.connect(context.destination);
     source.noteOn(0);
-  }
 }
 
 var lastWallBump = 0;
@@ -182,7 +181,8 @@ function wallBump(context) {
   var now = new Date().getTime();
   if ((lastWallBump == 0) || ((now - lastWallBump) > wallDelay)) {
     lastWallBump = now;
-    var urls = ['http://cs.unc.edu/~stancill/comp585/bump.wav'];
+    var urls = ['http://cs.unc.edu/~stancill/comp585/bump.mp3'];
+    //var urls = ['http://cs.unc.edu/~stancill/comp585/bump.wav'];
     var source = context.createBufferSource();
     var loader = new BufferLoader(context, urls, function (buffers) {
         source.buffer = buffers[0];
@@ -193,11 +193,43 @@ function wallBump(context) {
     gain.gain.value = 0.5;
     source.connect(gain);
     var randSpeed = 0.3;
-    source.playbackRate.value = 1.5+randSpeed*Math.random();
+    source.playbackRate.value = 1.5 + randSpeed * Math.random();
     gain.connect(compressor);
     compressor.connect(context.destination);
     source.noteOn(0);
   }
+}
+
+function winSound(context) {
+    var urls = ['http://cs.unc.edu/~stancill/comp585/tada.wav'];
+    var source = context.createBufferSource();
+    var loader = new BufferLoader(context, urls, function (buffers) {
+        source.buffer = buffers[0];
+    });
+    loader.load();
+    var compressor = context.createDynamicsCompressor();
+    var gain = context.createGainNode();
+    gain.gain.value = 0.3;
+    source.connect(gain);
+    gain.connect(compressor);
+    compressor.connect(context.destination);
+    source.noteOn(0);
+}
+
+function loseSound(context) {
+    var urls = ['http://cs.unc.edu/~stancill/comp585/gameover.ogg'];
+    var source = context.createBufferSource();
+    var loader = new BufferLoader(context, urls, function (buffers) {
+        source.buffer = buffers[0];
+    });
+    loader.load();
+    var compressor = context.createDynamicsCompressor();
+    var gain = context.createGainNode();
+    gain.gain.value = 0.3;
+    source.connect(gain);
+    gain.connect(compressor);
+    compressor.connect(context.destination);
+    source.noteOn(0);
 }
 
 // bind keyboard events to game functions (movement, etc)
@@ -213,12 +245,12 @@ function bindKeys(context) {
 
         // Testing wall bump
         var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
-        rot = player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+        var rot = player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
         while (rot < 0) rot += twoPI;
         while (rot >= twoPI) rot -= twoPI;
         var newX = player.x + Math.cos(rot) * moveStep;  // calculate new player position with simple trigonometry
         var newY = player.y + Math.sin(rot) * moveStep;
-        checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, true);
+        checkCollision(player.x, player.y, newX-1, newY, player.moveSpeed, context, true);
         break;
 
       case 40: // down, move player backward, set negative speed
@@ -252,31 +284,42 @@ function bindKeys(context) {
 }
 
 function gameCycle(context) {
-    move(context);
-  	
-  	moveZombies();
-  	
-  	detectZombieCollision();
+  move(context);
+  
+  moveZombies();
+  
+  detectZombieCollision();
   	
 	var randSpeed2 = .2;
 	var interval = 0.32;
-	if(Math.abs(player.speed) == 1 && context.currentTime - lastFootTime > 2*interval+randSpeed2*Math.random()){
-        footStep(context);
-        lastFootTime = context.currentTime;
-        }
+	if(Math.abs(player.speed) == 1 && context.currentTime - lastFootTime > 2 * interval + randSpeed2 * Math.random()) {
+    footStep(context);
+    lastFootTime = context.currentTime;
+  }
         
-  	updateMiniMap();
+  updateMiniMap();
 
   // display sound cones
   castRays(soundSource, mapWidth*miniMapScale, coneInnerAngle);
+  for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+    castRays(zombies[i], mapWidth*miniMapScale, coneInnerAngle);
+  }
 
   updateConsoleLog();
 
   if (player.eaten){
-  	alert("You've been eaten!");
+    soundSource.gain.gain.value = 0;
+    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+      zombies[i].gain.gain.value = 0;
+    }
+    loseSound(context);
   }
   else if(player.winner){
-  	alert("YOU WIN! You've successfully avoided zombies!")
+    soundSource.gain.gain.value = 0;
+    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+      zombies[i].gain.gain.value = 0;
+    }
+    winSound(context);
   }
   else {
     setTimeout(function(){gameCycle(context);},1000/15);
@@ -310,7 +353,7 @@ function move(context) {
   player.y = pos.y;
   
   // Check the win condition
-  if (map[Math.floor(newY)][Math.floor(newX)]==4){
+  if (map[Math.floor(newY)][Math.floor(newX)] == 4){
   	//alert("You win!");
   	player.winner = true;
   }
@@ -339,13 +382,11 @@ function move(context) {
   }
   
   //soundSource.rot += 6;
-  soundSource.rot = Math.round(Math.atan2(newY-soundSource.y, newX-soundSource.x)*10)/10.0;
+  soundSource.rot = Math.round(Math.atan2(newY - soundSource.y, newX - soundSource.x) * 10) / 10.0;
   //console.log(soundSource.rot);
   
   positionSample.changePosition(player);
 }
-
-<<<<<<< HEAD
 
 function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 	var pos = {
@@ -360,7 +401,6 @@ function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 	var blockX = Math.floor(toX);
 	var blockY = Math.floor(toY);
 
-
 	if (isBlocking(blockX,blockY)) {
 		return pos;
 	}
@@ -368,10 +408,20 @@ function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 	pos.x = toX;
 	pos.y = toY;
 
-	var blockTop = isBlocking(blockX,blockY-1, play);
-	var blockBottom = isBlocking(blockX,blockY+1, play);
-	var blockLeft = isBlocking(blockX-1,blockY, play);
-	var blockRight = isBlocking(blockX+1,blockY, play);
+  // determine what direction the player is facing
+  var rightDown = Math.PI / 4;
+  var leftDown = (Math.PI * 3) / 4;
+  var leftUp = (Math.PI * 5) / 4;
+  var rightUp = (Math.PI * 7) / 4;
+  var up = (player.rot < rightUp && player.rot > leftUp);
+  var down = (player.rot < leftDown && player.rot > rightDown);
+  var left = (player.rot >= leftDown && player.rot <= leftUp);
+  var right = (player.rot >= rightUp || player.rot <= rightDown);
+
+	var blockTop = isBlocking(blockX,blockY-1, play && up);
+	var blockBottom = isBlocking(blockX,blockY+1, play && down);
+	var blockLeft = isBlocking(blockX-1,blockY, play && left);
+	var blockRight = isBlocking(blockX+1,blockY, play && right);
 
 	if (blockTop != 0 && toY - blockY < radius) {
 		toY = pos.y = blockY + radius;
@@ -438,34 +488,34 @@ function moveZombies(){
 	var length = zombies.length;
 	for(var i = 0 ; i < length ; i++){ 
 		var z = zombies[i];
-		z.numCycles = (z.numCycles+1)%z.moveTime;
+		z.numCycles = (z.numCycles + 1) % z.moveTime;
 		//console.log(z.numCycles);
-		if (z.numCycles==0){   // only move every once in a while
-	  		var randChase = Math.floor(Math.random()*z.intelligence);
-	  		if(randChase==0) z.rot = Math.round(Math.atan2(player.y-z.y, player.x-z.x)*10)/10.0;
-	  		else  z.rot += Math.random()*twoPI/4 - twoPI/8;
-	  		var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
-	
-	  		// make sure the angle is between 0 and 360 degrees
-	  		while (player.rot < 0) player.rot += twoPI;
-	  		while (player.rot >= twoPI) player.rot -= twoPI;
-	  		
-	  		var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
+		if (z.numCycles == 0){   // only move every once in a while
+      var randChase = Math.floor(Math.random() * z.intelligence);
+      if (randChase == 0) z.rot = Math.round(Math.atan2(player.y - z.y, player.x - z.x) * 10) / 10.0;
+      else  z.rot += Math.random() * twoPI / 4 - twoPI / 8;
+      var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
+
+      // make sure the angle is between 0 and 360 degrees
+      while (player.rot < 0) player.rot += twoPI;
+      while (player.rot >= twoPI) player.rot -= twoPI;
+      
+      var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
 			var newY = z.y + Math.sin(z.rot) * moveStep;
 			
 			if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
 			  return; // no, bail out.
 			}
-	  		
-	  		z.x = newX;
-	  		z.y = newY;
-  		}
+      
+      z.x = newX;
+      z.y = newY;
+    }
 	}
 }
 
 function isBlocking(x,y, play) {
   // first make sure that we cannot move outside the boundaries of the level
-  if (y < 0 || y > mapHeight || x < 0 || x > mapWidth) {
+  if (y <= 0 || y >= mapHeight || x <= 0 || x >= mapWidth) {
     if (play)
       wallBump(context);
     return true;
@@ -484,7 +534,7 @@ function isBlocking(x,y, play) {
 function detectZombieCollision(){
 	var length = zombies.length;
 	for (var i = 0 ; i < length ; i++){
-		if (Math.abs(zombies[i].x-player.x) < 0.5 && Math.abs(zombies[i].y-player.y)<0.5){
+		if (Math.abs(zombies[i].x - player.x) < 0.5 && Math.abs(zombies[i].y - player.y) < 0.5){
 			player.eaten=true;
 		}
 	}
@@ -516,22 +566,22 @@ function updateMiniMap() {
   for (var i = 0 ; i < l ; i++){
   	//console.log("x: " + z.x + "; y: " + z.y);
   	z = zombies[i];
-	objectCtx.fillStyle = "red";
-  	objectCtx.fillRect(   // draw a dot at the current zombie position
-	    z.x * miniMapScale - 2,
-	    z.y * miniMapScale - 2,
-	    4, 4
-	  );
-	  objectCtx.beginPath();
-	  objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
-	  objectCtx.lineTo(
-	    (z.x + Math.cos(z.rot) * 1) * miniMapScale,
-	    (z.y + Math.sin(z.rot) * 1) * miniMapScale
-	  );
-	  
-      objectCtx.strokeStyle = 'red';
-	  objectCtx.closePath();
-	  objectCtx.stroke();
+    objectCtx.fillStyle = "red";
+    objectCtx.fillRect(   // draw a dot at the current zombie position
+      z.x * miniMapScale - 2,
+      z.y * miniMapScale - 2,
+      4, 4
+    );
+    objectCtx.beginPath();
+    objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
+    objectCtx.lineTo(
+      (z.x + Math.cos(z.rot) * 1) * miniMapScale,
+      (z.y + Math.sin(z.rot) * 1) * miniMapScale
+    );
+    
+    objectCtx.strokeStyle = 'red';
+    objectCtx.closePath();
+    objectCtx.stroke();
   }
 
   objectCtx.fillStyle = "black";
@@ -630,45 +680,71 @@ function PositionSampleTest(context) {
     //var urls = ["http://upload.wikimedia.org/wikipedia/commons/8/8f/FollowMyVoice.ogg"];
     //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
-    var source = context.createBufferSource();
-    var gain = context.createGainNode();
-    gain.gain.value = 0;
-    this.isPlaying = false;
+    soundSource.source = context.createBufferSource();
+    soundSource.gain = context.createGainNode();
+    soundSource.gain.gain.value = 1;
     var loader = new BufferLoader(context, urls, function (buffers) {
-        source.buffer = buffers[0];
+        soundSource.source.buffer = buffers[0];
     });
     loader.load();
-    var canvas = document.getElementById('minimapobjects');
-    this.size = {
-        width: canvas.width,
-        height: canvas.height
-    };
 
-    source.loop = true;
-
+    soundSource.source.loop = true;
     soundSource.panner = context.createPanner();
     soundSource.panner.coneOuterGain = 0.005;
     soundSource.panner.coneOuterAngle = coneOuterAngle;
     soundSource.panner.coneInnerAngle = coneInnerAngle;
-    soundSource.panner.connect(gain);
-    source.connect(soundSource.panner);
-    gain.connect(context.destination);
-    source.noteOn(0);
+    soundSource.panner.connect(soundSource.gain);
+    soundSource.source.connect(soundSource.panner);
+    soundSource.gain.connect(context.destination);
+    soundSource.source.noteOn(0);
     context.listener.setPosition(player.x, player.y, 0);
     soundSource.panner.setPosition(soundSource.x, soundSource.y, 0);
+
+    var url = "http://cs.unc.edu/~stancill/comp585/zombie-17.wav";
+    var zombieUrls = [];
+    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
+      zombieUrls.push(url); 
+    }
+    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+      var randSpeed = 0.3;
+      zombies[i].source = context.createBufferSource();
+      zombies[i].gain = context.createGainNode();
+      zombies[i].compressor = context.createDynamicsCompressor();
+      zombies[i].source.playbackRate.value = 0.5 + randSpeed * Math.random();
+      zombies[i].gain.gain.value = 0.3;
+      zombies[i].source.loop = true;
+      zombies[i].panner = context.createPanner();
+      zombies[i].panner.coneOuterGain = 0.005;
+      zombies[i].panner.rolloffFactor = 2;
+      zombies[i].panner.coneOuterAngle = 360;
+      zombies[i].panner.coneInnerAngle = 360;
+      zombies[i].panner.connect(zombies[i].gain);
+      zombies[i].source.connect(zombies[i].panner);
+      zombies[i].gain.connect(zombies[i].compressor);
+      zombies[i].compressor.connect(context.destination);
+      zombies[i].source.noteOn(0);
+      zombies[i].panner.setPosition(zombies[i].x, zombies[i].y, 0);
+    }
+    loader = new BufferLoader(context, zombieUrls, function (buffers) {
+      for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
+        zombies[i].source.buffer = buffers[i];
+      }
+    });
+    loader.load();
 }
 PositionSampleTest.prototype.changePosition = function (position) {
-	
     soundSource.panner.setPosition(soundSource.x, soundSource.y, 0); // Change the soundSource position
     context.listener.setPosition(position.x, position.y, 0);
     context.listener.setOrientation(Math.cos(player.rot),
       Math.sin(player.rot), -1, 0,0,-1);
-//    soundSource.panner.setOrientation(Math.cos(soundSource.rot),
-//      Math.sin(soundSource.rot), 0);
     soundSource.panner.setOrientation(Math.cos(soundSource.rot),
       Math.sin(soundSource.rot), 0);
+    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+      zombies[i].panner.setPosition(zombies[i].x, zombies[i].y, 0); // Change the soundSource position
+      zombies[i].panner.setOrientation(Math.cos(zombies[i].rot),
+        Math.sin(zombies[i].rot), 0);
+    }
 };
-
 
 //
 // BufferLoader
