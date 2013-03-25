@@ -15,9 +15,32 @@
     }
   </style>
   <script src="maps.js" type="text/javascript"></script>
+  <script src="zombieClass.js" type="text/javascript"></script>
+  <script src="rayCasting.js" type="text/javascript"></script>
   <script src="level1.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+  	function pauseGame(){
+  		button = document.getElementById("pauseButton");
+  		if (button.value == "Pause Game"){
+  			button.value = "Resume Game";
+  		}
+  		else {
+  			button.value = "Pause Game";
+  		}
+  	}
+  </script>  
+  
 </head>
 <body>
+	<div id="gamecontroller">
+		<form>
+			<input type="button" name="sel" value="Play Level 1" onclick="initLevel1()">
+			<input type="button" id="pauseButton" value="Pause Game" onclick="pauseGame()">
+		</form>
+	</div>
+	
+	
   <div id="minimapcontainer">
     <canvas id="minimap"></canvas>
     <canvas id="levelmap"></canvas>
