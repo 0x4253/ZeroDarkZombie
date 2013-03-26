@@ -2,8 +2,9 @@ var $ = function(id) { return document.getElementById(id); };
 var dc = function(tag) { return document.createElement(tag); };
 
 var lvl1;
-
 var startTime, endTime; // variables to keep time
+var gameOver = false;
+var playing = false;
 
 var player = {
   x : 2,     // current x, y position
@@ -27,7 +28,9 @@ var gameGuide = {
 var zombies = [];
 var NUMBER_OF_ZOMBIES = 1;
 for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-	zombies[i] = new Zombie(Math.random() * (map[0].length - 4) + 3, Math.random() * (map.length - 4) + 3, Math.floor(Math.random() * 3));
+	zombies[i] = new Zombie(Math.random() * (map[0].length - 4) + 3,
+      Math.random() * (map.length - 4) + 3,
+      Math.floor(Math.random() * 3));
 }
 
 // map attributes
@@ -40,7 +43,6 @@ var coneOuterAngle = 120;
 var coneInnerAngle = 60;
 var twoPI = Math.PI * 2;
 
-//setTimeout(initLevel1, 1);
 var d = new Date();
 var lastFootTime = 0;
 
@@ -64,7 +66,8 @@ function initLevel1() {
   
 	startTime = new Date();
 
-  gameCycle(context);
+  playing = true;
+  mainCycle(context);
 }
 
 function footStep(context) {
@@ -225,6 +228,21 @@ function bindKeys(context) {
   }
 }
 
+function pause() {
+  playing = !playing;
+}
+
+// Need to add support for more levels
+// Need more structure to code
+function mainCycle(context) {
+  if (playing) {
+    gameCycle(context);
+  }
+
+  if (!gameOver)
+    setTimeout(function(){mainCycle(context);}, 1000 / 15);
+}
+
 function gameCycle(context) {
   move(context);
   
@@ -234,7 +252,8 @@ function gameCycle(context) {
   	
 	var randSpeed2 = .2;
 	var interval = 0.32;
-	if(Math.abs(player.speed) == 1 && context.currentTime - lastFootTime > 2 * interval + randSpeed2 * Math.random()) {
+	if(Math.abs(player.speed) == 1 &&
+      context.currentTime - lastFootTime > 2 * interval + randSpeed2 * Math.random()) {
     footStep(context);
     lastFootTime = context.currentTime;
   }
@@ -256,7 +275,9 @@ function gameCycle(context) {
     }
     loseSound(context);
   	endTime = new Date();
-    outputToScreen("You've been eaten! It took " + (endTime-startTime)/1000 + " seconds.");
+    outputToScreen("You've been eaten! It took " +
+        (endTime-startTime)/1000 + " seconds.");
+    gameOver = true;
   }
   else if(player.winner){
     gameGuide.gain.gain.value = 0;
@@ -265,10 +286,9 @@ function gameCycle(context) {
     }
     winSound(context);
   	endTime = new Date();
-  	outputToScreen("YOU WIN! You've successfully avoided zombies! It took " + (endTime-startTime)/1000 + " seconds.");
-  }
-  else {
-    setTimeout(function(){gameCycle(context);}, 1000 / 15);
+  	outputToScreen("YOU WIN! You've successfully avoided zombies! It took " +
+        (endTime-startTime)/1000 + " seconds.");
+    gameOver = true;
   }
 }
 
