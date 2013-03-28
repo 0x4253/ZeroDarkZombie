@@ -7,8 +7,8 @@ var gameOver = false;
 var playing = false;
 
 var player = {
-  x : 2,     // current x, y position
-  y : 2,
+  x : 1.5,     // current x, y position
+  y : 1.5,
   dir : 0,    // the direction that the player is turning, either -1 for left or 1 for right.
   rot : 0,    // the current angle of rotation
   speed : 0,    // is the playing moving forward (speed = 1) or backwards (speed = -1).
@@ -316,10 +316,16 @@ function move(context) {
   while (player.rot < 0) player.rot += twoPI;
   while (player.rot >= twoPI) player.rot -= twoPI;
 
-  var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
-  var newY = player.y + Math.sin(player.rot) * moveStep;
+  if ((Math.round(player.rot * 180 / Math.PI) / 45) % 2 == 0){ // If the player is looking straight up, down, left, or right
+	  var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
+	  var newY = player.y + Math.sin(player.rot) * moveStep;
+  }
+  else {
+  	  var newX = player.x + Math.cos(player.rot) * moveStep * Math.SQRT2;  // calculate new player position with simple trigonometry
+	  var newY = player.y + Math.sin(player.rot) * moveStep * Math.SQRT2;
+  }
 
-  var pos = checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, false);
+  var pos = checkCollision(player.x, player.y, newX, newY, .5, context, false);
 
   // set new position
   player.x = pos.x; 
