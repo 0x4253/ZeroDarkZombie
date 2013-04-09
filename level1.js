@@ -261,9 +261,10 @@ function gameCycle(context) {
   updateMiniMap();
 
   // display sound cones
-  castRays(gameGuide, mapWidth*miniMapScale, coneInnerAngle);
+  castCircle(gameGuide, 3, 90, "rgba(0,100,0,0.3)");
+  castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
   for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-    castRays(zombies[i], mapWidth*miniMapScale, coneInnerAngle);
+    castCircle(zombies[i], 3, 90, "rgba(100,0,0,0.3)");
   }
 
   updateConsoleLog();
@@ -503,14 +504,6 @@ function updateMiniMap() {
     player.y * miniMapScale - 2,
     4, 4
   );
-  objectCtx.beginPath();
-  objectCtx.moveTo(player.x * miniMapScale, player.y * miniMapScale);
-  objectCtx.lineTo(
-    (player.x + Math.cos(player.rot) * 2) * miniMapScale,
-    (player.y + Math.sin(player.rot) * 2) * miniMapScale
-  );
-  objectCtx.closePath();
-  objectCtx.stroke();
   
   //Draw the zombies
   var l = zombies.length
@@ -523,16 +516,6 @@ function updateMiniMap() {
       z.y * miniMapScale - 2,
       4, 4
     );
-    objectCtx.beginPath();
-    objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
-    objectCtx.lineTo(
-      (z.x + Math.cos(z.rot) * 1) * miniMapScale,
-      (z.y + Math.sin(z.rot) * 1) * miniMapScale
-    );
-    
-    objectCtx.strokeStyle = 'red';
-    objectCtx.closePath();
-    objectCtx.stroke();
   }
 
   objectCtx.fillStyle = "black";
@@ -541,15 +524,6 @@ function updateMiniMap() {
     gameGuide.y * miniMapScale - 2,
     4, 4
   );
-  objectCtx.beginPath();
-  objectCtx.moveTo(gameGuide.x * miniMapScale, gameGuide.y * miniMapScale);
-  objectCtx.lineTo(
-    (gameGuide.x + Math.cos(gameGuide.rot) * 2) * miniMapScale,
-    (gameGuide.y + Math.sin(gameGuide.rot) * 2) * miniMapScale
-  );
-  objectCtx.strokeStyle = 'black';
-  objectCtx.closePath();
-  objectCtx.stroke();
 }
 
 function drawMiniMap() {
