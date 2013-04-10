@@ -126,7 +126,7 @@ function castSingleRay(rayAngle, stripIdx, source) {
 }
 
 function drawRay(rayX, rayY, source) {
-  var miniMapObjects = $("minimapobjects");
+  var miniMapObjects = getid("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
 
   objectCtx.strokeStyle = "rgba(0,100,0,0.3)";

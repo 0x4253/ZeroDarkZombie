@@ -36,12 +36,15 @@
       float: left;
     }
   </style>
+
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
   <script src="maps.js" type="text/javascript"></script>
   <script src="zombieClass.js" type="text/javascript"></script>
   <script src="rayCasting.js" type="text/javascript"></script>
   <script src="circleCasting.js" type="text/javascript"></script>
   <script src="level1.js" type="text/javascript"></script>
-  
+
   <script type="text/javascript">
   function initModifiers(){
       number1 = document.getElementById("playerTurnSpeed");
@@ -108,13 +111,23 @@
     }
     */
   </script>  
+
+  <script src="GameEngine.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    document.onload = startGame();
+  </script>
+  
   
 </head>
 <body>
 	<div id="gamecontroller">
 		<form>
-			<input type="button" name="sel" value="Play Level 1" onclick="initLevel1()">
-			<input type="button" id="pauseButton" value="Pause Game" onclick="pauseGame()">
+			<input type="button" id="pauseButton" value="Pause Game [space]" onclick="pauseGame()" disabled>
+      <input type="button" id="quitButton" value="Quit Level [q]" onclick="" disabled>
+      <br>
+      <input type="button" id="level1" name="sel" value="Play Level 1 [#1]" onclick="startLevel(1)">
+      <input type="button" id="level2" name="sel" value="Play Level 2 [#2]" onclick="startLevel(2)">
 		</form>
 	</div>
   <div id="gamemodifiers">
