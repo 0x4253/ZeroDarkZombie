@@ -19,6 +19,22 @@
     .sprite{
       display:none;
     }
+    #gamemodifiers{
+      position:absolute;
+      left:680px;
+      width:px;
+    }
+    #gamemodifiers label{
+      display: inline-block;
+      float: left;
+      clear: left;
+      width: 160px;
+      text-align: left;
+    }
+    #gamemodifiers input {
+      display: inline-block;
+      float: left;
+    }
   </style>
   <script src="maps.js" type="text/javascript"></script>
   <script src="zombieClass.js" type="text/javascript"></script>
@@ -27,6 +43,14 @@
   <script src="level1.js" type="text/javascript"></script>
   
   <script type="text/javascript">
+  function initModifiers(){
+      number1 = document.getElementById("playerTurnSpeed");
+      number1.value = player.rotSpeed*180/Math.PI;
+
+      number2 = document.getElementById("playerMoveSpeed");
+      number2.value = player.moveSpeed;
+    }
+
   	function pauseGame(){
   		button = document.getElementById("pauseButton");
   		if (button.value == "Pause Game"){
@@ -37,6 +61,52 @@
   		}
       pause();
   	}
+    function changePlayerTurnSpeed(){
+      number = document.getElementById("playerTurnSpeed");
+      player.rotSpeed = number.value* Math.PI / 180;
+    }
+    function changePlayerMoveSpeed(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    /*
+    function changeZombieMoveSpeed(){
+      number = document.getElementById("zombieMoveSpeed");
+       = number.value;
+    }
+    function changeZombieIQ(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeGuideDistance(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeGuideVolume(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeZombieVolume(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeWallVolume(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeFootstepVolume(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeGuideRefDist(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    function changeZombieRefDist(){
+      number = document.getElementById("playerMoveSpeed");
+      player.moveSpeed = number.value;
+    }
+    */
   </script>  
   
 </head>
@@ -47,6 +117,22 @@
 			<input type="button" id="pauseButton" value="Pause Game" onclick="pauseGame()">
 		</form>
 	</div>
+  <div id="gamemodifiers">
+    <form name="modifiers">
+      <label>Player turn speed:</label> <input type="number" id="playerTurnSpeed"name="playerTurnSpeed" onchange="changePlayerTurnSpeed()"><br>
+      <label>Player move speed:</label> <input type="number" id="playerMoveSpeed" name="playerMoveSpeed" onchange="changePlayerMoveSpeed()"><br>
+      <!--<label>Zombie move speed:</label> <input type="number" name="zombieMoveSpeed"><br>
+      <label>Zobmie IQ:</label> <input type="number" name="zombieIQ"><br>
+      <label>Guide distance:</label> <input type="number" name="guideDistance"><br>
+      <label>Guide volume:</label> <input type="number" name="guideVolume"><br>
+      <label>Zombie volume:</label> <input type="number" name="zombieVolume"><br>
+      <label>Wall volume:</label> <input type="number" name="wallVolume"><br>
+      <label>Footstep volume:</label> <input type="number" name="footStepVolume"><br>
+      <label>Guide ref distance:</label> <input type="number" name="guideRefDist"><br>
+      <label>Zombie ref distance:</label> <input type="number" name="zombieRefDist"><br>
+    -->
+  </form>
+</div>
 	
 	
   <div id="minimapcontainer">

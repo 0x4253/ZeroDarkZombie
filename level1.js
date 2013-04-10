@@ -47,6 +47,7 @@ var d = new Date();
 var lastFootTime = 0;
 
 function initLevel1() {
+  initModifiers();
   mapWidth = map[0].length;
   mapHeight = map.length;
 
