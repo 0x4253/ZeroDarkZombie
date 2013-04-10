@@ -504,12 +504,19 @@ function updateMiniMap() {
     player.y * miniMapScale - 2,
     4, 4
   );
+  //draw player sprite
+  var img=$("marine");
+  objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
   
   //Draw the zombies
   var l = zombies.length
   for (var i = 0 ; i < l ; i++){
   	//console.log("x: " + z.x + "; y: " + z.y);
   	z = zombies[i];
+    //draw zombie sprite
+    var img=$("zombie");
+    objectCtx.drawImage(img,203,240,44,76,zombies[i].x*miniMapScale-15,zombies[i].y*miniMapScale-27,44/1.5,76/1.5);
+
     objectCtx.fillStyle = "red";
     objectCtx.fillRect(   // draw a dot at the current zombie position
       z.x * miniMapScale - 2,
@@ -524,6 +531,9 @@ function updateMiniMap() {
     gameGuide.y * miniMapScale - 2,
     4, 4
   );
+  //draw guide sprite
+  var img=$("guide");
+    objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
 }
 
 function drawMiniMap() {
