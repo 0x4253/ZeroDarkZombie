@@ -4,9 +4,7 @@ var playing = false;
 var levelAlive;
 var waitTime;
 var distanceFromGuide;
-var guideAudio = "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg";
-var zombieAudio = "";  //"http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
-var levelCompleted = 0;
+var levelCompleted = 2;
 
 
 function startGame() {
@@ -33,17 +31,15 @@ function initGameEngine() {
 
 function GameEngineLoop() {
 	if (levelAlive == false && startLevelNumber <= levelCompleted + 1) {
-		switch (startLevelNumber) {
+		switch (startLevelNumber) { 
 			case 1:
-				startLevelNumber = 0;
 				switchToLevel();
-				initLevel1();
+				initLevel(Level1);
 				levelCycle(context);
 				break;
 			case 2:
-				startLevelNumber = 0;
 				switchToLevel();
-				initLevel2();
+				initLevel(Level2);
 				levelCycle(context);
 				break;
 		}
@@ -62,13 +58,15 @@ function clearLevel() {
 		}
 		console.log("Level is over");
 		levelAlive = false;
+		startLevelNumber = 0;
 
 		$(document).unbind('keydown');
 		$(document).unbind('keyup');
 
 		// enable/disable HTML buttons
 		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
-			var idname = "#level" + 1;
+			var idname = "#level" + i;
+			$(idname).removeAttr("disabled");
 		}
 		$("#pauseButton").attr("disabled", "disabled");
 		$("#quitButton").attr("disabled", "disabled");
@@ -107,6 +105,41 @@ function switchToLevel() {
 	$("#level2").attr("disabled", "disabled");
 	$("#level1").attr("disabled", "disabled");
 	gameOver = false;
+}
+
+function initLevel(lvl){
+	lvl.randomizeMap();
+	map = lvl.map;
+	mapWidth = map[0].length;
+	mapHeight = map.length;
+
+	player.x = lvl.player.x;
+	player.y = lvl.player.y;
+	player.rot = lvl.player.rot;
+
+	// reset active player attributes
+	player.speed = 0;
+	player.dir = 0;
+	player.eaten = false;
+	player.winner = false;
+
+	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
+
+	gameGuide.x = lvl.gameGuide.x;
+	gameGuide.y = lvl.gameGuide.y;
+	gameGuide.rot = lvl.gameGuide.rot;
+
+	drawMiniMap();
+
+	guideAudio = lvl.guideAudio;
+	zombieAudio = lvl.zombieAudio;
+
+	setTimeout(function() {
+		bindKeys();
+		startTime = new Date();
+	}, lvl.startTimeDelay);
+
+	playing = true;
 }
 
 function initLevel1() {
