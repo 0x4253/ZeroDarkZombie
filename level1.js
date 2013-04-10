@@ -261,9 +261,10 @@ function gameCycle(context) {
   updateMiniMap();
 
   // display sound cones
-  castRays(gameGuide, mapWidth*miniMapScale, coneInnerAngle);
+  castCircle(gameGuide, 3, 90, "rgba(0,100,0,0.3)");
+  castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
   for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-    castRays(zombies[i], mapWidth*miniMapScale, coneInnerAngle);
+    castCircle(zombies[i], 3, 90, "rgba(100,0,0,0.3)");
   }
 
   updateConsoleLog();
@@ -509,36 +510,25 @@ function updateMiniMap() {
     player.y * miniMapScale - 2,
     4, 4
   );
-  objectCtx.beginPath();
-  objectCtx.moveTo(player.x * miniMapScale, player.y * miniMapScale);
-  objectCtx.lineTo(
-    (player.x + Math.cos(player.rot) * 2) * miniMapScale,
-    (player.y + Math.sin(player.rot) * 2) * miniMapScale
-  );
-  objectCtx.closePath();
-  objectCtx.stroke();
+  //draw player sprite
+  var img=$("marine");
+  objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
   
   //Draw the zombies
   var l = zombies.length
   for (var i = 0 ; i < l ; i++){
   	//console.log("x: " + z.x + "; y: " + z.y);
   	z = zombies[i];
+    //draw zombie sprite
+    var img=$("zombie");
+    objectCtx.drawImage(img,203,240,44,76,zombies[i].x*miniMapScale-15,zombies[i].y*miniMapScale-27,44/1.5,76/1.5);
+
     objectCtx.fillStyle = "red";
     objectCtx.fillRect(   // draw a dot at the current zombie position
       z.x * miniMapScale - 2,
       z.y * miniMapScale - 2,
       4, 4
     );
-    objectCtx.beginPath();
-    objectCtx.moveTo(z.x * miniMapScale, z.y * miniMapScale);
-    objectCtx.lineTo(
-      (z.x + Math.cos(z.rot) * 1) * miniMapScale,
-      (z.y + Math.sin(z.rot) * 1) * miniMapScale
-    );
-    
-    objectCtx.strokeStyle = 'red';
-    objectCtx.closePath();
-    objectCtx.stroke();
   }
 
   objectCtx.fillStyle = "black";
@@ -547,15 +537,9 @@ function updateMiniMap() {
     gameGuide.y * miniMapScale - 2,
     4, 4
   );
-  objectCtx.beginPath();
-  objectCtx.moveTo(gameGuide.x * miniMapScale, gameGuide.y * miniMapScale);
-  objectCtx.lineTo(
-    (gameGuide.x + Math.cos(gameGuide.rot) * 2) * miniMapScale,
-    (gameGuide.y + Math.sin(gameGuide.rot) * 2) * miniMapScale
-  );
-  objectCtx.strokeStyle = 'black';
-  objectCtx.closePath();
-  objectCtx.stroke();
+  //draw guide sprite
+  var img=$("guide");
+    objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
 }
 
 function drawMiniMap() {

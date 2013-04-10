@@ -1,5 +1,8 @@
 <html>
 <head>
+  <img id="marine" class="sprite" src="marinez.png" alt="Marines" width="1088" height="896">
+  <img id="zombie" class="sprite" src="zombie.png" alt="Zombie" width="640" height="480">
+  <img id="guide" class="sprite" src="guide.gif" alt="Guide" width="798" height="2828">
 <title>-Follow My Voice-</title>
   <style>
     div#minimapcontainer {
@@ -13,10 +16,14 @@
     canvas#levelmap {
      position : absolute;
     }
+    .sprite{
+      display:none;
+    }
   </style>
   <script src="maps.js" type="text/javascript"></script>
   <script src="zombieClass.js" type="text/javascript"></script>
   <script src="rayCasting.js" type="text/javascript"></script>
+  <script src="circleCasting.js" type="text/javascript"></script>
   <script src="level1.js" type="text/javascript"></script>
   
   <script type="text/javascript">
