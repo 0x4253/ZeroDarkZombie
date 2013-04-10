@@ -480,7 +480,7 @@ function updateMiniMap() {
     4, 4
   );
   //draw player sprite
-  var img=$("marine");
+  var img=getid("marine");
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
   
   //Draw the zombies
@@ -489,7 +489,7 @@ function updateMiniMap() {
   	//console.log("x: " + z.x + "; y: " + z.y);
   	z = zombies[i];
     //draw zombie sprite
-    var img=$("zombie");
+    var img=getid("zombie");
     objectCtx.drawImage(img,203,240,44,76,zombies[i].x*miniMapScale-15,zombies[i].y*miniMapScale-27,44/1.5,76/1.5);
 
     objectCtx.fillStyle = "red";
@@ -507,7 +507,7 @@ function updateMiniMap() {
     4, 4
   );
   //draw guide sprite
-  var img=$("guide");
+  var img=getid("guide");
     objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
 }
 
@@ -585,7 +585,7 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ["http://upload.wikimedia.org/wikipedia/commons/0/0e/FollowMyVoice2.ogg"];
+    var urls = ["http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg"];
     //var urls = ["http://upload.wikimedia.org/wikipedia/commons/8/8f/FollowMyVoice.ogg"];
     //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
@@ -608,11 +608,11 @@ function PositionSampleTest(context) {
     context.listener.setPosition(player.x, player.y, 0);
     gameGuide.panner.setPosition(gameGuide.x, gameGuide.y, 0);
 
-    var url = "http://cs.unc.edu/~stancill/comp585/zombie-17.wav";
-    var zombieUrls = [];
-    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
-      zombieUrls.push(url); 
-    }
+    var zombieUrls = ["http://cs.unc.edu/~stancill/comp585/zombie-17.wav"];
+    // var zombieUrls = [];
+    // for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
+    //   zombieUrls.push(url); 
+    // }
     for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
       var randSpeed = 0.3;
       zombies[i].source = context.createBufferSource();

@@ -4,6 +4,10 @@ var playing = false;
 var levelAlive;
 var waitTime;
 var distanceFromGuide;
+var guideAudio = "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg";
+var zombieAudio = "";  //"http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
+var levelCompleted = 0;
+
 
 function startGame() {
 	setTimeout(function() {
@@ -28,7 +32,7 @@ function initGameEngine() {
 }
 
 function GameEngineLoop() {
-	if (levelAlive == false) {
+	if (levelAlive == false && startLevelNumber <= levelCompleted + 1) {
 		switch (startLevelNumber) {
 			case 1:
 				startLevelNumber = 0;
@@ -53,6 +57,9 @@ function GameEngineLoop() {
 function clearLevel() {
 
 	if (levelAlive) {
+		if (player.winner){
+			levelCompleted++;
+		}
 		console.log("Level is over");
 		levelAlive = false;
 
@@ -60,8 +67,9 @@ function clearLevel() {
 		$(document).unbind('keyup');
 
 		// enable/disable HTML buttons
-		$("#level1").removeAttr("disabled");
-		$("#level2").removeAttr("disabled");
+		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
+			var idname = "#level" + 1;
+		}
 		$("#pauseButton").attr("disabled", "disabled");
 		$("#quitButton").attr("disabled", "disabled");
 
@@ -126,12 +134,14 @@ function initLevel1() {
 
 	drawMiniMap();
 
-	
+	guideAudio = "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg";
+	zombieAudio = "";  //"http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
+
 
 	setTimeout(function() {
 		bindKeys();
 		startTime = new Date();
-	}, 2000);
+	}, 25000);
 
 	playing = true;
 }
@@ -156,7 +166,7 @@ function initLevel2() {
 		winner: false, //Whether the player has made it to the level's goal
 	}
 
-	NUMBER_OF_ZOMBIES = 0;
+	NUMBER_OF_ZOMBIES = 1;
 
 	gameGuide.x = 1.5;
 	gameGuide.y = 1.5;
