@@ -1,0 +1,87 @@
+<html>
+<head>
+  <style>
+    .sliderValue {
+        margin-left: 20px;
+        padding: 3px;
+        background-color: #d0d0f0;
+        border: 1px solid #808080;
+    }
+  </style>
+<title>-Follow My Voice-</title>
+  <script src="AudioManager.js" type="text/javascript"></script>
+  <script src="AudioManager_test.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    function OnSliderChanged (slider) {
+        var sliderValue = document.getElementById( slider.id + "Value" );
+        sliderValue.innerHTML = slider.value;
+        masterGainChanged(slider.value);
+    }
+
+    function Init () {
+        var slider = document.getElementById( "slider1" );
+        OnSliderChanged( slider );
+    }
+  </script>
+</head>
+<body onload="Init ()">
+  <form>
+    <h3> Listener </h3>
+    <input type="button" name="sel" value="Update Listener Position Randomly"
+     onclick="updateListenerPosition()">
+    <br /> <hr />
+    <h3> Individual sounds </h3>
+    <input type="button" name="sel" value="Play Techno" onclick="play1()">
+    <input type="button" name="sel" value="Stop Techno" onclick="stop1()">
+    <input type="button" name="sel" value="Pause Techno" onclick="pause1()">
+    <input type="button" name="sel" value="Resume Techno"
+     onclick="resume1()">
+    <input type="button" name="sel" value="Update Techno Position Randomly"
+     onclick="updatePosition1()">
+    <br /> <hr />
+    <input type="button" name="sel" value="Play Hay" onclick="play2()">
+    <input type="button" name="sel" value="Stop Hay" onclick="stop2()">
+    <input type="button" name="sel" value="Pause Hay" onclick="pause2()">
+    <input type="button" name="sel" value="Resume Hay"
+     onclick="resume2()">
+    <input type="button" name="sel" value="Update Hay Position Randomly"
+     onclick="updatePosition2()">
+    <br /> <hr />
+    <input type="button" name="sel" value="Play Concrete" onclick="play3()">
+    <input type="button" name="sel" value="Stop Concrete" onclick="stop3()">
+    <input type="button" name="sel" value="Pause Concrete"
+     onclick="pause3()">
+    <input type="button" name="sel" value="Resume Concrete"
+     onclick="resume3()">
+    <input type="button" name="sel" value="Update Concrete Position Randomly"
+     onclick="updatePosition3()">
+    <br /> <hr />
+    <input type="button" name="sel" value="Play Gameover" onclick="play4()">
+    <input type="button" name="sel" value="Stop Gameover" onclick="stop4()">
+    <input type="button" name="sel" value="Pause Gameover"
+     onclick="pause4()">
+    <input type="button" name="sel" value="Resume Gameover"
+     onclick="resume4()">
+    <input type="button" name="sel" value="Update Gameover Position Randomly"
+     onclick="updatePosition4()">
+    <br /> <hr />
+    <h3> Applies to all sounds </h3>
+    <input type="button" name="sel" value="Initialize All Sounds" onclick="init()">
+    <input type="button" id="pauseButton"
+     value="Pause All Sounds" onclick="pauseAllSounds()">
+    <input type="button" id="resumeButton"
+     value="Resume All Sounds" onclick="resumeAllSounds()">
+    <input type="button" id="updateButton"
+     value="Randomly Update Position" onclick="updateAllPositions()">
+    <input type="button" id="deleteAllButton"
+     value="Delete All Playing Sounds" onclick="deleteAllSounds()">
+    <input type="button" id="stopAllButton"
+     value="Stop All Playing Sounds" onclick="stopAllSounds()">
+    <br /> <hr />
+    <h3> Master Volume </h3>
+    0<input type="range" id="slider1" min="0" max="1" step="0.01"
+     value="0.5" onChange="OnSliderChanged( this )">1
+    <span id="slider1Value" class="sliderValue"></span>
+  </form>
+</body>
+</html>
