@@ -4,9 +4,7 @@ var playing = false;
 var levelAlive;
 var waitTime;
 var distanceFromGuide;
-var guideAudio = "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg";
-var zombieAudio = "";  //"http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
-var levelCompleted = 0;
+var levelCompleted = 2;
 
 
 function startGame() {
@@ -33,17 +31,15 @@ function initGameEngine() {
 
 function GameEngineLoop() {
 	if (levelAlive == false && startLevelNumber <= levelCompleted + 1) {
-		switch (startLevelNumber) {
+		switch (startLevelNumber) { 
 			case 1:
-				startLevelNumber = 0;
 				switchToLevel();
-				initLevel1();
+				initLevel(Level1);
 				levelCycle(context);
 				break;
 			case 2:
-				startLevelNumber = 0;
 				switchToLevel();
-				initLevel2();
+				initLevel(Level2);
 				levelCycle(context);
 				break;
 		}
@@ -62,25 +58,19 @@ function clearLevel() {
 		}
 		console.log("Level is over");
 		levelAlive = false;
+		startLevelNumber = 0;
 
 		$(document).unbind('keydown');
 		$(document).unbind('keyup');
 
 		// enable/disable HTML buttons
 		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
-			var idname = "#level" + 1;
+			var idname = "#level" + i;
+			$(idname).removeAttr("disabled");
 		}
 		$("#pauseButton").attr("disabled", "disabled");
 		$("#quitButton").attr("disabled", "disabled");
-
-
-		// clear canvas
-		var mm = $('#minimap')[0];
-		mm.width = mm.width;
-		var mmo = $('#minimapobjects')[0];
-		mmo.width = mmo.width;
-		var lm = $('#levelmap')[0];
-		lm.width = lm.width;
+		clearMap();
 	}
 
 }
@@ -109,74 +99,37 @@ function switchToLevel() {
 	gameOver = false;
 }
 
-function initLevel1() {
-
+function initLevel(lvl){
+	lvl.randomizeMap();
+	map = lvl.map;
 	mapWidth = map[0].length;
 	mapHeight = map.length;
-	generateLevelOneMap();
-	distanceFromGuide = 1;
 
-	player.x = map[0].length/2 - 1 + 0.5;
-	player.y = 1;
-	player.dir = 0;
-	player.rot = 90 * Math.PI / 180;
+	player.x = lvl.player.x;
+	player.y = lvl.player.y;
+	player.rot = lvl.player.rot;
+
+	// reset active player attributes
 	player.speed = 0;
-	player.moveSpeed = 1;
-	player.rotSpeed = 45 * Math.PI / 180;
+	player.dir = 0;
 	player.eaten = false;
 	player.winner = false;
 
-	NUMBER_OF_ZOMBIES = 0;
+	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
 
-	gameGuide.x = map[0].length/2 - 1 + 0.5;
-	gameGuide.y = 3;
-	gameGuide.rot = -90 * Math.PI / 180;
+	gameGuide.x = lvl.gameGuide.x;
+	gameGuide.y = lvl.gameGuide.y;
+	gameGuide.rot = lvl.gameGuide.rot;
 
 	drawMiniMap();
 
-	guideAudio = "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg";
-	zombieAudio = "";  //"http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
-
+	guideAudio = lvl.guideAudio;
+	zombieAudio = lvl.zombieAudio;
 
 	setTimeout(function() {
 		bindKeys();
 		startTime = new Date();
-	}, 25000);
-
-	playing = true;
-}
-
-function initLevel2() {
-
-	mapWidth = map[0].length;
-	mapHeight = map.length;
-	generateLevelTwoMap();
-
-	distanceFromGuide = 3;
-
-	player = {
-		x: 1.5, // current x, y position
-		y: 1.5,
-		dir: 0, // the direction that the player is turning, either -1 for left or 1 for right.
-		rot: 0, // the current angle of rotation
-		speed: 0, // is the playing moving forward (speed = 1) or backwards (speed = -1).
-		moveSpeed: 1, // how far (in map units) does the player move each step/update
-		rotSpeed: 45 * Math.PI / 180, // how much does the player rotate each step/update (in radians)
-		eaten: false, //Whether or not the player has been attacked by a zombie
-		winner: false, //Whether the player has made it to the level's goal
-	}
-
-	NUMBER_OF_ZOMBIES = 1;
-
-	gameGuide.x = 1.5;
-	gameGuide.y = 1.5;
-	gameGuide.rot = -120 * Math.PI / 180;
-
-	drawMiniMap();
-
-	startTime = new Date();
-
-	bindKeys();
+	}, lvl.startTimeDelay);
 
 	playing = true;
 }
@@ -221,5 +174,16 @@ function initKeypressListener(event) {
 
 function startLevel(num) {
 	startLevelNumber = num;
+}
+
+
+  // clear the canvas
+function clearMap(){
+	var mm = $('#minimap')[0];
+	mm.width = mm.width;
+	var mmo = $('#minimapobjects')[0];
+	mmo.width = mmo.width;
+	var lm = $('#levelmap')[0];
+	lm.width = lm.width;
 }
 
