@@ -5,6 +5,7 @@ var levelAlive;
 var waitTime;
 var distanceFromGuide;
 var levelCompleted = 2;
+//var map;
 
 
 function startGame() {

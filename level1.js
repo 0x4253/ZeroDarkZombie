@@ -6,6 +6,7 @@ var lvl1;
 var startTime, endTime; // variables to keep time
 var gameOver = false;
 var playing = false;
+var map = getBlankMap();
 
 var player = {
   x : 1.5,     // current x, y position
