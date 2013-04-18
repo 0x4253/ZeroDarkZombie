@@ -28,22 +28,13 @@ var Level1 = {
 		[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	],
-	player: {
-		x: 16,
-		y: 1,
-		rot: 90 * Math.PI / 180,
-		moveSpeed: 1,
-		rotSpeed: 45 * Math.PI / 180,
-	},
+	player: new Player(15.5, 3, (90 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 0,
-	gameGuide: {
-		x: 15.5,
-		y: 3,
-		rot: -90 * Math.PI / 180,
-	},
-	guideAudio: "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg",
-	zombieAudio: "",
-	startTimeDelay: 25000,
+	gameGuide: new Guide(15.5,
+											 3,
+											 (-90 * Math.PI / 180),
+											 "http://cs.unc.edu/~stancill/comp585/IntroToGame2.ogg"),
+	startTimeDelay: 0, //25000,
 }
 
 var Level2 = {
@@ -69,19 +60,12 @@ var Level2 = {
 		map[i][j + 1] = map[i][j + 1] != 0 ? map[i][j + 1] : 4;
 		map[i][j - 1] = map[i][j - 1] != 0 ? map[i][j - 1] : 4;
 	},
-	player: {
-		x: 1.5,
-		y: 1.5,
-		rot: 0 * Math.PI / 180,
-	},
+	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	gameGuide: {
-		x: 1.5,
-		y: 1.5,
-		rot: -120 * Math.PI / 180,
-	},
-	guideAudio: "http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg",
-	zombieAudio: "",
+	gameGuide: new Guide(1.5,
+											 1.5,
+											 (-120 * Math.PI / 180),
+											 "http://cs.unc.edu/~stancill/comp585/IntroToGame2.ogg"),
 	startTimeDelay: 0,
 }
 

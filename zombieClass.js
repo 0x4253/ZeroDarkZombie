@@ -1,4 +1,7 @@
-function Zombie(startx, starty, startNumCycles){
+function Zombie(number, startx, starty, startNumCycles, audioUrl) {
+  this.name = "zombie" + number;
+  this.audioUrl = audioUrl || "http://cs.unc.edu/~stancill/comp585/zombie-17.wav";
+  this.loop = true;
 	this.x = startx;
 	this.y = starty;
 	this.rot = 0;
@@ -6,6 +9,13 @@ function Zombie(startx, starty, startNumCycles){
 	this.moveTime = 5; //How many game cycles it takes for the zombie to move
 	this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
 	this.intelligence = 15; //A ratio of how much the zombie follows the player, >1 required
+  this.circleColor = "rgba(100,0,0,0.3)";
+  this.panner = true;
+  this.isZombie = true;
+  this.coneOuterGain = 0.005;
+  this.rolloffFactor = 2;
+  this.coneOuterAngle = 360;
+  this.coneInnerAngle = 360;
 }
 
 Zombie.prototype.move = function(playerX, playerY){
@@ -14,23 +24,23 @@ Zombie.prototype.move = function(playerX, playerY){
 		//console.log(z.numCycles);
 	if (z.numCycles == 0) {   // only move every once in a while
     var randChase = Math.floor(Math.random() * z.intelligence);
-    if (randChase == 0) 
+    if (randChase == 0)
       z.rot = Math.round(Math.atan2(playerY - z.y, playerX - z.x) * 10) / 10.0;
-    else 
+    else
       z.rot += Math.random() * twoPI / 4 - twoPI / 8;
     var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
 
     // make sure the angle is between 0 and 360 degrees
     while (z.rot < 0) z.rot += twoPI;
     while (z.rot >= twoPI) z.rot -= twoPI;
-    
+
     var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
 		var newY = z.y + Math.sin(z.rot) * moveStep;
-		
+
 		if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
 		  return; // no, bail out.
 		}
-  		
+
     z.x = newX;
     z.y = newY;
 	}
