@@ -23,9 +23,14 @@ function AudioManager( initialOptions ) {
   this.coneOuterAngle = 120;
   this.coneInnerAngle = 60;
   // setup listener's positional information
-  var initialX = initialOptions.x || 1;
-  var initialY = initialOptions.y || 1;
-  var initialRot = initialOptions.rot || 0;
+  if (typeof initialOptions != 'undefined') {
+    var x = initialOptions.x;
+    var y = initialOptions.y;
+    var rot = initialOptions.rot;
+  }
+  var initialX = x || 1;
+  var initialY = y || 1;
+  var initialRot = rot || 0;
   this.audioContext.listener.setPosition( initialX, initialY, 0 );
   this.audioContext.listener.setOrientation( Math.cos( initialRot ),
     Math.sin( initialRot ), -1, 0,0,-1 );
@@ -137,6 +142,9 @@ AudioManager.prototype.updateAllPositions = function( options ) {
       this.audioContext.listener.setPosition( options[i].x, options[i].y, 0 );
       this.audioContext.listener.setOrientation( Math.cos( options[i].rot ),
         Math.sin( options[i].rot ), -1, 0,0,-1 );
+      // console.log("Updated listener coord - x: " + options[i].x +
+      //              ", y: " + options[i].y +
+      //              " & rot: " + options[i].rot);
     } else {
       var sound = this.sounds[ options[i].name ];
       if ( typeof sound != 'undefined' && sound.panner != null ) {
@@ -146,6 +154,9 @@ AudioManager.prototype.updateAllPositions = function( options ) {
         sound.panner.setPosition( sound.x, sound.y, 0);
         sound.panner.setOrientation( Math.cos( sound.rot ),
             Math.sin( sound.rot ), 0) ;
+        // console.log("Updated " + options[i].name + " coord - x: " + options[i].x +
+        //             ", y: " + options[i].y +
+        //             " & rot: " + options[i].rot);
       }
     }
   };
@@ -198,20 +209,28 @@ AudioManager.prototype.play = function( options ) {
   }
   // which channel to connect this node to
   channel = this.nodes.effectsGain;
-  // create panner node for this sound
-  panner = this.audioContext.createPanner();
-  panner.coneOuterGain = this.coneOuterGain;
-  panner.coneOuterAngle = this.coneOuterAngle;
-  panner.coneInnerAngle = this.coneInnerAngle;
-  panner.connect( channel );
+
+  // decide to make it a panner node or not
+  if ( typeof options.panner != 'undefined' && options.panner ) {
+    // create panner node for this sound, but treat it special if it's a zombie
+    panner = this.audioContext.createPanner();
+    panner.coneOuterGain = (options.isZombie ? options.coneOuterGain : this.coneOuterGain);
+    panner.coneOuterAngle = (options.isZombie ? options.coneOuterAngle : this.coneOuterAngle);
+    panner.coneInnerAngle = (options.isZombie ? options.coneInnerAngle : this.coneInnerAngle);
+    if (options.isZombie)
+      panner.rolloffFactor = options.rolloffFactor;
+    panner.connect( channel );
+  }
   // create a basic buffer source for this node
   source = this.audioContext.createBufferSource();
   // assign sound it's positional information
-  sound.x = options.x;
-  sound.y = options.y;
-  sound.rot = options.rot;
-  panner.setPosition( sound.x, sound.y, 0 );
-  panner.setOrientation( Math.cos( sound.rot ), Math.sin( sound.rot ), 0 );
+  if ( typeof options.panner != 'undefined' && options.panner ) {
+    sound.x = options.x;
+    sound.y = options.y;
+    sound.rot = options.rot;
+    panner.setPosition( sound.x, sound.y, 0 );
+    panner.setOrientation( Math.cos( sound.rot ), Math.sin( sound.rot ), 0 );
+  }
   // finish assigning sound & source their playback information
   source.noteOnAt = now;
   sound.source = source;
@@ -219,7 +238,11 @@ AudioManager.prototype.play = function( options ) {
   sound.loop = options.loop || false;
   source.buffer = sound.buffer;
   sound.length = sound.buffer.duration;
-  source.connect( panner );
+  if ( typeof options.panner != 'undefined' && options.panner ) {
+    source.connect( panner );
+  } else {
+    source.connect( channel );
+  }
   source.loop = sound.loop;
   // resume if we were paused, using 'options.pausedAt' here instead of
   // 'sound.pausedAt' to prevent playing a new sound with the same
@@ -239,6 +262,7 @@ AudioManager.prototype.play = function( options ) {
   } else {
     // start play immediately
     source.noteOn( 0 );
+    console.log("Playing: " + options.name + ", coord - x: " + options.x + ", y: " + options.y);
   }
 }
 
@@ -328,7 +352,7 @@ AudioManager.prototype.resume = function( soundObj ) {
 // Accepts a multi-dimensional array (urlMap) that holds two arrays
 // The first array is the name of the objects
 // The second array is their corresponding url links
-AudioManager.prototype.load = function( urlMap ) {
+AudioManager.prototype.load = function( urlMap, callback) {
   var urlList = [];
   for (var i = 0; i < urlMap[0].length; i++) {
     urlList.push(urlMap[1][i]); // access the url list
@@ -345,8 +369,10 @@ AudioManager.prototype.load = function( urlMap ) {
             source: null
             };
           sounds[ sound.name ] = sound;
-          //alert("Loaded sound: " + sound.name);
+          console.log("Loaded sound: " + sound.name);
         };
+        if ( typeof( callback ) === 'function' )
+          callback();
       });
   bufferLoader.load();
 }

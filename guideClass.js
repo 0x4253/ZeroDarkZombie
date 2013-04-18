@@ -1,16 +1,12 @@
-function Player(startx, starty, initRot) {
-  this.name = "player";
-  this.isListener = true;  // Needed for a listener
+function Guide(startx, starty, initRot, audioUrl) {
+  this.name = "guide";
+  this.audioUrl = audioUrl || "";
+  this.loop = true;
   this.x = startx || 1.5;     // current x, y position
   this.y = starty || 1.5;
-  this.dir = 0;    // the direction that the player is turning, either -1 for left or 1 for right.
-  this.rot = initRot || 0;    // the current angle of rotation
-  this.speed = 0;    // is sthe playing moving forward (speed = 1) or backwards (speed = -1).
-  this.moveSpeed = 1; // how far (in map units) does the player move each step/update
-  this.rotSpeed = 45 * Math.PI / 180;  // how much does the player rotate each step/update (in radians)
-  this.eaten = false; //Whether or not the player has been attacked by a zombie
-  this.winner = false; //Whether the player has made it to the level's goal
-  this.circleColor = "rgba(0,0,100,0.3)";
+  this.rot = initRot || -120 * Math.PI / 180;    // the current angle of rotation
+  this.circleColor = "rgba(0,100,0,0.3)";
+  this.panner = true;
 }
 
 Player.prototype.move = function() {
@@ -33,7 +29,8 @@ Player.prototype.move = function() {
 
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)] == 4){
-  	//alert("You win!");
-  	player.winner = true;
+    //alert("You win!");
+    player.winner = true;
   }
 }
+
