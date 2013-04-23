@@ -107,31 +107,47 @@ function togglePause() {
   }
 }
 
-// Need to add support for more levels
-// Need more structure to code
+// specialized engine for tutorial level (level 0)
+var tstate;
+function tutorialLevelCycle(state) {
+  switch (state) {
+    case 1:
+      // play the opening audio
+      setTimeout(function(){
+        tutorialLevelCycle(2);
+      }, 2000);
+    case 2:
+      // play the next sound
+      // enable left and right turns
+      tutorialLevelCycle(3);
+    case 3:
+      // if (facing towards guide){
+      //   tutorialGuide(4); 
+      // } else {
+      //   setTimeout( function() { tutorialGuide(3); } , 100)
+      // }
+  }
+}
 
 
 function gameCycle() {
-  move();
+  // Check the win condition
+  if (map[Math.floor(player.y)][Math.floor(player.x)] == 4) {
+    //alert("You win!");
+    player.winner = true;
+  }
 
-  audioManager.updateAllPositions(toUpdate);
-
+  gameGuide.move();
+  //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
+  zombie.move(player.x, player.y);
   detectZombieCollision();
 
-	var randSpeed2 = .2;
-	var interval = 0.32;
-	if(Math.abs(player.speed) == 1 &&
-      audioManager.audioContext.currentTime - lastFootTime > 2 * interval + randSpeed2 * Math.random()) {
-    footStep();
-    lastFootTime = audioManager.audioContext.currentTime;
-  }
+  audioManager.updateAllPositions(toUpdate);
 
   updateMiniMap();
 
   // display sound cones
-  castCircle(gameGuide, 3, 90, "rgba(0,100,0,0.3)");
   castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
-  castCircle(zombie, 3, 90, "rgba(100,0,0,0.3)");
 
   updateConsoleLog();
 
@@ -153,7 +169,7 @@ function gameCycle() {
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
     console.log(millisecondsToStr( endTime - startTime ));
-    audioManager.loadAndPlay("YOU WIN! You've successfully avoided zombies! It took " +
+    audioManager.loadAndPlay("YOU WON! It took " +
         millisecondsToStr( endTime - startTime ));
   }
 }
@@ -210,48 +226,6 @@ function outputToScreen(string) {
   var objectCtx = miniMapObjects.getContext("2d");
   objectCtx.font="20px Georgia";
   objectCtx.fillText(string, 5, (map[0].length / 2) * miniMapScale);
-}
-
-function move() {
-  // newX and newY are used to update the positions for the guide and the zombie
-  var newX = player.x;
-  var newY = player.y;
-
-  // Check the win condition
-  if (map[Math.floor(newY)][Math.floor(newX)] == 4) {
-  	//alert("You win!");
-  	player.winner = true;
-  }
-
-  //move the guide
-  var minDist = Math.min(gameGuide.x - newX, gameGuide.y - newY);
-  var maxDist = Math.max(gameGuide.x - newX, gameGuide.y - newY);
-  //console.log("min: " + minDist + "; max: " + maxDist);
-  var gx = Math.floor(gameGuide.x);
-  var gy = Math.floor(gameGuide.y);
-  if ((minDist < 0 && maxDist < 8) || (minDist < 3 && maxDist < 3)	){
-  	if (map[gy][gx+1] >= 3){
-  		gameGuide.x += 1;
-  	}
-  	else if (map[gy+1][gx] >= 3){
-  		gameGuide.y += 1;
-  	}
-  }
-  else if (minDist > 7 && maxDist > 7){
-  	if (map[gy][gx-1] >= 3){
-  		gameGuide.x -= 1;
-  	}
-  	else if (map[gy-1][gx] >= 3){
-  		gameGuide.y -= 1;
-  	}
-  }
-
-  //gameGuide.rot += 6;
-  gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0;
-  //console.log(gameGuide.rot);
-
-  zombie.move(player.x, player.y);
-
 }
 
 function checkCollision(fromX, fromY, toX, toY, radius, play) {
