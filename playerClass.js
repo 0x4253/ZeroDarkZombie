@@ -14,26 +14,73 @@ function Player(startx, starty, initRot) {
 }
 
 Player.prototype.move = function() {
-  var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
+  if (player.speed == 1){
+    this.moveForward();
+  } 
+  if (player.speed == -1){
+    this.moveBackward();
+  } 
+  if (player.dir == 1) {
+    this.turnLeft();
+  }
+  if (player.dir == -1) {
+    this.turnRight();
+  }
 
-  player.rot += player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+  // * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+}
+
+Player.prototype.turnLeft = function() {
+  this.rot -= this.rotSpeed;
 
   // make sure the angle is between 0 and 360 degrees
-  while (player.rot < 0) player.rot += twoPI;
-  while (player.rot >= twoPI) player.rot -= twoPI;
-
-  var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
-  var newY = player.y + Math.sin(player.rot) * moveStep;
-
-  var pos = checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, false);
-
-  // set new position
-  player.x = pos.x;
-  player.y = pos.y;
-
-  // Check the win condition
-  if (map[Math.floor(newY)][Math.floor(newX)] == 4){
-  	//alert("You win!");
-  	player.winner = true;
-  }
+  while (this.rot < 0) this.rot += twoPI;
+  while (this.rot >= twoPI) this.rot -= twoPI;
 }
+
+Player.prototype.turnRight = function() {
+  this.rot += this.rotSpeed;
+
+  // make sure the angle is between 0 and 360 degrees
+  while (this.rot < 0) this.rot += twoPI;
+  while (this.rot >= twoPI) this.rot -= twoPI;
+}
+
+Player.prototype.moveForward = function() {
+  if ((Math.round(this.rot * 180 / Math.PI) / 45) % 2 == 0){ // If the player is looking straight up, down, left, or right
+    var newX = this.x + Math.cos(this.rot) * this.moveSpeed;  // calculate new player position with simple trigonometry
+    var newY = this.y + Math.sin(this.rot) * this.moveSpeed;
+  }
+  else {
+    var newX = this.x + Math.cos(this.rot) * this.moveSpeed * Math.SQRT2;  // calculate new player position with simple trigonometry
+    var newY = this.y + Math.sin(this.rot) * this.moveSpeed * Math.SQRT2;
+  }
+  var pos = checkCollision(this.x, this.y, newX, newY, .5, false);
+  // set new position
+  this.x = pos.x;
+  this.y = pos.y;
+
+  // play the footstep sound
+  footStep();
+}
+
+Player.prototype.moveBackward = function() {
+  if ((Math.round(this.rot * 180 / Math.PI) / 45) % 2 == 0){ // If the player is looking straight up, down, left, or right
+    var newX = this.x + Math.cos(this.rot) * this.moveSpeed * -1;  // calculate new player position with simple trigonometry
+    var newY = this.y + Math.sin(this.rot) * this.moveSpeed * -1;
+  }
+  else {
+    var newX = this.x + Math.cos(this.rot) * this.moveSpeed * -1 * Math.SQRT2;  // calculate new player position with simple trigonometry
+    var newY = this.y + Math.sin(this.rot) * this.moveSpeed * -1 * Math.SQRT2;
+  }
+  var pos = checkCollision(this.x, this.y, newX, newY, .5, false);
+  // set new position
+  this.x = pos.x;
+  this.y = pos.y;
+  
+  // play the footstep sound
+  footStep();
+}
+
+
+

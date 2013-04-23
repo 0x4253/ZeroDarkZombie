@@ -51,8 +51,7 @@ function clearLevel() {
 		levelAlive = false;
 		startLevelNumber = 0;
 
-		$(document).unbind('keydown');
-		$(document).unbind('keyup');
+		RemoveAllListeners();
 
 		// enable/disable HTML buttons
 		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
@@ -119,7 +118,7 @@ function initLevel(lvl){
 	drawMiniMap();
 
 	setTimeout(function() {
-		bindKeys();
+		LevelKeypressListener();
 		startTime = new Date();
 	}, lvl.startTimeDelay);
 }
@@ -134,9 +133,7 @@ function startSounds() {
 
 	// update all locations to default & add to the update array
 	toUpdate = [];
-	for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++) {
-		toUpdate.push(zombie);
-	}
+    toUpdate.push(zombie);
 	toUpdate.push(gameGuide);
 	toUpdate.push(player);
 	audioManager.updateAllPositions(toUpdate);
