@@ -14,6 +14,7 @@ var gameGuide = new Guide();
 var audioManager = new AudioManager();
 
 // create one zombie
+var NUMBER_OF_ZOMBIES = 0;
 var zombie = new Zombie(1, Math.random() * (map[0].length - 4) + 3,
       Math.random() * (map.length - 4) + 3,
       Math.floor(Math.random() * 3));
@@ -135,6 +136,8 @@ function gameCycle() {
     outputToScreen("You've been eaten! It took " +
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
+    audioManager.loadAndPlay("You've been eaten! It took " +
+        (endTime-startTime)/1000 + " seconds.");
   }
   else if(player.winner){
     audioManager.stopAll();
@@ -143,7 +146,49 @@ function gameCycle() {
   	outputToScreen("YOU WIN! You've successfully avoided zombies! It took " +
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
+    console.log(millisecondsToStr( endTime - startTime ));
+    audioManager.loadAndPlay("YOU WIN! You've successfully avoided zombies! It took " +
+        millisecondsToStr( endTime - startTime ));
   }
+}
+
+function getDuration(timeMillis){
+    var units = [
+        {label:"millis",    mod:1000,},
+        {label:"seconds",   mod:60,},
+        {label:"minutes",   mod:60,},
+        {label:"hours",     mod:24,},
+        {label:"days",      mod:7,},
+        {label:"weeks",     mod:52,},
+    ];
+    var duration = new Object();
+    var x = timeMillis;
+    for (i = 0; i < units.length; i++){
+        var tmp = x % units[i].mod;
+        duration[units[i].label] = tmp;
+        x = (x - tmp) / units[i].mod
+    }
+    return duration;
+}
+
+function millisecondsToStr( time ) {
+  var duration = getDuration( time );
+  var str = "";
+  if (duration.weeks > 0)
+    str += duration.weeks + " weeks, ";
+  if (duration.days > 0)
+    str += duration.days + " days, ";
+  if (duration.hours > 0)
+    str += duration.hours + " hours, ";
+  if (duration.minutes > 0)
+    str += duration.minutes + " minutes, ";
+  if (duration.minutes > 0)
+    str += " and "
+  if (duration.seconds > 0)
+    str += duration.seconds + " seconds, ";
+  // if (duration.millis > 0)
+  //   str += duration.millis + " milliseconds";
+  return str;
 }
 
 // display user coordinates

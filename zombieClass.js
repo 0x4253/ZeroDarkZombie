@@ -12,9 +12,8 @@ function Zombie(number, startx, starty, startNumCycles, audioUrl) {
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
   this.coneOuterGain = 0.005;
-  this.rolloffFactor = 2;
-  this.coneOuterAngle = 360;
-  this.coneInnerAngle = 360;
+  this.rolloffFactor = 10;
+  this.isZombie = true;
 }
 
 Zombie.prototype.move = function(playerX, playerY){
