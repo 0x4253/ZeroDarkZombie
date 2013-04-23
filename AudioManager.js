@@ -20,8 +20,8 @@ function AudioManager( initialOptions ) {
   this.sounds = {};
   // panner properties
   this.coneOuterGain = 0.0005;
-  this.coneOuterAngle = 120;
-  this.coneInnerAngle = 60;
+  this.coneOuterAngle = 360;
+  this.coneInnerAngle = 360;
   // setup listener's positional information
   if (typeof initialOptions != 'undefined') {
     var x = initialOptions.x;
@@ -162,6 +162,36 @@ AudioManager.prototype.updateAllPositions = function( options ) {
   };
 }
 
+// helpers for loadAndPlay
+function html5_audio(){
+    var a = document.createElement('audio');
+    return !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+}
+var play_html5_audio = false;
+if(html5_audio()) play_html5_audio = true;
+function play_sound(url){
+    if(play_html5_audio){
+        var snd = new Audio(url);
+        snd.load();
+        snd.play();
+    }else{
+        $("#sound").remove();
+        var sound = $("<embed id='sound' type='audio/mpeg' />");
+        sound.attr('src', url);
+        sound.attr('loop', false);
+        sound.attr('hidden', true);
+        sound.attr('autostart', true);
+        $('body').append(sound);
+    }
+}
+
+// takes text as input and using Google's text-to-speech to play the text out loud
+AudioManager.prototype.loadAndPlay = function( txt ) {
+  play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q=" +
+    encodeURIComponent(txt) + "&tl=en&total=1&idx=0prev=input");
+}
+
+
 // takes an object that has the following attributes:
 // - 'name'
 // - 'x' & 'y' coordinates
@@ -217,8 +247,10 @@ AudioManager.prototype.play = function( options ) {
     panner.coneOuterGain = this.coneOuterGain;
     panner.coneOuterAngle = this.coneOuterAngle;
     panner.coneInnerAngle = this.coneInnerAngle;
-    if (options.isZombie)
+    if (options.isZombie) {
       panner.rolloffFactor = options.rolloffFactor;
+      panner.coneOuterGain = options.coneOuterGain;
+    }
     panner.connect( channel );
   }
   // create a basic buffer source for this node

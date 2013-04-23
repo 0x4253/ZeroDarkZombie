@@ -14,6 +14,7 @@ var gameGuide = new Guide();
 var audioManager = new AudioManager();
 
 // create one zombie
+var NUMBER_OF_ZOMBIES = 0;
 var zombie = new Zombie(1, Math.random() * (map[0].length - 4) + 3,
       Math.random() * (map.length - 4) + 3,
       Math.floor(Math.random() * 3));
@@ -96,57 +97,14 @@ function loseSound() {
   audioManager.play(soundObjLose);
 }
 
-// bind keyboard events to game functions (movement, etc)
-function bindKeys() {
-
-  $(document).keydown(function(event) {
-
-    switch (event.which) { // which key was pressed?
-
-      case 38: // up, move player forward, ie. increase speed
-        player.speed = 1;
-
-        // Testing wall bump
-        var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
-        var rot = player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
-        while (rot < 0) rot += twoPI;
-        while (rot >= twoPI) rot -= twoPI;
-        var newX = player.x + Math.cos(rot) * moveStep;  // calculate new player position with simple trigonometry
-        var newY = player.y + Math.sin(rot) * moveStep;
-        checkCollision(player.x, player.y, newX-1, newY, player.moveSpeed, true);
-        break;
-
-      case 40: // down, move player backward, set negative speed
-        player.speed = -1;
-        break;
-
-      case 37: // left, rotate player left
-        player.dir = -1;
-        break;
-
-      case 39: // right, rotate player right
-        player.dir = 1;
-        break;
-    }
-  });
-
-  $(document).keyup(function(event) {
-
-    switch (event.which) {
-      case 38:
-      case 40:
-        player.speed = 0; // stop the player movement when up/down key is released
-        break;
-      case 37:
-      case 39:
-        player.dir = 0;
-        break;
-    }
-  });
-}
-
 function togglePause() {
-  playing = !playing;
+  if (playing == true){
+    playing = false;
+    audioManager.pauseEffects();
+  } else {
+    audioManager.resumeEffects();
+    playing = true;
+  }
 }
 
 // Need to add support for more levels
@@ -155,8 +113,6 @@ function togglePause() {
 
 function gameCycle() {
   move();
-
-  moveZombies();
 
   audioManager.updateAllPositions(toUpdate);
 
@@ -186,6 +142,8 @@ function gameCycle() {
     outputToScreen("You've been eaten! It took " +
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
+    audioManager.loadAndPlay("You've been eaten! It took " +
+        (endTime-startTime)/1000 + " seconds.");
   }
   else if(player.winner){
     audioManager.stopAll();
@@ -194,7 +152,49 @@ function gameCycle() {
   	outputToScreen("YOU WIN! You've successfully avoided zombies! It took " +
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
+    console.log(millisecondsToStr( endTime - startTime ));
+    audioManager.loadAndPlay("YOU WIN! You've successfully avoided zombies! It took " +
+        millisecondsToStr( endTime - startTime ));
   }
+}
+
+function getDuration(timeMillis){
+    var units = [
+        {label:"millis",    mod:1000,},
+        {label:"seconds",   mod:60,},
+        {label:"minutes",   mod:60,},
+        {label:"hours",     mod:24,},
+        {label:"days",      mod:7,},
+        {label:"weeks",     mod:52,},
+    ];
+    var duration = new Object();
+    var x = timeMillis;
+    for (i = 0; i < units.length; i++){
+        var tmp = x % units[i].mod;
+        duration[units[i].label] = tmp;
+        x = (x - tmp) / units[i].mod
+    }
+    return duration;
+}
+
+function millisecondsToStr( time ) {
+  var duration = getDuration( time );
+  var str = "";
+  if (duration.weeks > 0)
+    str += duration.weeks + " weeks, ";
+  if (duration.days > 0)
+    str += duration.days + " days, ";
+  if (duration.hours > 0)
+    str += duration.hours + " hours, ";
+  if (duration.minutes > 0)
+    str += duration.minutes + " minutes, ";
+  if (duration.minutes > 0)
+    str += " and "
+  if (duration.seconds > 0)
+    str += duration.seconds + " seconds, ";
+  // if (duration.millis > 0)
+  //   str += duration.millis + " milliseconds";
+  return str;
 }
 
 // display user coordinates
@@ -213,28 +213,9 @@ function outputToScreen(string) {
 }
 
 function move() {
-  var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
-
-  player.rot += player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
-
-  // make sure the angle is between 0 and 360 degrees
-  while (player.rot < 0) player.rot += twoPI;
-  while (player.rot >= twoPI) player.rot -= twoPI;
-
-  if ((Math.round(player.rot * 180 / Math.PI) / 45) % 2 == 0){ // If the player is looking straight up, down, left, or right
-	  var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
-	  var newY = player.y + Math.sin(player.rot) * moveStep;
-  }
-  else {
-  	var newX = player.x + Math.cos(player.rot) * moveStep * Math.SQRT2;  // calculate new player position with simple trigonometry
-	  var newY = player.y + Math.sin(player.rot) * moveStep * Math.SQRT2;
-  }
-
-  var pos = checkCollision(player.x, player.y, newX, newY, .5, false);
-
-  // set new position
-  player.x = pos.x;
-  player.y = pos.y;
+  // newX and newY are used to update the positions for the guide and the zombie
+  var newX = player.x;
+  var newY = player.y;
 
   // Check the win condition
   if (map[Math.floor(newY)][Math.floor(newX)] == 4) {
@@ -268,6 +249,8 @@ function move() {
   //gameGuide.rot += 6;
   gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0;
   //console.log(gameGuide.rot);
+
+  zombie.move(player.x, player.y);
 
 }
 
@@ -367,11 +350,7 @@ function checkCollision(fromX, fromY, toX, toY, radius, play) {
 	return pos;
 }
 
-function moveZombies(){
-  zombie.move(player.x, player.y);
-}
-
-function isBlocking(x,y, play) {
+function isBlocking(x, y, play) {
   // first make sure that we cannot move outside the boundaries of the level
   if (y < 0 || y > mapHeight || x < 0 || x > mapWidth) {
     if (play)

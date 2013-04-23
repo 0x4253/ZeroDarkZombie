@@ -9,7 +9,7 @@ function Guide(startx, starty, initRot, audioUrl) {
   this.panner = true;
 }
 
-Player.prototype.move = function() {
+Guide.prototype.move = function() {
   var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
 
   player.rot += player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)

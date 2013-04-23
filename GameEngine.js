@@ -11,8 +11,19 @@ var levelCompleted = 2;
 function startGame() {
 	setTimeout(function() {
 		initGameEngine();
+		drawMenu();
 		GameEngineLoop();
 	}, 100);
+}
+
+function drawMenu(){
+	var miniMap = getid("minimap");     // the actual map
+	var ctx = miniMap.getContext("2d");
+
+  	ctx.fillStyle = "rgb(50, 150, 50)";
+  	ctx.fillRect(0,0,miniMap.width,miniMap.height);
+  	var img=document.getElementById("title");
+	ctx.drawImage(img, 0, 0, miniMap.width,miniMap.height);
 }
 
 function initGameEngine() {
@@ -51,8 +62,7 @@ function clearLevel() {
 		levelAlive = false;
 		startLevelNumber = 0;
 
-		$(document).unbind('keydown');
-		$(document).unbind('keyup');
+		RemoveAllListeners();
 
 		// enable/disable HTML buttons
 		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
@@ -82,13 +92,9 @@ function levelCycle() {
 
 function switchToLevel() {
 	levelAlive = true;
-	$("#pauseButton").removeAttr("disabled");
-	//$("#quitButton").removeAttr("disabled");
-
-	$("#level2").attr("disabled", "disabled");
-	$("#level1").attr("disabled", "disabled");
 	gameOver = false;
 	playing = false;
+	clearMap();
 }
 
 function initLevel(lvl){
@@ -119,7 +125,7 @@ function initLevel(lvl){
 	drawMiniMap();
 
 	setTimeout(function() {
-		bindKeys();
+		LevelKeypressListener();
 		startTime = new Date();
 	}, lvl.startTimeDelay);
 }
@@ -134,9 +140,7 @@ function startSounds() {
 
 	// update all locations to default & add to the update array
 	toUpdate = [];
-	for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++) {
-		toUpdate.push(zombie);
-	}
+    toUpdate.push(zombie);
 	toUpdate.push(gameGuide);
 	toUpdate.push(player);
 	audioManager.updateAllPositions(toUpdate);
@@ -145,6 +149,7 @@ function startSounds() {
 	playing = true;
 }
 
+// obsolete function, keep for reference
 function pauseGame() {
 	button = document.getElementById("pauseButton");
 	if (levelAlive) {
