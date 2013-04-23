@@ -10,27 +10,29 @@ function Guide(startx, starty, initRot, audioUrl) {
 }
 
 Guide.prototype.move = function() {
-  var moveStep = player.speed * player.moveSpeed; // player will move this far along the current direction vector
+  var newX = player.x;
+  var newY = player.y;
 
-  player.rot += player.dir * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
-
-  // make sure the angle is between 0 and 360 degrees
-  while (player.rot < 0) player.rot += twoPI;
-  while (player.rot >= twoPI) player.rot -= twoPI;
-
-  var newX = player.x + Math.cos(player.rot) * moveStep;  // calculate new player position with simple trigonometry
-  var newY = player.y + Math.sin(player.rot) * moveStep;
-
-  var pos = checkCollision(player.x, player.y, newX, newY, player.moveSpeed, context, false);
-
-  // set new position
-  player.x = pos.x;
-  player.y = pos.y;
-
-  // Check the win condition
-  if (map[Math.floor(newY)][Math.floor(newX)] == 4){
-    //alert("You win!");
-    player.winner = true;
+  var minDist = Math.min(this.x - newX, this.y - newY);
+  var maxDist = Math.max(this.x - newX, this.y - newY);
+  //console.log("min: " + minDist + "; max: " + maxDist);
+  var gx = Math.floor(this.x);
+  var gy = Math.floor(this.y);
+  if ((minDist < 0 && maxDist < 8) || (minDist < 3 && maxDist < 3)  ){
+    if (map[gy][gx+1] >= 3){
+      this.x += 1;
+    }
+    else if (map[gy+1][gx] >= 3){
+      this.y += 1;
+    }
+  }
+  else if (minDist > 7 && maxDist > 7){
+    if (map[gy][gx-1] >= 3){
+      this.x -= 1; 
+    }
+    else if (map[gy-1][gx] >= 3){
+      this.y -= 1;
+    }
   }
 }
 
