@@ -1,10 +1,12 @@
-var $ = function(id) { return document.getElementById(id); };
+//var getid = function(id) { return document.getElementById(id); };
+var getid = function(id) { return document.getElementById(id); };
 var dc = function(tag) { return document.createElement(tag); };
 
 var lvl1;
 var startTime, endTime; // variables to keep time
 var gameOver = false;
 var playing = false;
+var map = getBlankMap();
 
 var player = {
   x : 1.5,     // current x, y position
@@ -46,30 +48,6 @@ var twoPI = Math.PI * 2;
 var d = new Date();
 var lastFootTime = 0;
 
-function initLevel1() {
-  initModifiers();
-  mapWidth = map[0].length;
-  mapHeight = map.length;
-
-  if (typeof AudioContext == "function") {
-    context = new AudioContext();
-  } else if (typeof webkitAudioContext == "function") {
-    context = new webkitAudioContext();
-  } else {
-    alert('Web Audio API is not supported in this browser');
-  }
-
-  positionSample = new PositionSampleTest(context);
-
-  bindKeys(context);
-
-  drawMiniMap();
-  
-	startTime = new Date();
-
-  playing = true;
-  mainCycle(context);
-}
 
 function footStep(context) {
 	var rand = Math.floor(Math.random() * 10);
@@ -82,7 +60,7 @@ function footStep(context) {
         var urls = ['http://www.unc.edu/home/trivazul/Concrete_steps_1.mp3'];
         break;
 
-      case 1: 
+      case 1:
         var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_2.mp3'];
         break;
 
@@ -93,7 +71,7 @@ function footStep(context) {
       case 3:
         var urls = ['http://www.unc.edu/home/trivazul/Concete_Steps_4.mp3'];
         break;
-        
+
       case 4:
         var urls = ['http://www.unc.edu/home/trivazul/Concrete_Steps_5.mp3'];
         break;
@@ -104,7 +82,7 @@ function footStep(context) {
   var floorType = map[yblock][xblock];
   if(floorType == 3)
     urls = ['http://www.cs.unc.edu/~stancill/comp585/Concrete_Steps_2.ogg'];
-  
+
   var source = context.createBufferSource();
   var loader = new BufferLoader(context, urls, function (buffers) {
       source.buffer = buffers[0];
@@ -181,10 +159,9 @@ function loseSound(context) {
 // bind keyboard events to game functions (movement, etc)
 function bindKeys(context) {
 
-  document.onkeydown = function(e) {
-    e = e || window.event;
+  $(document).keydown(function(event) {
 
-    switch (e.keyCode) { // which key was pressed?
+    switch (event.which) { // which key was pressed?
 
       case 38: // up, move player forward, ie. increase speed
         player.speed = 1;
@@ -211,12 +188,11 @@ function bindKeys(context) {
         player.dir = 1;
         break;
     }
-  }
+  });
 
-  document.onkeyup = function(e) {
-    e = e || window.event;
+  $(document).keyup(function(event) {
 
-    switch (e.keyCode) {
+    switch (event.which) {
       case 38:
       case 40:
         player.speed = 0; // stop the player movement when up/down key is released
@@ -226,31 +202,25 @@ function bindKeys(context) {
         player.dir = 0;
         break;
     }
-  }
+  });
 }
 
-function pause() {
+function togglePause() {
   playing = !playing;
 }
 
 // Need to add support for more levels
 // Need more structure to code
-function mainCycle(context) {
-  if (playing) {
-    gameCycle(context);
-  }
 
-  if (!gameOver)
-    setTimeout(function(){mainCycle(context);}, 1000 / 10);
-}
 
 function gameCycle(context) {
   move(context);
-  
+
   moveZombies();
-  
+  positionSample.changePosition(player);
+
   detectZombieCollision();
-  	
+
 	var randSpeed2 = .2;
 	var interval = 0.32;
 	if(Math.abs(player.speed) == 1 &&
@@ -258,7 +228,7 @@ function gameCycle(context) {
     footStep(context);
     lastFootTime = context.currentTime;
   }
-        
+
   updateMiniMap();
 
   // display sound cones
@@ -296,14 +266,14 @@ function gameCycle(context) {
 
 // display user coordinates
 function updateConsoleLog() {
-  var miniMapObjects = $("minimapobjects");
+  var miniMapObjects = getid("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
   objectCtx.fillText("(" + Math.floor(player.x).toString() + ", " +
   Math.floor(player.y).toString() + ")" + " - " + map[Math.floor(player.y)][Math.floor(player.x)].toString(), 5, 10);
 }
 
 function outputToScreen(string) {
-  var miniMapObjects = $("minimapobjects");
+  var miniMapObjects = getid("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
   objectCtx.font="20px Georgia";
   objectCtx.fillText(string, 5, (map[0].length / 2) * miniMapScale);
@@ -330,22 +300,22 @@ function move(context) {
   var pos = checkCollision(player.x, player.y, newX, newY, .5, context, false);
 
   // set new position
-  player.x = pos.x; 
+  player.x = pos.x;
   player.y = pos.y;
-  
+
   // Check the win condition
-  if (map[Math.floor(newY)][Math.floor(newX)] == 4){
+  if (map[Math.floor(newY)][Math.floor(newX)] == 4) {
   	//alert("You win!");
   	player.winner = true;
   }
-  
+
   //move the guide
   var minDist = Math.min(gameGuide.x - newX, gameGuide.y - newY);
   var maxDist = Math.max(gameGuide.x - newX, gameGuide.y - newY);
   //console.log("min: " + minDist + "; max: " + maxDist);
   var gx = Math.floor(gameGuide.x);
   var gy = Math.floor(gameGuide.y);
-  if ((minDist < 0 && maxDist < 8) || (minDist < 3 && maxDist < 3)	){
+  if ((minDist < 0 && maxDist < 8) || (minDist < distanceFromGuide && maxDist < distanceFromGuide)	){
   	if (map[gy][gx+1] >= 3){
   		gameGuide.x += 1;
   	}
@@ -361,12 +331,11 @@ function move(context) {
   		gameGuide.y -= 1;
   	}
   }
-  
+
   //gameGuide.rot += 6;
   gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0;
   //console.log(gameGuide.rot);
-  
-  positionSample.changePosition(player);
+
 }
 
 function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
@@ -466,8 +435,8 @@ function checkCollision(fromX, fromY, toX, toY, radius, context, play) {
 }
 
 function moveZombies(){
-	var length = zombies.length;
-	for(var i = 0 ; i < length ; i++){ 
+	var length = NUMBER_OF_ZOMBIES;
+	for(var i = 0 ; i < length ; i++){
       zombies[i].move(player.x, player.y);
   }
 }
@@ -491,7 +460,7 @@ function isBlocking(x,y, play) {
 }
 
 function detectZombieCollision(){
-	var length = zombies.length;
+	var length = NUMBER_OF_ZOMBIES;
 	for (var i = 0 ; i < length ; i++){
 		if (Math.abs(zombies[i].x - player.x) < 0.5 && Math.abs(zombies[i].y - player.y) < 0.5){
 			player.eaten=true;
@@ -500,8 +469,8 @@ function detectZombieCollision(){
 }
 
 function updateMiniMap() {
-  var miniMap = $("minimap");
-  var miniMapObjects = $("minimapobjects");
+  var miniMap = getid("minimap");
+  var miniMapObjects = getid("minimapobjects");
 
   var objectCtx = miniMapObjects.getContext("2d");
   miniMapObjects.width = miniMapObjects.width;
@@ -512,16 +481,16 @@ function updateMiniMap() {
     4, 4
   );
   //draw player sprite
-  var img=$("marine");
+  var img=getid("marine");
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
-  
+
   //Draw the zombies
-  var l = zombies.length
+  var l = NUMBER_OF_ZOMBIES
   for (var i = 0 ; i < l ; i++){
   	//console.log("x: " + z.x + "; y: " + z.y);
   	z = zombies[i];
     //draw zombie sprite
-    var img=$("zombie");
+    var img=getid("zombie");
     objectCtx.drawImage(img,203,240,44,76,zombies[i].x*miniMapScale-15,zombies[i].y*miniMapScale-27,44/1.5,76/1.5);
 
     objectCtx.fillStyle = "red";
@@ -539,19 +508,18 @@ function updateMiniMap() {
     4, 4
   );
   //draw guide sprite
-  var img=$("guide");
+  var img=getid("guide");
     objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
 }
 
 function drawMiniMap() {
   // generate level map
-  generateLevelOneMap();
 
   // draw the topdown view minimap
-  var miniMap = $("minimap");     // the actual map
-  var miniMapCtr = $("minimapcontainer");   // the container div element
-  var miniMapObjects = $("minimapobjects"); // the canvas used for drawing the objects on the map (player character, etc)
-  var levelmap = $("levelmap");
+  var miniMap = getid("minimap");     // the actual map
+  var miniMapCtr = getid("minimapcontainer");   // the container div element
+  var miniMapObjects = getid("minimapobjects"); // the canvas used for drawing the objects on the map (player character, etc)
+  var levelmap = getid("levelmap");
 
   miniMap.width = mapWidth * miniMapScale;  // resize the internal canvas dimensions
   miniMap.height = mapHeight * miniMapScale;  // of both the map canvas and the object canvas
@@ -618,7 +586,7 @@ function drawMiniMap() {
 }
 
 function PositionSampleTest(context) {
-    var urls = ["http://upload.wikimedia.org/wikipedia/commons/0/0e/FollowMyVoice2.ogg"];
+    var urls = ["http://upload.wikimedia.org/wikipedia/commons/c/c0/IntroToGame2.ogg"];
     //var urls = ["http://upload.wikimedia.org/wikipedia/commons/8/8f/FollowMyVoice.ogg"];
     //var urls = ['http://upload.wikimedia.org/wikipedia/en/f/fc/Juan_Atkins_-_Techno_Music.ogg'];
     //var urls = ['http://upload.wikimedia.org/wikipedia/commons/5/51/Blablablabla.ogg'];
@@ -641,11 +609,11 @@ function PositionSampleTest(context) {
     context.listener.setPosition(player.x, player.y, 0);
     gameGuide.panner.setPosition(gameGuide.x, gameGuide.y, 0);
 
-    var url = "http://cs.unc.edu/~stancill/comp585/zombie-17.wav";
-    var zombieUrls = [];
-    for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
-      zombieUrls.push(url); 
-    }
+    var zombieUrls = ["http://cs.unc.edu/~stancill/comp585/zombie-17.wav"];
+    // var zombieUrls = [];
+    // for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+    //   zombieUrls.push(url);
+    // }
     for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
       var randSpeed = 0.3;
       zombies[i].source = context.createBufferSource();
@@ -667,7 +635,7 @@ function PositionSampleTest(context) {
       zombies[i].panner.setPosition(zombies[i].x, zombies[i].y, 0);
     }
     loader = new BufferLoader(context, zombieUrls, function (buffers) {
-      for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){ 
+      for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
         zombies[i].source.buffer = buffers[i];
       }
     });
