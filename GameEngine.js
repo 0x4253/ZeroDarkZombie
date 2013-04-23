@@ -16,7 +16,7 @@ function startGame() {
 }
 
 function initGameEngine() {
-	initKeypressListener();
+	MenuKeypressListener();
 	levelAlive = false;
 }
 
@@ -106,9 +106,9 @@ function initLevel(lvl){
 	// initialize sounds for AudioManager
 	audioManager.masterGainChanged( 1 );
 	for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-		toPlayUrl.push(zombies[i].audioUrl);
-		console.log("Zombie[" + i + "] audio url: " + zombies[i].audioUrl);
-		toPlayNames.push(zombies[i].name);
+		toPlayUrl.push(zombie.audioUrl);
+		console.log("Zombie[" + i + "] audio url: " + zombie.audioUrl);
+		toPlayNames.push(zombie.name);
 	}
 	toPlayUrl.push(gameGuide.audioUrl);
 	toPlayNames.push(gameGuide.name);
@@ -129,13 +129,13 @@ function startSounds() {
   // start playing all sounds
   audioManager.play(gameGuide);
   for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++) {
-		  audioManager.play(zombies[i]);
+		  audioManager.play(zombie);
 	}
 
 	// update all locations to default & add to the update array
 	toUpdate = [];
 	for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++) {
-		toUpdate.push(zombies[i]);
+		toUpdate.push(zombie);
 	}
 	toUpdate.push(gameGuide);
 	toUpdate.push(player);
@@ -158,32 +158,6 @@ function pauseGame() {
 		}
 		togglePause();
 	}
-}
-
-function initKeypressListener(event) {
-	$(document).keypress(function(event) {
-		console.log(event.which);
-		event.preventDefault();
-		switch (event.which) {
-			case 32:
-				// Pause/Resume Game
-				pauseGame();
-				break;
-			case 49:
-				// Play Level 1
-				startLevel(1);
-				break;
-			case 50:
-				// Play Level 1
-				startLevel(2);
-				break;
-			case 113:
-				// quit level
-				//gameOver=true;
-				//clearLevel();
-				break;
-		}
-	});
 }
 
 function startLevel(num) {

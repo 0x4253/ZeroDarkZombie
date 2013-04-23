@@ -13,14 +13,10 @@ var player = new Player();
 var gameGuide = new Guide();
 var audioManager = new AudioManager();
 
-// create a variable number of zombies
-var zombies = [];
-var NUMBER_OF_ZOMBIES = 1;
-for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-	zombies[i] = new Zombie(i, Math.random() * (map[0].length - 4) + 3,
+// create one zombie
+var zombie = new Zombie(1, Math.random() * (map[0].length - 4) + 3,
       Math.random() * (map.length - 4) + 3,
       Math.floor(Math.random() * 3));
-}
 
 // create soundObjs that are always used
 var soundObjHay = {
@@ -179,9 +175,7 @@ function gameCycle() {
   // display sound cones
   castCircle(gameGuide, 3, 90, "rgba(0,100,0,0.3)");
   castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
-  for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
-    castCircle(zombies[i], 3, 90, "rgba(100,0,0,0.3)");
-  }
+  castCircle(zombie, 3, 90, "rgba(100,0,0,0.3)");
 
   updateConsoleLog();
 
@@ -254,7 +248,7 @@ function move() {
   //console.log("min: " + minDist + "; max: " + maxDist);
   var gx = Math.floor(gameGuide.x);
   var gy = Math.floor(gameGuide.y);
-  if ((minDist < 0 && maxDist < 8) || (minDist < distanceFromGuide && maxDist < distanceFromGuide)	){
+  if ((minDist < 0 && maxDist < 8) || (minDist < 3 && maxDist < 3)	){
   	if (map[gy][gx+1] >= 3){
   		gameGuide.x += 1;
   	}
@@ -374,10 +368,7 @@ function checkCollision(fromX, fromY, toX, toY, radius, play) {
 }
 
 function moveZombies(){
-	var length = NUMBER_OF_ZOMBIES;
-	for(var i = 0 ; i < length ; i++){
-      zombies[i].move(player.x, player.y);
-  }
+  zombie.move(player.x, player.y);
 }
 
 function isBlocking(x,y, play) {
@@ -399,11 +390,8 @@ function isBlocking(x,y, play) {
 }
 
 function detectZombieCollision(){
-	var length = NUMBER_OF_ZOMBIES;
-	for (var i = 0 ; i < length ; i++){
-		if (Math.abs(zombies[i].x - player.x) < 0.5 && Math.abs(zombies[i].y - player.y) < 0.5){
-			player.eaten=true;
-		}
+	if (Math.abs(zombie.x - player.x) < 0.5 && Math.abs(zombie.y - player.y) < 0.5){
+		player.eaten=true;
 	}
 }
 
@@ -423,22 +411,18 @@ function updateMiniMap() {
   var img=getid("marine");
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
 
-  //Draw the zombies
-  var l = NUMBER_OF_ZOMBIES
-  for (var i = 0 ; i < l ; i++){
-  	//console.log("x: " + z.x + "; y: " + z.y);
-  	z = zombies[i];
-    //draw zombie sprite
-    var img=getid("zombie");
-    objectCtx.drawImage(img,203,240,44,76,zombies[i].x*miniMapScale-15,zombies[i].y*miniMapScale-27,44/1.5,76/1.5);
+  //Draw the zombie
+	z = zombie;
+  //draw zombie sprite
+  var img=getid("zombie");
+  objectCtx.drawImage(img,203,240,44,76,zombie.x*miniMapScale-15,zombie.y*miniMapScale-27,44/1.5,76/1.5);
 
-    objectCtx.fillStyle = "red";
-    objectCtx.fillRect(   // draw a dot at the current zombie position
-      z.x * miniMapScale - 2,
-      z.y * miniMapScale - 2,
-      4, 4
-    );
-  }
+  objectCtx.fillStyle = "red";
+  objectCtx.fillRect(   // draw a dot at the current zombie position
+    z.x * miniMapScale - 2,
+    z.y * miniMapScale - 2,
+    4, 4
+  );
 
   objectCtx.fillStyle = "black";
   objectCtx.fillRect(   // draw a dot at the current gameGuide position
