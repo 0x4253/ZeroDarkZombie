@@ -78,7 +78,10 @@ function clearLevel() {
 
 function levelCycle() {
 	if (playing) {
+    document.getElementById("loading").style.display="none";
 		gameCycle();
+	} else {
+    document.getElementById("loading").style.display="block";
 	}
 
 	if (gameOver) {

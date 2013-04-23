@@ -153,7 +153,7 @@ function gameCycle() {
         (endTime-startTime)/1000 + " seconds.");
     gameOver = true;
     console.log(millisecondsToStr( endTime - startTime ));
-    audioManager.loadAndPlay("YOU WIN! You've successfully avoided zombies! It took " +
+    audioManager.loadAndPlay("YOU WON! It took " +
         millisecondsToStr( endTime - startTime ));
   }
 }
