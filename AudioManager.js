@@ -212,11 +212,11 @@ AudioManager.prototype.play = function( options ) {
 
   // decide to make it a panner node or not
   if ( typeof options.panner != 'undefined' && options.panner ) {
-    // create panner node for this sound, but treat it special if it's a zombie
+    // create panner node for this sound
     panner = this.audioContext.createPanner();
-    panner.coneOuterGain = (options.isZombie ? options.coneOuterGain : this.coneOuterGain);
-    panner.coneOuterAngle = (options.isZombie ? options.coneOuterAngle : this.coneOuterAngle);
-    panner.coneInnerAngle = (options.isZombie ? options.coneInnerAngle : this.coneInnerAngle);
+    panner.coneOuterGain = this.coneOuterGain;
+    panner.coneOuterAngle = this.coneOuterAngle;
+    panner.coneInnerAngle = this.coneInnerAngle;
     if (options.isZombie)
       panner.rolloffFactor = options.rolloffFactor;
     panner.connect( channel );

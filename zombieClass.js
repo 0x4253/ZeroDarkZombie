@@ -11,7 +11,6 @@ function Zombie(number, startx, starty, startNumCycles, audioUrl) {
 	this.intelligence = 15; //A ratio of how much the zombie follows the player, >1 required
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
-  this.isZombie = true;
   this.coneOuterGain = 0.005;
   this.rolloffFactor = 2;
   this.coneOuterAngle = 360;
