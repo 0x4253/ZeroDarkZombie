@@ -97,7 +97,13 @@ function loseSound() {
 }
 
 function togglePause() {
-  playing = !playing;
+  if (playing == true){
+    playing = false;
+    audioManager.pauseEffects();
+  } else {
+    audioManager.resumeEffects();
+    playing = true;
+  }
 }
 
 // Need to add support for more levels
