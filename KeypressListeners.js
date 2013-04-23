@@ -8,7 +8,7 @@ function MenuKeypressListener(event) {
 		switch (event.which) {
 			case 32:
 				// Pause/Resume Game
-				pauseGame();
+				startLevel(1);
 				break;
 			case 49:
 				// Play Level 1
@@ -64,6 +64,11 @@ function LevelKeypressListener() {
 	      case 39: // right, rotate player right
 	        player.turnRight();
 	        break;
+
+	      case 32:
+				// Pause/Resume Game
+				togglePause();
+				break;
 	    }
 	}
   });

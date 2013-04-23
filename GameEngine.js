@@ -11,8 +11,19 @@ var levelCompleted = 2;
 function startGame() {
 	setTimeout(function() {
 		initGameEngine();
+		drawMenu();
 		GameEngineLoop();
 	}, 100);
+}
+
+function drawMenu(){
+	var miniMap = getid("minimap");     // the actual map
+	var ctx = miniMap.getContext("2d");
+
+  	ctx.fillStyle = "rgb(50, 150, 50)";
+  	ctx.fillRect(0,0,miniMap.width,miniMap.height);
+  	var img=document.getElementById("title");
+	ctx.drawImage(img, 0, 0, miniMap.width,miniMap.height);
 }
 
 function initGameEngine() {
@@ -81,13 +92,9 @@ function levelCycle() {
 
 function switchToLevel() {
 	levelAlive = true;
-	$("#pauseButton").removeAttr("disabled");
-	//$("#quitButton").removeAttr("disabled");
-
-	$("#level2").attr("disabled", "disabled");
-	$("#level1").attr("disabled", "disabled");
 	gameOver = false;
 	playing = false;
+	clearMap();
 }
 
 function initLevel(lvl){
@@ -142,6 +149,7 @@ function startSounds() {
 	playing = true;
 }
 
+// obsolete function, keep for reference
 function pauseGame() {
 	button = document.getElementById("pauseButton");
 	if (levelAlive) {
