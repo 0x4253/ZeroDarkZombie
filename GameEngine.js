@@ -11,6 +11,12 @@ var menuSound = {
 	name: "menuSound"
 }
 
+var bg_noise = {
+	url: 'http://cs.unc.edu/~stancill/comp585/Drone_Dark_1.ogg',
+	name: "bg_noise"
+}
+
+
 //var map;
 //
 
@@ -24,10 +30,14 @@ function startGame() {
 		setTimeout(function(){drawText()}, 1000);
 		GameEngineLoop();
 
-		var menuToPlayURLs = [menuSound.url];
-		var menuToPlayNames = [menuSound.name];
+		var menuToPlayURLs = [menuSound.url, bg_noise.url];
+		var menuToPlayNames = [menuSound.name, bg_noise.name];
 		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
-		audioManager.load(menuUrlMap, function(){audioManager.play(menuSound)});
+		audioManager.load(menuUrlMap, function(){
+			audioManager.play(bg_noise);
+			setTimeout(function(){audioManager.play(menuSound)}, 3000);
+		});
+
 		
 	}, 100);
 }
