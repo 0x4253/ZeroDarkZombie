@@ -41,6 +41,63 @@ var soundObjLose = {
   url: 'http://cs.unc.edu/~stancill/comp585/gameover.ogg'
 }
 
+// tutorial soundObjs
+var tutorial1 = {
+  name: "tutorial1",
+  url: 'http://cs.unc.edu/~stancill/comp585/tutorial1.ogg',
+  x: 0,
+  y: 0,
+  panner: true,
+  move: function(guide) {
+    this.x = guide.x;
+    this.y = guide.y;
+  }
+}
+var tutorial2 = {
+  name: "tutorial2",
+  url: 'http://cs.unc.edu/~stancill/comp585/tutorial2.ogg',
+  x: 0,
+  y: 0,
+  panner: true,
+  move: function(guide) {
+    this.x = guide.x;
+    this.y = guide.y;
+  }
+}
+var tutorial3 = {
+  name: "tutorial3",
+  url: 'http://cs.unc.edu/~stancill/comp585/tutorial3.ogg',
+  x: 0,
+  y: 0,
+  panner: true,
+  move: function(guide) {
+    this.x = guide.x;
+    this.y = guide.y;
+  }
+}
+var tutorial4 = {
+  name: "tutorial4",
+  url: 'http://cs.unc.edu/~stancill/comp585/tutorial4.ogg',
+  x: 0,
+  y: 0,
+  panner: true,
+  move: function(guide) {
+    this.x = guide.x;
+    this.y = guide.y;
+  }
+}
+var overHere = {
+  name: "overHere",
+  url: 'http://cs.unc.edu/~stancill/comp585/overhere.ogg',
+  x: 0,
+  y: 0,
+  panner: true,
+  move: function(guide) {
+    this.x = guide.x;
+    this.y = guide.y;
+  }
+}
+
 // arrays to hold variables that need sound and sound updating
 var toPlayUrl = [soundObjHay.url,
                  soundObjConcrete.url,
@@ -63,10 +120,8 @@ var miniMapScale = 20;
 var coneOuterAngle = 120;
 var coneInnerAngle = 60;
 var twoPI = Math.PI * 2;
-
-var d = new Date();
-var lastFootTime = 0;
-
+var lastWallBump = 0;
+var wallDelay = 0;
 
 function footStep() {
   var xblock = Math.floor(player.x);
@@ -77,9 +132,6 @@ function footStep() {
   else
     audioManager.play(soundObjHay);
 }
-
-var lastWallBump = 0;
-var wallDelay = 200;
 
 function wallBump() {
   var now = new Date().getTime();
@@ -109,23 +161,98 @@ function togglePause() {
 
 // specialized engine for tutorial level (level 0)
 var tstate;
-function tutorialLevelCycle(state) {
+function tutorialLevelCycle(state, callback) {
   switch (state) {
     case 1:
       // play the opening audio
-      setTimeout(function(){
-        tutorialLevelCycle(2);
-      }, 2000);
+      console.log("tutorial level cycle 1");
+      tutorial1.move(gameGuide);
+      audioManager.updatePosition(tutorial1);
+      audioManager.play(tutorial1);
+      setTimeout(function() {
+          tutorialLevelCycle(2, callback);
+        }, 35000);
+      break;
     case 2:
       // play the next sound
       // enable left and right turns
-      tutorialLevelCycle(3);
+      console.log("tutorial level cycle 2");
+      tutorial2.move(gameGuide);
+      audioManager.updatePosition(tutorial2);
+      audioManager.play(tutorial2);
+
+      // move to player's right
+      setTimeout(function() {
+          gameGuide.x = 5.5;
+          gameGuide.y = 7.5;
+          tutorial2.move(gameGuide);
+          audioManager.updatePosition(tutorial2);
+          updateMiniMap();
+        }, 2000);
+
+      // move behind player
+      setTimeout(function() {
+          gameGuide.x = 3.5;
+          gameGuide.y = 5.5;
+          tutorial2.move(gameGuide);
+          audioManager.updatePosition(tutorial2);
+          updateMiniMap();
+        }, 5000);
+
+      // move to player's left
+      setTimeout(function() {
+          gameGuide.x = 5.5;
+          gameGuide.y = 3.5;
+          tutorial2.move(gameGuide);
+          audioManager.updatePosition(tutorial2);
+          updateMiniMap();
+        }, 7500);
+
+      // move in front of player
+      setTimeout(function() {
+          gameGuide.x = 7.5;
+          gameGuide.y = 5.5;
+          tutorial2.move(gameGuide);
+          audioManager.updatePosition(tutorial2);
+          updateMiniMap();
+        }, 10500);
+
+      setTimeout(function() {
+          tutorialLevelCycle(3, callback);
+        }, 13000);
+      break;
     case 3:
-      // if (facing towards guide){
-      //   tutorialGuide(4); 
-      // } else {
-      //   setTimeout( function() { tutorialGuide(3); } , 100)
-      // }
+      console.log("tutorial level cycle 3");
+      tutorial3.move(gameGuide);
+      audioManager.updatePosition(tutorial3);
+      audioManager.play(tutorial3);
+
+      setTimeout(function() {
+          tutorialLevelCycle(4, callback);
+        }, 31000);
+      break;
+    case 4:
+      gameGuide.x = 3.5;
+      gameGuide.y = 5.5;
+      overHere.move(gameGuide);
+      audioManager.updatePosition(overHere);
+      console.log(player.rot);
+      if (player.rot == Math.PI) {
+        audioManager.stop(overHere);
+        tutorialLevelCycle(5, callback);
+      } else {
+        audioManager.play(overHere);
+        setTimeout( function() { tutorialLevelCycle(4, callback); } , 2500);
+      }
+      break;
+    case 5:
+      tutorial4.move(gameGuide);
+      audioManager.updatePosition(tutorial4);
+      audioManager.play(tutorial4);
+
+      // call the callback
+      setTimeout( function() { callback(); } , 10500);
+      break;
   }
 }
 
@@ -139,8 +266,10 @@ function gameCycle() {
 
   gameGuide.move();
   //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
-  zombie.move(player.x, player.y);
-  detectZombieCollision();
+  if (NUMBER_OF_ZOMBIES > 0) {
+    zombie.move(player.x, player.y);
+    detectZombieCollision();
+  }
 
   audioManager.updateAllPositions(toUpdate);
 
@@ -151,27 +280,7 @@ function gameCycle() {
 
   updateConsoleLog();
 
-  if (player.eaten){
-    audioManager.stopAll();
-    loseSound();
-  	endTime = new Date();
-    outputToScreen("You've been eaten! It took " +
-        (endTime-startTime)/1000 + " seconds.");
-    gameOver = true;
-    audioManager.loadAndPlay("You've been eaten! It took " +
-        (endTime-startTime)/1000 + " seconds.");
-  }
-  else if(player.winner){
-    audioManager.stopAll();
-    winSound();
-  	endTime = new Date();
-  	outputToScreen("YOU WIN! You've successfully avoided zombies! It took " +
-        (endTime-startTime)/1000 + " seconds.");
-    gameOver = true;
-    console.log(millisecondsToStr( endTime - startTime ));
-    audioManager.loadAndPlay("YOU WON! It took " +
-        millisecondsToStr( endTime - startTime ));
-  }
+  gameOver = (player.winner || player.eaten);
 }
 
 function getDuration(timeMillis){
@@ -207,7 +316,7 @@ function millisecondsToStr( time ) {
   if (duration.minutes > 0)
     str += " and "
   if (duration.seconds > 0)
-    str += duration.seconds + " seconds, ";
+    str += duration.seconds + " seconds!";
   // if (duration.millis > 0)
   //   str += duration.millis + " milliseconds";
   return str;
@@ -224,8 +333,8 @@ function updateConsoleLog() {
 function outputToScreen(string) {
   var miniMapObjects = getid("minimapobjects");
   var objectCtx = miniMapObjects.getContext("2d");
-  objectCtx.font="20px Georgia";
-  objectCtx.fillText(string, 5, (map[0].length / 2) * miniMapScale);
+  objectCtx.font="30px Georgia";
+  objectCtx.fillText(string, 80, (map[0].length / 3) * miniMapScale);
 }
 
 function checkCollision(fromX, fromY, toX, toY, radius, play) {
@@ -364,18 +473,20 @@ function updateMiniMap() {
   var img=getid("marine");
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
 
-  //Draw the zombie
-	z = zombie;
-  //draw zombie sprite
-  var img=getid("zombie");
-  objectCtx.drawImage(img,203,240,44,76,zombie.x*miniMapScale-15,zombie.y*miniMapScale-27,44/1.5,76/1.5);
+  if (NUMBER_OF_ZOMBIES > 0) {
+    //Draw the zombie
+  	z = zombie;
+    //draw zombie sprite
+    var img=getid("zombie");
+    objectCtx.drawImage(img,203,240,44,76,zombie.x*miniMapScale-15,zombie.y*miniMapScale-27,44/1.5,76/1.5);
 
-  objectCtx.fillStyle = "red";
-  objectCtx.fillRect(   // draw a dot at the current zombie position
-    z.x * miniMapScale - 2,
-    z.y * miniMapScale - 2,
-    4, 4
-  );
+    objectCtx.fillStyle = "red";
+    objectCtx.fillRect(   // draw a dot at the current zombie position
+      z.x * miniMapScale - 2,
+      z.y * miniMapScale - 2,
+      4, 4
+    );
+  }
 
   objectCtx.fillStyle = "black";
   objectCtx.fillRect(   // draw a dot at the current gameGuide position

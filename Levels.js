@@ -1,3 +1,16 @@
+var Tutorial = {
+	map: getBlankMap(),
+	randomizeMap: function() {
+		//do nothing
+	},
+	player: new Player(5.5, 5.5, (0 * Math.PI / 180)),
+	NUMBER_OF_ZOMBIES: 0,
+	gameGuide: new Guide(7.5,
+											 5.5,
+											 (-120 * Math.PI / 180)),
+	startTimeDelay: 0
+}
+
 var Level1 = {
 	randomizeMap: function() {
 		//do nothing
@@ -34,7 +47,7 @@ var Level1 = {
 											 3.5,
 											 (-90 * Math.PI / 180),
 											 "http://cs.unc.edu/~stancill/comp585/IntroToGame2.ogg"),
-	startTimeDelay: 0, //25000,
+	startTimeDelay: 0 //25000,
 }
 
 var Level2 = {
@@ -52,21 +65,23 @@ var Level2 = {
 			i += rand < map.length - 2 ? 1 : 0;
 			j += rand >= map.length - 2 ? 1 : 0;
 			map[i][j] = 3;
+			if (i+1 != map.length-1 && j+1 != map[0].length-1)
+				map[i+1][j+1] = 3;
 		}
 
 		map[i][j] = 4;
-		map[i + 1][j] = map[i + 1][j] != 0 ? map[i + 1][j] : 4;
-		map[i - 1][j] = map[i - 1][j] != 0 ? map[i - 1][j] : 4;
-		map[i][j + 1] = map[i][j + 1] != 0 ? map[i][j + 1] : 4;
-		map[i][j - 1] = map[i][j - 1] != 0 ? map[i][j - 1] : 4;
+		map[i + 1][j] = map[i + 1][j] == 1 ? map[i + 1][j] : 4;
+		map[i - 1][j] = map[i - 1][j] == 1 ? map[i - 1][j] : 4;
+		map[i][j + 1] = map[i][j + 1] == 1 ? map[i][j + 1] : 4;
+		map[i][j - 1] = map[i][j - 1] == 1 ? map[i][j - 1] : 4;
 	},
 	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	gameGuide: new Guide(2,
-											 1.5,
+	gameGuide: new Guide(3,
+											 2.5,
 											 (-120 * Math.PI / 180),
-											 "http://cs.unc.edu/~stancill/comp585/IntroToGame2.ogg"),
-	startTimeDelay: 0,
+											 "http://cs.unc.edu/~stancill/comp585/followme.ogg"),
+	startTimeDelay: 0
 }
 
 	function getBlankMap() {

@@ -39,6 +39,7 @@ function AudioManager( initialOptions ) {
     destination: this.audioContext.destination,
     masterGain: this.audioContext.createGainNode(),
     coreEffectsGain: this.audioContext.createGainNode(),
+    backgroundGain: this.audioContext.createGainNode(),
     effectsGain: this.audioContext.createGainNode()
   };
   // and setup the graph
@@ -184,7 +185,6 @@ function play_sound(url){
         $('body').append(sound);
     }
 }
-
 // takes text as input and using Google's text-to-speech to play the text out loud
 AudioManager.prototype.loadAndPlay = function( txt ) {
   play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q=" +
@@ -443,6 +443,8 @@ BufferLoader.prototype.loadBuffer = function (url, index) {
     request.send();
 };
 BufferLoader.prototype.load = function () {
-    for (var i = 0; i < this.urlList.length; ++i)
+    for (var i = 0; i < this.urlList.length; ++i) {
+      // console.log("Loading sound: " + this.urlList[i]);
       this.loadBuffer(this.urlList[i], i);
+    }
 };

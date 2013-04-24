@@ -1,12 +1,24 @@
 function Guide(startx, starty, initRot, audioUrl) {
   this.name = "guide";
   this.audioUrl = audioUrl || "";
-  this.loop = true;
+  this.loop = false;
   this.x = startx || 1.5;     // current x, y position
   this.y = starty || 1.5;
   this.rot = initRot || -120 * Math.PI / 180;    // the current angle of rotation
   this.circleColor = "rgba(0,100,0,0.3)";
   this.panner = true;
+  this.play = false;
+}
+
+Guide.prototype.start = function( guide ) {
+  if (guide.play) {
+    setTimeout(function() {
+      audioManager.play( guide );
+      guide.start( guide );
+    }, 2000);
+  } else {
+    audioManager.stop( guide );
+  }
 }
 
 Guide.prototype.move = function() {
@@ -28,7 +40,7 @@ Guide.prototype.move = function() {
   }
   else if (minDist > 7 && maxDist > 7){
     if (map[gy][gx-1] >= 3){
-      this.x -= 1; 
+      this.x -= 1;
     }
     else if (map[gy-1][gx] >= 3){
       this.y -= 1;

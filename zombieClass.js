@@ -5,14 +5,14 @@ function Zombie(number, startx, starty, startNumCycles, audioUrl) {
 	this.x = startx;
 	this.y = starty;
 	this.rot = 0;
-	this.moveSpeed = 0.4; // How far zombie moves in one move
+	this.moveSpeed = 1; // How far zombie moves in one move
 	this.moveTime = 5; //How many game cycles it takes for the zombie to move
 	this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
-	this.intelligence = 15; //A ratio of how much the zombie follows the player, >1 required
+	this.intelligence = 10; //A ratio of how much the zombie follows the player, >1 required
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
   this.coneOuterGain = 0.005;
-  this.rolloffFactor = 10;
+  this.rolloffFactor = 4;
   this.isZombie = true;
 }
 
@@ -26,7 +26,7 @@ Zombie.prototype.move = function(playerX, playerY){
       z.rot = Math.round(Math.atan2(playerY - z.y, playerX - z.x) * 10) / 10.0;
     else
       z.rot += Math.random() * twoPI / 4 - twoPI / 8;
-    var moveStep = z.moveSpeed; // zombiewill move this far along the current direction vector
+    var moveStep = z.moveSpeed; // zombie will move this far along the current direction vector
 
     // make sure the angle is between 0 and 360 degrees
     while (z.rot < 0) z.rot += twoPI;

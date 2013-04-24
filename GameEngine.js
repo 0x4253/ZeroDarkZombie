@@ -1,10 +1,13 @@
 var startLevelNumber = 0;
 var gameOver = false;
 var playing = false;
+var loading = true;
+var loadingSound = true;
 var levelAlive;
 var waitTime;
 var distanceFromGuide;
 var levelCompleted = 2;
+var numLevels = 3; // one greater than actual num levels
 //var map;
 
 
@@ -20,10 +23,10 @@ function drawMenu(){
 	var miniMap = getid("minimap");     // the actual map
 	var ctx = miniMap.getContext("2d");
 
-  	ctx.fillStyle = "rgb(50, 150, 50)";
-  	ctx.fillRect(0,0,miniMap.width,miniMap.height);
-  	var img=document.getElementById("title");
-	ctx.drawImage(img, 0, 0, miniMap.width,miniMap.height);
+	ctx.fillStyle = "rgb(50, 150, 50)";
+	ctx.fillRect(0,0,miniMap.width,miniMap.height);
+	var img = document.getElementById("title");
+	ctx.drawImage(img, 0, 0, miniMap.width, miniMap.height);
 }
 
 function initGameEngine() {
@@ -36,13 +39,17 @@ function GameEngineLoop() {
 		switch (startLevelNumber) {
 			case 1:
 				switchToLevel();
-				initLevel(Level1);
+				initTutorial(Tutorial);
+				// initLevel(Level1);
 				levelCycle();
 				break;
 			case 2:
 				switchToLevel();
 				initLevel(Level2);
 				levelCycle();
+				break;
+			case numLevels:
+				document.location.reload();
 				break;
 		}
 	}
@@ -60,7 +67,7 @@ function clearLevel() {
 		}
 		console.log("Level is over");
 		levelAlive = false;
-		startLevelNumber = 0;
+		startLevelNumber += 1;
 
 		RemoveAllListeners();
 
@@ -77,15 +84,41 @@ function clearLevel() {
 }
 
 function levelCycle() {
-	if (playing) {
-    document.getElementById("loading").style.display="none";
-		gameCycle();
+	if (loading) {
+		document.getElementById("loading").style.display="block";
+		if (loadingSound) {
+			audioManager.loadAndPlay("Loading");
+			loadingSound = false;
+		}
 	} else {
-    document.getElementById("loading").style.display="block";
+		document.getElementById("loading").style.display="none";
+		loadingSound = true;
+	}
+
+	if (playing) {
+		gameCycle();
 	}
 
 	if (gameOver) {
-		clearLevel();
+		audioManager.stopAll();
+		gameGuide.play = false;
+		endTime = new Date();
+	  if (player.eaten) {
+	    outputToScreen("You've been eaten! It took " +
+	        millisecondsToStr( endTime - startTime ));
+	    audioManager.loadAndPlay("Oh no!. . You've been eaten!. . It took " +
+	        millisecondsToStr( endTime - startTime ));
+	  }
+	  else if (player.winner) {
+	  	endTime = new Date();
+	  	outputToScreen("YOU WON! It took " +
+	        millisecondsToStr( endTime - startTime ));
+	    audioManager.loadAndPlay("Yay!. . You won!. .  It took " +
+	        millisecondsToStr( endTime - startTime ));
+	  }
+		setTimeout(function() {
+			clearLevel();
+		}, 5000);
 	} else {
 		setTimeout(function() {
 			levelCycle();
@@ -98,6 +131,48 @@ function switchToLevel() {
 	gameOver = false;
 	playing = false;
 	clearMap();
+}
+
+function initTutorial(tutorial) {
+	// initialize map
+	tutorial.randomizeMap();
+	map = tutorial.map;
+	mapWidth = map[0].length;
+	mapHeight = map.length;
+
+	// initialize player/guide/zombie(s)
+	player = tutorial.player;
+	NUMBER_OF_ZOMBIES = tutorial.NUMBER_OF_ZOMBIES;
+	gameGuide = tutorial.gameGuide;
+
+	// initialize sounds for AudioManager
+	audioManager.masterGainChanged( 1 );
+
+	toPlayUrl.push(tutorial1.url);
+	toPlayNames.push(tutorial1.name);
+
+	toPlayUrl.push(tutorial2.url);
+	toPlayNames.push(tutorial2.name);
+
+	toPlayUrl.push(tutorial3.url);
+	toPlayNames.push(tutorial3.name);
+
+	toPlayUrl.push(tutorial4.url);
+	toPlayNames.push(tutorial4.name);
+
+	toPlayUrl.push(overHere.url);
+	toPlayNames.push(overHere.name);
+
+	var urlMap = [ toPlayNames, toPlayUrl ];
+	audioManager.load(urlMap, tutorialStart);
+
+	// draw map
+	drawMiniMap();
+
+	setTimeout(function() {
+		LevelKeypressListener();
+		startTime = new Date();
+	}, tutorial.startTimeDelay);
 }
 
 function initLevel(lvl){
@@ -114,9 +189,8 @@ function initLevel(lvl){
 
 	// initialize sounds for AudioManager
 	audioManager.masterGainChanged( 1 );
-	for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++){
+  if (NUMBER_OF_ZOMBIES > 0) {
 		toPlayUrl.push(zombie.audioUrl);
-		console.log("Zombie[" + i + "] audio url: " + zombie.audioUrl);
 		toPlayNames.push(zombie.name);
 	}
 	toPlayUrl.push(gameGuide.audioUrl);
@@ -133,22 +207,41 @@ function initLevel(lvl){
 	}, lvl.startTimeDelay);
 }
 
+function tutorialStart() {
+	toUpdate.push(gameGuide);
+	// toUpdate.push(tutorial1);
+	// toUpdate.push(tutorial2);
+	// toUpdate.push(tutorial3);
+	// toUpdate.push(tutorial4);
+  toUpdate.push(player);
+  audioManager.updateAllPositions(toUpdate);
+  tutorialLevelCycle(1, clearLevel);
+  loading = false;
+  playing = true;
+}
+
 function startSounds() {
 	console.log("Starting sounds");
   // start playing all sounds
-  audioManager.play(gameGuide);
-  for (var i = 0 ; i < NUMBER_OF_ZOMBIES ; i++) {
-		  audioManager.play(zombie);
-	}
+  if (gameGuide.audioUrl != "") {
+  	// audioManager.play(gameGuide);
+  	console.log("Start gameGuide sound");
+  	gameGuide.play = true;
+  	gameGuide.start( gameGuide );
+  }
+  if (NUMBER_OF_ZOMBIES > 0)
+		audioManager.play(zombie);
 
 	// update all locations to default & add to the update array
 	toUpdate = [];
-    toUpdate.push(zombie);
+	if (NUMBER_OF_ZOMBIES > 0)
+  	toUpdate.push(zombie);
 	toUpdate.push(gameGuide);
 	toUpdate.push(player);
 	audioManager.updateAllPositions(toUpdate);
 
 	// once all the sounds are loaded allow player to play
+	loading = false;
 	playing = true;
 }
 
@@ -181,6 +274,7 @@ function clearMap(){
 	mmo.width = mmo.width;
 	var lm = $('#levelmap')[0];
 	lm.width = lm.width;
-	audioManager.destroyAll();
+	audioManager.stopAll();
+	loading = true;
 }
 
