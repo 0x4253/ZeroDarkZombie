@@ -8,15 +8,44 @@ var waitTime;
 var distanceFromGuide;
 var levelCompleted = 2;
 var numLevels = 3; // one greater than actual num levels
+var menuSound = {
+	url: 'http://www.cs.unc.edu/~stancill/comp585/Blaine_intro.ogg',
+	name: "menuSound"
+}
+var bg_noise = {
+	url: 'http://cs.unc.edu/~stancill/comp585/Drone_Dark_1.ogg',
+	name: "bg_noise",
+	loop: true
+}
 //var map;
+//
+
 
 
 function startGame() {
 	setTimeout(function() {
 		initGameEngine();
 		drawMenu();
+		drawSkull();
+		setTimeout(function(){drawText()}, 1000);
 		GameEngineLoop();
+
+		var menuToPlayURLs = [menuSound.url, bg_noise.url];
+		var menuToPlayNames = [menuSound.name, bg_noise.name];
+		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
+		audioManager.load(menuUrlMap, function() {
+			audioManager.play(bg_noise);
+			setTimeout(function() {startMenuSound();}, 3000);
+		});
+
 	}, 100);
+}
+
+function startMenuSound() {
+	if (!levelAlive) {
+		audioManager.play(menuSound);
+		setTimeout(function() {startMenuSound();}, 20000);
+	}
 }
 
 function drawMenu(){
@@ -25,8 +54,29 @@ function drawMenu(){
 
 	ctx.fillStyle = "rgb(50, 150, 50)";
 	ctx.fillRect(0,0,miniMap.width,miniMap.height);
-	var img = document.getElementById("title");
-	ctx.drawImage(img, 0, 0, miniMap.width, miniMap.height);
+	var img=document.getElementById("bg");
+	ctx.drawImage(img, 0, 0, img.width, img.height);
+	var img=document.getElementById("bg_title");
+	ctx.drawImage(img, 0, 100, img.width, img.height);
+}
+
+function drawSkull(){
+	var miniMap = getid("minimap");     // the actual map
+	var ctx = miniMap.getContext("2d");
+	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
+	var img=document.getElementById("bg_skull");
+	ctx.drawImage(img, -30, 300, img.width, img.height);
+}
+
+function drawText(){
+	if(!levelAlive){
+		var miniMap = getid("minimap");     // the actual map
+		var ctx = miniMap.getContext("2d");
+
+		ctx.globalAlpha = 1; //sets opacity. 0 = transparent
+		var img=document.getElementById("bg_start");
+		ctx.drawImage(img, -5, 170, img.width, img.height);
+	}
 }
 
 function initGameEngine() {

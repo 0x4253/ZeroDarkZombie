@@ -162,6 +162,7 @@ function togglePause() {
 // specialized engine for tutorial level (level 0)
 var tstate;
 function tutorialLevelCycle(state, callback) {
+  RemoveAllListeners();
   switch (state) {
     case 1:
       // play the opening audio
@@ -232,6 +233,7 @@ function tutorialLevelCycle(state, callback) {
         }, 31000);
       break;
     case 4:
+      LevelKeypressListener();
       gameGuide.x = 3.5;
       gameGuide.y = 5.5;
       overHere.move(gameGuide);
@@ -305,14 +307,19 @@ function getDuration(timeMillis){
 function millisecondsToStr( time ) {
   var duration = getDuration( time );
   var str = "";
-  if (duration.weeks > 0)
-    str += duration.weeks + " weeks, ";
-  if (duration.days > 0)
-    str += duration.days + " days, ";
-  if (duration.hours > 0)
-    str += duration.hours + " hours, ";
-  if (duration.minutes > 0)
-    str += duration.minutes + " minutes, ";
+  // if (duration.weeks > 0)
+  //   str += duration.weeks + " weeks, ";
+  // if (duration.days > 0)
+  //   str += duration.days + " days, ";
+  // if (duration.hours > 0)
+  //   str += duration.hours + " hours, ";
+  if (duration.minutes > 0) {
+    if (duration.minutes == 1) {
+      str += duration.minutes + " minute, ";
+    } else {
+      str += duration.minutes + " minutes, ";
+    }
+  }
   if (duration.minutes > 0)
     str += " and "
   if (duration.seconds > 0)
