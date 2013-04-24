@@ -5,14 +5,30 @@ var levelAlive;
 var waitTime;
 var distanceFromGuide;
 var levelCompleted = 2;
+
+var menuSound = {
+	url: 'http://www.cs.unc.edu/~stancill/comp585/Blaine_intro.ogg',
+	name: "menuSound"
+}
+
 //var map;
+//
+
 
 
 function startGame() {
 	setTimeout(function() {
 		initGameEngine();
 		drawMenu();
+		drawSkull();
+		setTimeout(function(){drawText()}, 1000);
 		GameEngineLoop();
+
+		var menuToPlayURLs = [menuSound.url];
+		var menuToPlayNames = [menuSound.name];
+		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
+		audioManager.load(menuUrlMap, function(){audioManager.play(menuSound)});
+		
 	}, 100);
 }
 
@@ -22,8 +38,29 @@ function drawMenu(){
 
   	ctx.fillStyle = "rgb(50, 150, 50)";
   	ctx.fillRect(0,0,miniMap.width,miniMap.height);
-  	var img=document.getElementById("title");
-	ctx.drawImage(img, 0, 0, miniMap.width,miniMap.height);
+  	var img=document.getElementById("bg");
+	ctx.drawImage(img, 0, 0, img.width, img.height);
+	var img=document.getElementById("bg_title");
+	ctx.drawImage(img, 0, 100, img.width, img.height);
+}
+
+function drawSkull(){
+	var miniMap = getid("minimap");     // the actual map
+	var ctx = miniMap.getContext("2d");
+	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
+	var img=document.getElementById("bg_skull");
+	ctx.drawImage(img, -30, 300, img.width, img.height);
+}
+
+function drawText(){
+	if(!levelAlive){
+	var miniMap = getid("minimap");     // the actual map
+	var ctx = miniMap.getContext("2d");
+
+	ctx.globalAlpha = 1; //sets opacity. 0 = transparent
+	var img=document.getElementById("bg_start");
+	ctx.drawImage(img, -5, 170, img.width, img.height);
+}
 }
 
 function initGameEngine() {
