@@ -100,6 +100,9 @@
       number = document.getElementById("playerMoveSpeed");
       player.moveSpeed = number.value;
     }
+    function reload() {
+      document.location.reload();
+    }
     /*
     function changeZombieMoveSpeed(){
       number = document.getElementById("zombieMoveSpeed");
@@ -150,16 +153,19 @@
 
 </head>
 <body bgcolor="#000000">
-  <!--
 	<div id="gamecontroller">
 		<form>
+      <!--
 			<input type="button" id="pauseButton" value="Pause Game [space]" onclick="pauseGame()" disabled>
       <input type="button" id="quitButton" value="Quit Level [q]" onclick="" disabled>
       <br>
+      -->
+      <input type="button" id="level1" name="sel" value="Menu" onclick="reload()">
       <input type="button" id="level1" name="sel" value="Play Level 1 [#1]" onclick="startLevel(1)">
-      <input type="button" id="level2" name="sel" value="Play Level 2 [#2]" onclick="startLevel(2)" disabled>
+      <input type="button" id="level2" name="sel" value="Play Level 2 [#2]" onclick="startLevel(2)">
 		</form>
 	</div>
+  <!--
   <div id="gamemodifiers">
     <form name="modifiers">
       <label>Player turn speed:</label> <input type="number" id="playerTurnSpeed"name="playerTurnSpeed" onchange="changePlayerTurnSpeed()"><br>
