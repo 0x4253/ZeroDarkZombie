@@ -77,8 +77,8 @@ var Level2 = {
 	},
 	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	gameGuide: new Guide(3,
-											 2.5,
+	gameGuide: new Guide(2,
+											 1.5,
 											 (-120 * Math.PI / 180),
 											 "http://cs.unc.edu/~stancill/comp585/followme.ogg"),
 	startTimeDelay: 0

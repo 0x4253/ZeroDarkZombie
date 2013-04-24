@@ -313,6 +313,7 @@ function pauseGame() {
 
 function startLevel(num) {
 	startLevelNumber = num;
+  clearMap();
 }
 
 
@@ -324,7 +325,8 @@ function clearMap(){
 	mmo.width = mmo.width;
 	var lm = $('#levelmap')[0];
 	lm.width = lm.width;
-	audioManager.stopAll();
+	//audioManager.stopAll();
+	audioManager.destroyAll();
 	loading = true;
 }
 
