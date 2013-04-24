@@ -1,1 +1,4 @@
 *.project
+
+/levelClass.js
+/test.css

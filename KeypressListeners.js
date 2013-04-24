@@ -27,12 +27,14 @@ function MenuKeypressListener(event) {
 	});
 }
 
+var twoPI = Math.PI * 2;
+
 // bind keyboard events to game functions (movement, etc)
 function LevelKeypressListener() {
 
   $(document).keydown(function(event) {
 
-	console.log(event.which);
+		console.log(event.which);
 
   	if (keyCurrentlyDown == false){
 	  	keyCurrentlyDown = true; // disables more than one key from being pressed and from the keydown action from being fired multiple times
@@ -50,7 +52,7 @@ function LevelKeypressListener() {
 	        while (rot >= twoPI) rot -= twoPI;
 	        var newX = player.x + Math.cos(rot) * moveStep;  // calculate new player position with simple trigonometry
 	        var newY = player.y + Math.sin(rot) * moveStep;
-	        checkCollision(player.x, player.y, newX-1, newY, player.moveSpeed, true);
+	        checkCollision(player.x, player.y, newX, newY, player.moveSpeed, true);
 	        break;
 
 	      case 40: // down, move player backward, set negative speed
@@ -66,11 +68,11 @@ function LevelKeypressListener() {
 	        break;
 
 	      case 32:
-				// Pause/Resume Game
-				togglePause();
-				break;
+					// Pause/Resume Game
+					togglePause();
+					break;
 	    }
-	}
+		}
   });
 
   $(document).keyup(function(event) {

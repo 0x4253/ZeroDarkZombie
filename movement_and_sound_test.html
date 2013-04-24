@@ -35,21 +35,45 @@
       display: inline-block;
       float: left;
     }
+    #screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #000;
+    }
   </style>
 
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 
   <script src="AudioManager.js" type="text/javascript"></script>
+  <script scr="globalSoundObjects.js" type="text/javascript"></script>
   <script src="global_config.js" type="text/javascript"></script>
   <script src="zombieClass.js" type="text/javascript"></script>
   <script src="playerClass.js" type="text/javascript"></script>
   <script src="guideClass.js" type="text/javascript"></script>
   <script src="Levels.js" type="text/javascript"></script>
   <script src="circleCasting.js" type="text/javascript"></script>
+  <script src="KeypressListeners.js" type="text/javascript"></script>
   <script src="LevelEngine.js" type="text/javascript"></script>
 
   <script type="text/javascript">
+    function curtainMode () {
+      curtain = document.getElementById("curtain");
+      if (curtain.value == "Curtain Mode: On"){
+        curtain.value = "Curtain Mode: Off";
+        document.getElementById("minimap").style.display="block";
+        document.getElementById("levelmap").style.display="block";
+        document.getElementById("minimapobjects").style.display="block";
+      }
+      else {
+        curtain.value = "Curtain Mode: On";
+        document.getElementById("minimap").style.display="none";
+        document.getElementById("levelmap").style.display="none";
+        document.getElementById("minimapobjects").style.display="none";
+      }
+    }
+
   function initModifiers(){
       number1 = document.getElementById("playerTurnSpeed");
       number1.value = player.rotSpeed*180/Math.PI;
@@ -116,7 +140,7 @@
     */
   </script>
 
-  <script src="KeypressListeners.js" type="text/javascript"></script>
+
   <script src="GameEngine.js" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -125,7 +149,7 @@
 
 
 </head>
-<body>
+<body bgcolor="#000000">
   <!--
 	<div id="gamecontroller">
 		<form>
@@ -153,11 +177,18 @@
   </form>
 </div>-->
 
-<img id="title" src="title.png" alt="Title Picture" style="display:none">
+<div id="screen"></div>
+<input type='button' value='Curtain Mode: Off' id='curtain' onclick="curtainMode()"/>
+
+<img id="bg" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_bg.jpg" alt="Title Picture" style="display:none" width="700" height="700">
+<img id="bg_title" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_text.gif" alt="Title Text" style="display:none" width="700" height="78">
+<img id="bg_skull" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_skull.gif" alt="Title Text" style="display:none" width="700" height="271">
+<img id="bg_start" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_start.gif" alt="Title Text" style="display:none" width="700" height="67">
+
 <img id="loading" src="ajax-loader.gif" width="50" height="50" style="display:none">
 
   <div id="minimapcontainer">
-    <canvas id="minimap"></canvas>
+    <canvas id="minimap" width="700" height="700"></canvas>
     <canvas id="levelmap"></canvas>
     <canvas id="minimapobjects"></canvas>
 
