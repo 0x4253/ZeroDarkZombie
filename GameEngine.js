@@ -46,6 +46,7 @@ function startMenuSound() {
 }
 
 function startLevel( num ) {
+	hideMenus();
 	startLevelNumber = num;
 
 	// load loading sound as it gets destroyed in clearMap()
