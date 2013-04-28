@@ -115,7 +115,9 @@ function levelCycle() {
 	  	loseSound();
 	  } else if ( player.winner ) {
 	  	update( totalTime );
+      audioManager.backgroundGainChanged( 1 ); // set background gain level
       audioManager.play( levels[ startLevelNumber ].epilog );
+      audioManager.backgroundGainChanged( 0.3 ); // set background gain level
       setTimeout( function() {
         newLevel();
       }, audioManager.sounds[ levels[ startLevelNumber ].epilog.name ].buffer.duration * 1000 );

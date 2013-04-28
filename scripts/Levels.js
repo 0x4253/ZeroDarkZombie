@@ -63,14 +63,7 @@ var Tutorial = {
 	},
 	epilog: {
 	  name: "epilogTutorial",
-	  url: 'http://cs.unc.edu/~stancill/comp585/tutorial_epilog.ogg',
-	  x: 0,
-	  y: 0,
-	  panner: true,
-	  move: function( guide ) {
-	    this.x = guide.x;
-	    this.y = guide.y;
-	  }
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/tutorial_epilog.ogg'
 	},
 	option: 5
 }
@@ -231,25 +224,11 @@ var Level1 = {
 	option: 0,
 	prolog1: {
 	  name: "prolog1Lvl1",
-	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level1_prolog.ogg",
-	  x: 0,
-	  y: 0,
-	  panner: true,
-	  move: function( guide ) {
-	    this.x = guide.x;
-	    this.y = guide.y;
-	  }
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level1_prolog.ogg"
 	},
 	epilog: {
 	  name: "epilogLvl1",
-	  url: 'http://cs.unc.edu/~stancill/comp585/level1_epilog.ogg',
-	  x: 0,
-	  y: 0,
-	  panner: true,
-	  move: function( guide ) {
-	    this.x = guide.x;
-	    this.y = guide.y;
-	  }
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level1_epilog.ogg'
 	}
 }
 Level1.prologUrls =	[ Level1.prolog1.url, Level1.epilog.url ];
@@ -257,25 +236,11 @@ Level1.prologNames = [ Level1.prolog1.name, Level1.epilog.name ];
 Level1.prolog = function( option, callback ) {
 	var level = Level1;
 	RemoveAllListeners();
-	switch (option) {
-	  case 0:
-	    // play the opening audio
-	    console.log("level1 cycle 1");
-	    level.prolog1.move(gameGuide);
-	    audioManager.updatePosition(level.prolog1);
-	    audioManager.play(level.prolog1);
-	    setTimeout(function() {
-	        level.prolog(1, callback);
-	      }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
-	    break;
-	  case 1:
-			LevelKeypressListener();
-	    // call the callback
-	    setTimeout( function() {
-	    	callback();
-	    } , 0);
-	    break;
-	}
+  audioManager.play(level.prolog1);
+  setTimeout(function() {
+		LevelKeypressListener();
+  	callback();
+    }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 
 
@@ -316,25 +281,11 @@ var Level2 = {
 	option: 0,
 	prolog1: {
 	  name: "prolog1Lvl2",
-	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level2_prolog.ogg",
-	  x: 0,
-	  y: 0,
-	  panner: true,
-	  move: function( guide ) {
-	    this.x = guide.x;
-	    this.y = guide.y;
-	  }
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level2_prolog.ogg"
 	},
 	epilog: {
 	  name: "epilogLvl2",
-	  url: 'http://cs.unc.edu/~stancill/comp585/level2_epilog.ogg',
-	  x: 0,
-	  y: 0,
-	  panner: true,
-	  move: function( guide ) {
-	    this.x = guide.x;
-	    this.y = guide.y;
-	  }
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level2_epilog.ogg'
 	}
 }
 Level2.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
@@ -342,25 +293,11 @@ Level2.prologNames = [ Level2.prolog1.name, Level2.epilog.name ];
 Level2.prolog = function( option, callback ) {
 	var level = Level2;
 	RemoveAllListeners();
-	switch (option) {
-	  case 0:
-	    // play the opening audio
-	    console.log("level2 cycle 1");
-	    level.prolog1.move(gameGuide);
-	    audioManager.updatePosition(level.prolog1);
-	    audioManager.play(level.prolog1);
-	    setTimeout(function() {
-	        level.prolog(1, callback);
-	      }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
-	    break;
-	  case 1:
-			LevelKeypressListener();
-	    // call the callback
-	    setTimeout( function() {
-	    	callback();
-	    } , 0);
-	    break;
-	}
+  audioManager.play(level.prolog1);
+  setTimeout(function() {
+		LevelKeypressListener();
+  	callback();
+    }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 
 
