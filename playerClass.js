@@ -75,5 +75,9 @@ Player.prototype.moveBackward = function() {
   this.walk(-1);
 }
 
+Player.prototype.castCircle = function(objectContext) {
+
+}
+
 
 

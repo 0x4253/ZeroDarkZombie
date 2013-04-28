@@ -7,6 +7,8 @@ var levelAlive = false;
 var playProlog = false;
 var gameOver = false;
 var playing = false;
+var startTime, endTime; // variables to keep time
+var map = getBlankMap();;
 
 ////////////////////////////////////////////////////////
 // 					functions used
@@ -261,7 +263,7 @@ function togglePause() {
 }
 
 function drawMenu(){
-	var miniMap = getid("minimap"); // the actual map
+	var miniMap = $("#minimap")[0]; // the actual map
 	var ctx = miniMap.getContext("2d");
 	ctx.fillStyle = "rgb(50, 150, 50)";
 	ctx.fillRect(0,0,miniMap.width,miniMap.height);
@@ -272,7 +274,7 @@ function drawMenu(){
 }
 
 function drawSkull(){
-	var miniMap = getid("minimap"); // the actual map
+	var miniMap = $("#minimap")[0]; // the actual map
 	var ctx = miniMap.getContext("2d");
 	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
 	var img = document.getElementById("bg_skull");
@@ -280,9 +282,25 @@ function drawSkull(){
 }
 
 function drawText(){
-	var miniMap = getid("minimap"); // the actual map
+	var miniMap = $("#minimap")[0]; // the actual map
 	var ctx = miniMap.getContext("2d");
 	ctx.globalAlpha = 1; //sets opacity. 0 = transparent
 	var img = document.getElementById("bg_start");
 	ctx.drawImage(img, -5, 170, img.width, img.height);
 }
+
+function curtainMode () {
+      curtain = document.getElementById("curtain");
+      if (curtain.value == "Curtain Mode: On"){
+        curtain.value = "Curtain Mode: Off";
+        document.getElementById("minimap").style.display="block";
+        document.getElementById("levelmap").style.display="block";
+        document.getElementById("minimapobjects").style.display="block";
+      }
+      else {
+        curtain.value = "Curtain Mode: On";
+        document.getElementById("minimap").style.display="none";
+        document.getElementById("levelmap").style.display="none";
+        document.getElementById("minimapobjects").style.display="none";
+      }
+    }

@@ -1,8 +1,8 @@
 
 
 function castCircle(source, radius, angle, color) {
-	var miniMapObjects = getid("minimapobjects");
-	var objectCtx=miniMapObjects.getContext("2d");
+	var miniMapObjects = $("#minimapobjects")[0];
+	var objectCtx = miniMapObjects.getContext("2d");
 
 	objectCtx.fillStyle = color;
 	objectCtx.beginPath();

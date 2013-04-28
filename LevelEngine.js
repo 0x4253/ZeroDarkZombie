@@ -1,10 +1,4 @@
-//var getid = function(id) { return document.getElementById(id); };
-var getid = function(id) { return document.getElementById(id); };
-var dc = function(tag) { return document.createElement(tag); };
 
-var lvl1;
-var startTime, endTime; // variables to keep time
-var map = getBlankMap();
 
 // basic global entities
 var player = new Player();
@@ -77,29 +71,10 @@ function gameCycle() {
 
   updateMiniMap();
 
-  // display sound cones
-  castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
-
-  updateConsoleLog();
-
   gameOver = (player.winner || player.eaten);
 }
 
-// display user coordinates
-function updateConsoleLog() {
-  var miniMapObjects = getid("minimapobjects");
-  var objectCtx = miniMapObjects.getContext("2d");
-  objectCtx.fillText("(" + Math.floor(player.x).toString() + ", " +
-  Math.floor(player.y).toString() + ")" + " - " + map[Math.floor(player.y)][Math.floor(player.x)].toString(), 5, 10);
-}
-
-function outputToScreen(string) {
-  var miniMapObjects = getid("minimapobjects");
-  var objectCtx = miniMapObjects.getContext("2d");
-  objectCtx.font="30px Georgia";
-  objectCtx.fillText(string, 80, (map[0].length / 3) * miniMapScale);
-}
-
+// check if the player has run into a wall and move the player if he has
 function checkCollision(fromX, fromY, toX, toY, radius, play) {
 	var pos = {
 		x : fromX,
@@ -215,50 +190,43 @@ function isBlocking(x, y, play) {
 }
 
 function detectZombieCollision(){
-	if (Math.abs(zombie.x - player.x) < 0.5 && Math.abs(zombie.y - player.y) < 0.5){
+	if (Math.abs(zombie.x - player.x) < 1 && Math.abs(zombie.y - player.y) < 1){
 		player.eaten=true;
 	}
 }
 
 function updateMiniMap() {
-  var miniMap = getid("minimap");
-  var miniMapObjects = getid("minimapobjects");
+  var miniMap = $("#minimap")[0];
+  var miniMapObjects = $("#minimapobjects")[0];
 
   var objectCtx = miniMapObjects.getContext("2d");
   miniMapObjects.width = miniMapObjects.width;
 
-  objectCtx.fillRect(   // draw a dot at the current player position
-    player.x * miniMapScale - 2,
-    player.y * miniMapScale - 2,
-    4, 4
-  );
   //draw player sprite
-  var img=getid("marine");
+  var img = $("#marine")[0];
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
+  
+  // draw the player's vision cone
+  // castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
+  objectCtx.fillStyle = "rgba(0,0,100,0.3)";
+  objectCtx.beginPath();
+  objectCtx.arc( player.x * miniMapScale,
+    player.y * miniMapScale , 3 * miniMapScale,
+    player.rot - ( 45 ) / 180 * Math.PI,
+    player.rot + ( 45 ) / 180 * Math.PI );
+  objectCtx.lineTo( player.x * miniMapScale , player.y * miniMapScale );
+  objectCtx.fill();
 
   if (NUMBER_OF_ZOMBIES > 0) {
     //Draw the zombie
   	z = zombie;
     //draw zombie sprite
-    var img=getid("zombie");
+    var img = $("#zombie")[0];
     objectCtx.drawImage(img,203,240,44,76,zombie.x*miniMapScale-15,zombie.y*miniMapScale-27,44/1.5,76/1.5);
-
-    objectCtx.fillStyle = "red";
-    objectCtx.fillRect(   // draw a dot at the current zombie position
-      z.x * miniMapScale - 2,
-      z.y * miniMapScale - 2,
-      4, 4
-    );
   }
 
-  objectCtx.fillStyle = "black";
-  objectCtx.fillRect(   // draw a dot at the current gameGuide position
-    gameGuide.x * miniMapScale - 2,
-    gameGuide.y * miniMapScale - 2,
-    4, 4
-  );
   //draw guide sprite
-  var img=getid("guide");
+  var img = $("#guide")[0];
     objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
 }
 
@@ -266,10 +234,10 @@ function drawMiniMap() {
   // generate level map
 
   // draw the topdown view minimap
-  var miniMap = getid("minimap");     // the actual map
-  var miniMapCtr = getid("minimapcontainer");   // the container div element
-  var miniMapObjects = getid("minimapobjects"); // the canvas used for drawing the objects on the map (player character, etc)
-  var levelmap = getid("levelmap");
+  var miniMap = $("#minimap")[0];     // the actual map
+  var miniMapCtr = $("#minimapcontainer")[0];   // the container div element
+  var miniMapObjects = $("#minimapobjects")[0]; // the canvas used for drawing the objects on the map (player character, etc)
+  var levelmap = $("#levelmap")[0];
 
   miniMap.width = mapWidth * miniMapScale;  // resize the internal canvas dimensions
   miniMap.height = mapHeight * miniMapScale;  // of both the map canvas and the object canvas

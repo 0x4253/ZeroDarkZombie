@@ -1,0 +1,36 @@
+ div#minimapcontainer {
+    }
+    canvas#minimap {
+     position : absolute;
+    }
+    canvas#minimapobjects {
+     position : absolute;
+    }
+    canvas#levelmap {
+     position : absolute;
+    }
+    .sprite{
+      display:none;
+    }
+    #gamemodifiers{
+      position:absolute;
+      left:680px;
+      width:px;
+    }
+    #gamemodifiers label{
+      display: inline-block;
+      float: left;
+      clear: left;
+      width: 160px;
+      text-align: left;
+    }
+    #gamemodifiers input {
+      display: inline-block;
+      float: left;
+    }
+    #screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #000;
+    }
