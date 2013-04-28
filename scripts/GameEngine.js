@@ -115,17 +115,21 @@ function levelCycle() {
 	  	loseSound();
 	  } else if ( player.winner ) {
 	  	update( totalTime );
-	  	winSound();
+      audioManager.play( levels[ startLevelNumber ].epilog );
+      setTimeout( function() {
+        newLevel();
+      }, audioManager.sounds[ levels[ startLevelNumber ].epilog.name ].buffer.duration * 1000 );
 	  }
-		setTimeout( function() {
-			levelAlive = false;
-			gameOver = false;
-			startLevelNumber++;
-		}, 2000);
 	} else {
 		gameCycle();
 		setTimeout(function() { levelCycle(); }, 100);
 	}
+}
+
+function newLevel() {
+  startLevelNumber++;
+  levelAlive = false;
+  gameOver = false;
 }
 
 function initLevel( lvl ) {

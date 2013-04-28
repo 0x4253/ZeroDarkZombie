@@ -61,16 +61,29 @@ var Tutorial = {
 	    this.y = guide.y;
 	  }
 	},
-	option: 1
+	epilog: {
+	  name: "epilogLvl1",
+	  url: 'http://cs.unc.edu/~stancill/comp585/followme.ogg',
+	  x: 0,
+	  y: 0,
+	  panner: true,
+	  move: function( guide ) {
+	    this.x = guide.x;
+	    this.y = guide.y;
+	  }
+	},
+	option: 5
 }
 Tutorial.prologUrls =	[ Tutorial.tutorial1.url,
 											  Tutorial.tutorial2.url,
 											  Tutorial.tutorial3.url,
-											  Tutorial.tutorial4.url ];
+											  Tutorial.tutorial4.url,
+                        Tutorial.epilog.url ];
 Tutorial.prologNames = [ Tutorial.tutorial1.name,
 													Tutorial.tutorial2.name,
 													Tutorial.tutorial3.name,
-													Tutorial.tutorial4.name ];
+													Tutorial.tutorial4.name,
+                          Tutorial.epilog.name ];
 Tutorial.prolog = function( option, callback ) {
 	RemoveAllListeners();
 	switch (option) {
