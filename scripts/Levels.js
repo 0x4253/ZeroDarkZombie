@@ -61,16 +61,29 @@ var Tutorial = {
 	    this.y = guide.y;
 	  }
 	},
-	option: 1
+	epilog: {
+	  name: "epilogTutorial",
+	  url: 'http://cs.unc.edu/~stancill/comp585/tutorial_epilog.ogg',
+	  x: 0,
+	  y: 0,
+	  panner: true,
+	  move: function( guide ) {
+	    this.x = guide.x;
+	    this.y = guide.y;
+	  }
+	},
+	option: 5
 }
 Tutorial.prologUrls =	[ Tutorial.tutorial1.url,
 											  Tutorial.tutorial2.url,
 											  Tutorial.tutorial3.url,
-											  Tutorial.tutorial4.url ];
+											  Tutorial.tutorial4.url,
+                        Tutorial.epilog.url ];
 Tutorial.prologNames = [ Tutorial.tutorial1.name,
 													Tutorial.tutorial2.name,
 													Tutorial.tutorial3.name,
-													Tutorial.tutorial4.name ];
+													Tutorial.tutorial4.name,
+                          Tutorial.epilog.name ];
 Tutorial.prolog = function( option, callback ) {
 	RemoveAllListeners();
 	switch (option) {
@@ -227,9 +240,20 @@ var Level1 = {
 	    this.y = guide.y;
 	  }
 	},
+	epilog: {
+	  name: "epilogLvl1",
+	  url: 'http://cs.unc.edu/~stancill/comp585/level1_epilog.ogg',
+	  x: 0,
+	  y: 0,
+	  panner: true,
+	  move: function( guide ) {
+	    this.x = guide.x;
+	    this.y = guide.y;
+	  }
+	}
 }
-Level1.prologUrls =	[ Level1.prolog1.url ];
-Level1.prologNames = [ Level1.prolog1.name ];
+Level1.prologUrls =	[ Level1.prolog1.url, Level1.epilog.url ];
+Level1.prologNames = [ Level1.prolog1.name, Level1.epilog.name ];
 Level1.prolog = function( option, callback ) {
 	var level = Level1;
 	RemoveAllListeners();
@@ -301,9 +325,20 @@ var Level2 = {
 	    this.y = guide.y;
 	  }
 	},
+	epilog: {
+	  name: "epilogLvl2",
+	  url: 'http://cs.unc.edu/~stancill/comp585/level2_epilog.ogg',
+	  x: 0,
+	  y: 0,
+	  panner: true,
+	  move: function( guide ) {
+	    this.x = guide.x;
+	    this.y = guide.y;
+	  }
+	}
 }
-Level2.prologUrls =	[ Level2.prolog1.url ];
-Level2.prologNames = [ Level2.prolog1.name ];
+Level2.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
+Level2.prologNames = [ Level2.prolog1.name, Level2.epilog.name ];
 Level2.prolog = function( option, callback ) {
 	var level = Level2;
 	RemoveAllListeners();
