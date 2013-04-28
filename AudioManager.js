@@ -46,6 +46,7 @@ function AudioManager( initialOptions ) {
   this.nodes.masterGain.connect( this.nodes.destination );
   this.nodes.coreEffectsGain.connect( this.nodes.masterGain );
   this.nodes.effectsGain.connect( this.nodes.coreEffectsGain );
+  this.nodes.backgroundGain.connect( this.nodes.coreEffectsGain );
 }
 
 
@@ -53,6 +54,13 @@ function AudioManager( initialOptions ) {
 AudioManager.prototype.masterGainChanged = function ( e ) {
     var value = parseFloat( e );
     this.nodes.masterGain.gain.value = value;
+};
+
+
+// Changes the background gain value
+AudioManager.prototype.backgroundGainChanged = function ( e ) {
+    var value = parseFloat( e );
+    this.nodes.backgroundGain.gain.value = value;
 };
 
 
@@ -211,7 +219,7 @@ AudioManager.prototype.play = function( options ) {
     panner,
     resumePanner;
   if ( typeof sound == 'undefined' || sound == null ) {
-    alert( "Specified sound was either undefined or null." );
+    console.log( "Specified sound was either undefined or null." );
     return;
   }
   // discard old nodes that have passed their buffer duration
@@ -272,6 +280,8 @@ AudioManager.prototype.play = function( options ) {
   sound.length = sound.buffer.duration;
   if ( typeof options.panner != 'undefined' && options.panner ) {
     source.connect( panner );
+  } else if ( typeof options.background != 'undefined' && options.background ) {
+    source.connect( this.nodes.backgroundGain );
   } else {
     source.connect( channel );
   }

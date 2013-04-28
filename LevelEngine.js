@@ -4,14 +4,11 @@ var dc = function(tag) { return document.createElement(tag); };
 
 var lvl1;
 var startTime, endTime; // variables to keep time
-var gameOver = false;
-var playing = false;
 var map = getBlankMap();
 
-// basic entities
+// basic global entities
 var player = new Player();
 var gameGuide = new Guide();
-var audioManager = new AudioManager();
 
 // create one zombie
 var NUMBER_OF_ZOMBIES = 0;
@@ -19,96 +16,9 @@ var zombie = new Zombie(1, Math.random() * (map[0].length - 4) + 3,
       Math.random() * (map.length - 4) + 3,
       Math.floor(Math.random() * 3));
 
-// create soundObjs that are always used
-var soundObjHay = {
-  name: "hay",
-  url: 'http://www.cs.unc.edu/~stancill/comp585/Hay_steps_2.ogg'
-}
-var soundObjConcrete = {
-  name: "concrete",
-  url: 'http://www.cs.unc.edu/~stancill/comp585/Concrete_Steps_2.ogg'
-}
-var soundObjWallBump = {
-  name: "wallBump",
-  url: 'http://cs.unc.edu/~stancill/comp585/bump.mp3'
-}
-var soundObjWin = {
-  name: "win",
-  url: 'http://cs.unc.edu/~stancill/comp585/tada.wav'
-}
-var soundObjLose = {
-  name: "lose",
-  url: 'http://cs.unc.edu/~stancill/comp585/gameover.ogg'
-}
-
-// tutorial soundObjs
-var tutorial1 = {
-  name: "tutorial1",
-  url: 'http://cs.unc.edu/~stancill/comp585/tutorial1.ogg',
-  x: 0,
-  y: 0,
-  panner: true,
-  move: function(guide) {
-    this.x = guide.x;
-    this.y = guide.y;
-  }
-}
-var tutorial2 = {
-  name: "tutorial2",
-  url: 'http://cs.unc.edu/~stancill/comp585/tutorial2.ogg',
-  x: 0,
-  y: 0,
-  panner: true,
-  move: function(guide) {
-    this.x = guide.x;
-    this.y = guide.y;
-  }
-}
-var tutorial3 = {
-  name: "tutorial3",
-  url: 'http://cs.unc.edu/~stancill/comp585/tutorial3.ogg',
-  x: 0,
-  y: 0,
-  panner: true,
-  move: function(guide) {
-    this.x = guide.x;
-    this.y = guide.y;
-  }
-}
-var tutorial4 = {
-  name: "tutorial4",
-  url: 'http://cs.unc.edu/~stancill/comp585/tutorial4.ogg',
-  x: 0,
-  y: 0,
-  panner: true,
-  move: function(guide) {
-    this.x = guide.x;
-    this.y = guide.y;
-  }
-}
-var overHere = {
-  name: "overHere",
-  url: 'http://cs.unc.edu/~stancill/comp585/overhere.ogg',
-  x: 0,
-  y: 0,
-  panner: true,
-  move: function(guide) {
-    this.x = guide.x;
-    this.y = guide.y;
-  }
-}
-
 // arrays to hold variables that need sound and sound updating
-var toPlayUrl = [soundObjHay.url,
-                 soundObjConcrete.url,
-                 soundObjWallBump.url,
-                 soundObjWin.url,
-                 soundObjLose.url]
-var toPlayNames = [soundObjHay.name,
-                   soundObjConcrete.name,
-                   soundObjWallBump.name,
-                   soundObjWin.name,
-                   soundObjLose.name]
+var toPlayUrl = [];
+var toPlayNames = [];
 var toUpdate = [];
 
 // map attributes
@@ -128,136 +38,26 @@ function footStep() {
   var yblock = Math.floor(player.y);
   var floorType = map[yblock][xblock];
   if(floorType == 3)
-    audioManager.play(soundObjConcrete);
+    audioManager.play(globalLevel.soundObjConcrete);
   else
-    audioManager.play(soundObjHay);
+    audioManager.play(globalLevel.soundObjHay);
 }
 
 function wallBump() {
   var now = new Date().getTime();
   if ((lastWallBump == 0) || ((now - lastWallBump) > wallDelay)) {
     lastWallBump = now;
-    audioManager.play(soundObjWallBump);
+    audioManager.play(globalLevel.soundObjWallBump);
   }
 }
 
 function winSound() {
-  audioManager.play(soundObjWin);
+  audioManager.play(globalLevel.soundObjWin);
 }
 
 function loseSound() {
-  audioManager.play(soundObjLose);
+  audioManager.play(globalLevel.soundObjLose);
 }
-
-function togglePause() {
-  if (playing == true){
-    playing = false;
-    audioManager.pauseEffects();
-  } else {
-    audioManager.resumeEffects();
-    playing = true;
-  }
-}
-
-// specialized engine for tutorial level (level 0)
-var tstate;
-function tutorialLevelCycle(state, callback) {
-  RemoveAllListeners();
-  switch (state) {
-    case 1:
-      // play the opening audio
-      console.log("tutorial level cycle 1");
-      tutorial1.move(gameGuide);
-      audioManager.updatePosition(tutorial1);
-      audioManager.play(tutorial1);
-      setTimeout(function() {
-          tutorialLevelCycle(2, callback);
-        }, 35000);
-      break;
-    case 2:
-      // play the next sound
-      // enable left and right turns
-      console.log("tutorial level cycle 2");
-      tutorial2.move(gameGuide);
-      audioManager.updatePosition(tutorial2);
-      audioManager.play(tutorial2);
-
-      // move to player's right
-      setTimeout(function() {
-          gameGuide.x = 5.5;
-          gameGuide.y = 7.5;
-          tutorial2.move(gameGuide);
-          audioManager.updatePosition(tutorial2);
-          updateMiniMap();
-        }, 2000);
-
-      // move behind player
-      setTimeout(function() {
-          gameGuide.x = 3.5;
-          gameGuide.y = 5.5;
-          tutorial2.move(gameGuide);
-          audioManager.updatePosition(tutorial2);
-          updateMiniMap();
-        }, 5000);
-
-      // move to player's left
-      setTimeout(function() {
-          gameGuide.x = 5.5;
-          gameGuide.y = 3.5;
-          tutorial2.move(gameGuide);
-          audioManager.updatePosition(tutorial2);
-          updateMiniMap();
-        }, 7500);
-
-      // move in front of player
-      setTimeout(function() {
-          gameGuide.x = 7.5;
-          gameGuide.y = 5.5;
-          tutorial2.move(gameGuide);
-          audioManager.updatePosition(tutorial2);
-          updateMiniMap();
-        }, 10500);
-
-      setTimeout(function() {
-          tutorialLevelCycle(3, callback);
-        }, 13000);
-      break;
-    case 3:
-      console.log("tutorial level cycle 3");
-      tutorial3.move(gameGuide);
-      audioManager.updatePosition(tutorial3);
-      audioManager.play(tutorial3);
-
-      setTimeout(function() {
-          tutorialLevelCycle(4, callback);
-        }, 31000);
-      break;
-    case 4:
-      LevelKeypressListener();
-      gameGuide.x = 3.5;
-      gameGuide.y = 5.5;
-      overHere.move(gameGuide);
-      audioManager.updatePosition(overHere);
-      console.log(player.rot);
-      if (player.rot == Math.PI) {
-        audioManager.stop(overHere);
-        tutorialLevelCycle(5, callback);
-      } else {
-        audioManager.play(overHere);
-        setTimeout( function() { tutorialLevelCycle(4, callback); } , 2500);
-      }
-      break;
-    case 5:
-      tutorial4.move(gameGuide);
-      audioManager.updatePosition(tutorial4);
-      audioManager.play(tutorial4);
-
-      // call the callback
-      setTimeout( function() { callback(); } , 10500);
-      break;
-  }
-}
-
 
 function gameCycle() {
   // Check the win condition
@@ -283,50 +83,6 @@ function gameCycle() {
   updateConsoleLog();
 
   gameOver = (player.winner || player.eaten);
-}
-
-function getDuration(timeMillis){
-    var units = [
-        {label:"millis",    mod:1000,},
-        {label:"seconds",   mod:60,},
-        {label:"minutes",   mod:60,},
-        {label:"hours",     mod:24,},
-        {label:"days",      mod:7,},
-        {label:"weeks",     mod:52,},
-    ];
-    var duration = new Object();
-    var x = timeMillis;
-    for (i = 0; i < units.length; i++){
-        var tmp = x % units[i].mod;
-        duration[units[i].label] = tmp;
-        x = (x - tmp) / units[i].mod
-    }
-    return duration;
-}
-
-function millisecondsToStr( time ) {
-  var duration = getDuration( time );
-  var str = "";
-  // if (duration.weeks > 0)
-  //   str += duration.weeks + " weeks, ";
-  // if (duration.days > 0)
-  //   str += duration.days + " days, ";
-  // if (duration.hours > 0)
-  //   str += duration.hours + " hours, ";
-  if (duration.minutes > 0) {
-    if (duration.minutes == 1) {
-      str += duration.minutes + " minute, ";
-    } else {
-      str += duration.minutes + " minutes, ";
-    }
-  }
-  if (duration.minutes > 0)
-    str += " and "
-  if (duration.seconds > 0)
-    str += duration.seconds + " seconds!";
-  // if (duration.millis > 0)
-  //   str += duration.millis + " milliseconds";
-  return str;
 }
 
 // display user coordinates

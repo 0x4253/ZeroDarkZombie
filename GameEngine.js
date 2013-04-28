@@ -1,231 +1,132 @@
+////////////////////////////////////////////////////////
+// 					variables used
+////////////////////////////////////////////////////////
+var gameAlive = false;
 var startLevelNumber = 0;
+var levelAlive = false;
+var playProlog = false;
 var gameOver = false;
 var playing = false;
-var loading = true;
-var loadingSound = true;
-var levelAlive;
-var waitTime;
-var distanceFromGuide;
-var levelCompleted = 2;
-var numLevels = 3; // one greater than actual num levels
-var menuSound = {
-	url: 'http://www.cs.unc.edu/~stancill/comp585/Blaine_intro.ogg',
-	name: "menuSound"
-}
-var bg_noise = {
-	url: 'http://cs.unc.edu/~stancill/comp585/Drone_Dark_1.ogg',
-	name: "bg_noise",
-	loop: true
-}
-//var map;
-//
 
-
-
+////////////////////////////////////////////////////////
+// 					functions used
+////////////////////////////////////////////////////////
 function startGame() {
-	setTimeout(function() {
-		initGameEngine();
+	setTimeout( function() {
+		// bind keys for menu
+		MenuKeypressListener();
+
+		// render menu visuals
 		drawMenu();
 		drawSkull();
-		setTimeout(function(){drawText()}, 1000);
-		GameEngineLoop();
+		setTimeout( function() { drawText() }, 500);
 
-		var menuToPlayURLs = [menuSound.url, bg_noise.url];
-		var menuToPlayNames = [menuSound.name, bg_noise.name];
+		// load and play menu sounds
+		var menuToPlayURLs = [ globalMenu.menuStartSound.url,
+													 globalMenu.menuBgNoise.url,
+													 globalMenu.loading.url ];
+		var menuToPlayNames = [ globalMenu.menuStartSound.name,
+														globalMenu.menuBgNoise.name,
+														globalMenu.loading.name ];
 		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
-		audioManager.load(menuUrlMap, function() {
-			audioManager.play(bg_noise);
-			setTimeout(function() {startMenuSound();}, 3000);
+		audioManager.load( menuUrlMap, function() {
+			audioManager.play(globalMenu.menuBgNoise);
+			setTimeout( function() { startMenuSound(); }, 3000 );
 		});
-
 	}, 100);
 }
 
 function startMenuSound() {
-	if (!levelAlive) {
-		audioManager.play(menuSound);
-		setTimeout(function() {startMenuSound();}, 20000);
+	if ( !levelAlive ) {
+		audioManager.play( globalMenu.menuStartSound );
+		setTimeout( function() { startMenuSound(); }, 20000 );
 	}
 }
 
-function drawMenu(){
-	var miniMap = getid("minimap");     // the actual map
-	var ctx = miniMap.getContext("2d");
+function startLevel( num ) {
+	startLevelNumber = num;
 
-	ctx.fillStyle = "rgb(50, 150, 50)";
-	ctx.fillRect(0,0,miniMap.width,miniMap.height);
-	var img=document.getElementById("bg");
-	ctx.drawImage(img, 0, 0, img.width, img.height);
-	var img=document.getElementById("bg_title");
-	ctx.drawImage(img, 0, 100, img.width, img.height);
-}
-
-function drawSkull(){
-	var miniMap = getid("minimap");     // the actual map
-	var ctx = miniMap.getContext("2d");
-	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
-	var img=document.getElementById("bg_skull");
-	ctx.drawImage(img, -30, 300, img.width, img.height);
-}
-
-function drawText(){
-	if(!levelAlive){
-		var miniMap = getid("minimap");     // the actual map
-		var ctx = miniMap.getContext("2d");
-
-		ctx.globalAlpha = 1; //sets opacity. 0 = transparent
-		var img=document.getElementById("bg_start");
-		ctx.drawImage(img, -5, 170, img.width, img.height);
-	}
-}
-
-function initGameEngine() {
-	MenuKeypressListener();
-	levelAlive = false;
+	// load loading sound as it gets destroyed in clearMap()
+	var menuToPlayURLs = [ globalMenu.loading.url ];
+	var menuToPlayNames = [ globalMenu.loading.name ];
+	var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
+	audioManager.load( menuUrlMap, function() {
+		setTimeout( function() {
+			gameAlive = true;
+			clearMap();
+			levelAlive = false;
+	  	GameEngineLoop();
+		} , 300);
+	});
 }
 
 function GameEngineLoop() {
-	if (levelAlive == false && startLevelNumber <= levelCompleted + 1) {
-		switch (startLevelNumber) {
-			case 1:
-				switchToLevel();
-				initTutorial(Tutorial);
-				// initLevel(Level1);
-				levelCycle();
-				break;
-			case 2:
-				switchToLevel();
-				initLevel(Level2);
-				levelCycle();
-				break;
-			case numLevels:
-				document.location.reload();
-				break;
+	// only change level if levelAlive is false
+	if ( levelAlive == false ) {
+		// load next level
+		if ( startLevelNumber >= levels.length ) {
+			// reload to main menu
+			document.location.reload();
+		} else {
+			loadLevel( startLevelNumber );
+			levelAlive = true;
 		}
 	}
 
-	setTimeout(function() {
-		GameEngineLoop();
-	}, 100);
+	// only if the game is alive
+	// keep looping
+	if ( gameAlive ) {
+		setTimeout( function() {
+			GameEngineLoop();
+		}, 100);
+	}
 }
 
-function clearLevel() {
+function loadLevel( lvlNum ) {
+	clearMap();
+	console.log("Loading level num: " + lvlNum);
+	console.log("Level: " + levels);
+	initLevel( levels[ lvlNum ] );
+}
 
-	if (levelAlive) {
-		if (player.winner){
-			levelCompleted++;
-		}
-		console.log("Level is over");
-		levelAlive = false;
-		startLevelNumber += 1;
-
-		RemoveAllListeners();
-
-		// enable/disable HTML buttons
-		for (var i = 1 ; i < levelCompleted + 2 ; i++){ //enable buttons of comepleted levels
-			var idname = "#level" + i;
-			$(idname).removeAttr("disabled");
-		}
-		$("#pauseButton").attr("disabled", "disabled");
-		$("#quitButton").attr("disabled", "disabled");
-		clearMap();
-	}
-
+function update(totalTime) {
+  $.create("http://followmyvoice.herokuapp.com/leaderboards/", {
+    leaderboard: {
+      name: "tester",
+      time: totalTime
+      }
+    }, function(response) {
+      console.log(response);
+    }
+  );
 }
 
 function levelCycle() {
-	if (loading) {
-		document.getElementById("loading").style.display="block";
-		if (loadingSound) {
-			audioManager.loadAndPlay("Loading");
-			loadingSound = false;
-		}
-	} else {
-		document.getElementById("loading").style.display="none";
-		loadingSound = true;
-	}
-
-	if (playing) {
-		gameCycle();
-	}
-
-	if (gameOver) {
+	if ( gameOver ) {
+		// playing = false;
 		audioManager.stopAll();
 		gameGuide.play = false;
 		endTime = new Date();
-	  if (player.eaten) {
-	    outputToScreen("You've been eaten! It took " +
-	        millisecondsToStr( endTime - startTime ));
-	    audioManager.loadAndPlay("Oh no!. . You've been eaten!. . It took " +
-	        millisecondsToStr( endTime - startTime ));
+		totalTime = endTime - startTime;
+
+	  if ( player.eaten ) {
+	  	loseSound();
+	  } else if ( player.winner ) {
+	  	update( totalTime );
+	  	winSound();
 	  }
-	  else if (player.winner) {
-	  	endTime = new Date();
-	  	outputToScreen("YOU WON! It took " +
-	        millisecondsToStr( endTime - startTime ));
-	    audioManager.loadAndPlay("Yay!. . You won!. .  It took " +
-	        millisecondsToStr( endTime - startTime ));
-	  }
-		setTimeout(function() {
-			clearLevel();
-		}, 5000);
+		setTimeout( function() {
+			levelAlive = false;
+			gameOver = false;
+			startLevelNumber++;
+		}, 2000);
 	} else {
-		setTimeout(function() {
-			levelCycle();
-		}, 1000 / 10);
+		gameCycle();
+		setTimeout(function() { levelCycle(); }, 100);
 	}
 }
 
-function switchToLevel() {
-	levelAlive = true;
-	gameOver = false;
-	playing = false;
-	clearMap();
-}
-
-function initTutorial(tutorial) {
-	// initialize map
-	tutorial.randomizeMap();
-	map = tutorial.map;
-	mapWidth = map[0].length;
-	mapHeight = map.length;
-
-	// initialize player/guide/zombie(s)
-	player = tutorial.player;
-	NUMBER_OF_ZOMBIES = tutorial.NUMBER_OF_ZOMBIES;
-	gameGuide = tutorial.gameGuide;
-
-	// initialize sounds for AudioManager
-	audioManager.masterGainChanged( 1 );
-
-	toPlayUrl.push(tutorial1.url);
-	toPlayNames.push(tutorial1.name);
-
-	toPlayUrl.push(tutorial2.url);
-	toPlayNames.push(tutorial2.name);
-
-	toPlayUrl.push(tutorial3.url);
-	toPlayNames.push(tutorial3.name);
-
-	toPlayUrl.push(tutorial4.url);
-	toPlayNames.push(tutorial4.name);
-
-	toPlayUrl.push(overHere.url);
-	toPlayNames.push(overHere.name);
-
-	var urlMap = [ toPlayNames, toPlayUrl ];
-	audioManager.load(urlMap, tutorialStart);
-
-	// draw map
-	drawMiniMap();
-
-	setTimeout(function() {
-		LevelKeypressListener();
-		startTime = new Date();
-	}, tutorial.startTimeDelay);
-}
-
-function initLevel(lvl){
+function initLevel( lvl ) {
 	// initialize map
 	lvl.randomizeMap();
 	map = lvl.map;
@@ -233,100 +134,155 @@ function initLevel(lvl){
 	mapHeight = map.length;
 
 	// initialize player/guide/zombie(s)
+	// for the level engine
 	player = lvl.player;
-	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
 	gameGuide = lvl.gameGuide;
+	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
 
-	// initialize sounds for AudioManager
-	audioManager.masterGainChanged( 1 );
-  if (NUMBER_OF_ZOMBIES > 0) {
-		toPlayUrl.push(zombie.audioUrl);
-		toPlayNames.push(zombie.name);
+	// load global guide sounds
+	for ( var soundObjKey in globalGuide ) {
+		toPlayUrl.push( globalGuide[ soundObjKey ].url );
+		toPlayNames.push( globalGuide[ soundObjKey ].name );
 	}
-	toPlayUrl.push(gameGuide.audioUrl);
-	toPlayNames.push(gameGuide.name);
+
+	// load global level sounds
+	for ( var soundObjKey in globalLevel ) {
+		toPlayUrl.push( globalLevel[ soundObjKey ].url );
+		toPlayNames.push( globalLevel[ soundObjKey ].name );
+	}
+
+	// load level's prolog sound(s)
+	for (var i = 0; i < lvl.prologUrls.length; i++) {
+		toPlayUrl.push( lvl.prologUrls[ i ] );
+		toPlayNames.push( lvl.prologNames[ i ] );
+	};
+
+	// load zombie sounds
+  if (NUMBER_OF_ZOMBIES > 0) {
+		toPlayUrl.push( zombie.audioUrl );
+		toPlayNames.push( zombie.name );
+	}
+
+	// tell audioManager to load sounds
+	// after loading all sounds it will perform
+	// the level's prolog
 	var urlMap = [ toPlayNames, toPlayUrl ];
-	audioManager.load(urlMap, startSounds);
+	audioManager.masterGainChanged( 1 ); // set master gain level
+	audioManager.backgroundGainChanged( 0.3 ); // set background gain level
+	setTimeout( function() {
+		audioManager.load( urlMap, function () { startProlog( lvl ) } );
+	}, 2000);
+
+	// start the loading gif and sound
+	document.getElementById("loading").style.display="block";
+	audioManager.play( globalMenu.loading );
+}
+
+function startProlog( lvl ) {
+	// stop the loading gif
+	document.getElementById("loading").style.display="none";
+
+	// update the guides position and all of
+	// the guide's global sounds
+	toUpdate.push(gameGuide);
+	for ( var soundObjKey in globalGuide ) {
+		toUpdate.push(globalGuide[ soundObjKey ]);
+	}
+
+	// update the player's position
+  toUpdate.push(player);
+  audioManager.updateAllPositions(toUpdate);
 
 	// draw map
 	drawMiniMap();
 
-	setTimeout(function() {
-		LevelKeypressListener();
-		startTime = new Date();
-	}, lvl.startTimeDelay);
+  // start level engine's gameCycle()
+  // and play prolog
+  playProlog = true;
+  PrologPlay();
+	LevelKeypressListener(); // rebind keys to level inputs
+	lvl.prolog( lvl.option, playLevel );
 }
 
-function tutorialStart() {
-	toUpdate.push(gameGuide);
-	// toUpdate.push(tutorial1);
-	// toUpdate.push(tutorial2);
-	// toUpdate.push(tutorial3);
-	// toUpdate.push(tutorial4);
-  toUpdate.push(player);
-  audioManager.updateAllPositions(toUpdate);
-  tutorialLevelCycle(1, clearLevel);
-  loading = false;
-  playing = true;
-}
-
-function startSounds() {
-	console.log("Starting sounds");
-  // start playing all sounds
-  if (gameGuide.audioUrl != "") {
-  	// audioManager.play(gameGuide);
-  	console.log("Start gameGuide sound");
-  	gameGuide.play = true;
-  	gameGuide.start( gameGuide );
-  }
-  if (NUMBER_OF_ZOMBIES > 0)
-		audioManager.play(zombie);
-
-	// update all locations to default & add to the update array
-	toUpdate = [];
-	if (NUMBER_OF_ZOMBIES > 0)
-  	toUpdate.push(zombie);
-	toUpdate.push(gameGuide);
-	toUpdate.push(player);
-	audioManager.updateAllPositions(toUpdate);
-
-	// once all the sounds are loaded allow player to play
-	loading = false;
-	playing = true;
-}
-
-// obsolete function, keep for reference
-function pauseGame() {
-	button = document.getElementById("pauseButton");
-	if (levelAlive) {
-		if (button.value == "Pause Game [space]") {
-			button.value = "Resume Game [space]";
-			audioManager.pauseEffects(); // had to do these opposite b/c of the way
-																	 // they display
-		} else {
-			button.value = "Pause Game [space]";
-			audioManager.resumeEffects();
-		}
-		togglePause();
+// allows prolog to have the gameCycle() running
+function PrologPlay() {
+	if ( playProlog ) {
+		gameCycle();
+		setTimeout( function() { PrologPlay(); }, 100 );
 	}
 }
 
-function startLevel(num) {
-	startLevelNumber = num;
-  clearMap();
+// start the level officially
+function playLevel() {
+	// stop the gameCycle() for the prolog
+	playProlog = false;
+
+ 	// start playing all sounds
+	console.log("Starting sounds");
+	console.log("Start gameGuide sound");
+	gameGuide.play = true;
+	gameGuide.start( gameGuide );
+
+  if (NUMBER_OF_ZOMBIES > 0)
+		audioManager.play(zombie);
+
+	// add zombie to the update array
+	if (NUMBER_OF_ZOMBIES > 0)
+  	toUpdate.push(zombie);
+	audioManager.updateAllPositions(toUpdate);
+
+	// once all the sounds are loaded allow player to play
+	startTime = new Date();
+	LevelKeypressListener();
+	levelCycle();
 }
 
-
-  // clear the canvas
-function clearMap(){
+function clearMap() {
+	// clear the canvas
 	var mm = $('#minimap')[0];
 	mm.width = mm.width;
 	var mmo = $('#minimapobjects')[0];
 	mmo.width = mmo.width;
 	var lm = $('#levelmap')[0];
 	lm.width = lm.width;
-	//audioManager.stopAll();
+
+	// stop all sounds
 	audioManager.destroyAll();
-	loading = true;
 }
 
+function togglePause() {
+  if ( playing == true ){
+    playing = false;
+    audioManager.pauseEffects();
+  } else {
+    audioManager.resumeEffects();
+    playing = true;
+  }
+}
+
+function drawMenu(){
+	var miniMap = getid("minimap"); // the actual map
+	var ctx = miniMap.getContext("2d");
+	ctx.fillStyle = "rgb(50, 150, 50)";
+	ctx.fillRect(0,0,miniMap.width,miniMap.height);
+	var img = document.getElementById("bg");
+	ctx.drawImage(img, 0, 0, img.width, img.height);
+	var img = document.getElementById("bg_title");
+	ctx.drawImage(img, 0, 100, img.width, img.height);
+}
+
+function drawSkull(){
+	var miniMap = getid("minimap"); // the actual map
+	var ctx = miniMap.getContext("2d");
+	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
+	var img = document.getElementById("bg_skull");
+	ctx.drawImage(img, -30, 300, img.width, img.height);
+}
+
+function drawText(){
+	var miniMap = getid("minimap"); // the actual map
+	var ctx = miniMap.getContext("2d");
+	ctx.globalAlpha = 1; //sets opacity. 0 = transparent
+	var img = document.getElementById("bg_start");
+	ctx.drawImage(img, -5, 170, img.width, img.height);
+}
