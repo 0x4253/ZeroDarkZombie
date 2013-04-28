@@ -1,36 +1,133 @@
+ body{
+  overflow:hidden;
+  top:0;
+ }
+
+
  div#minimapcontainer {
-    }
-    canvas#minimap {
-     position : absolute;
-    }
-    canvas#minimapobjects {
-     position : absolute;
-    }
-    canvas#levelmap {
-     position : absolute;
-    }
-    .sprite{
-      display:none;
-    }
-    #gamemodifiers{
-      position:absolute;
-      left:680px;
-      width:px;
-    }
-    #gamemodifiers label{
-      display: inline-block;
-      float: left;
-      clear: left;
-      width: 160px;
-      text-align: left;
-    }
-    #gamemodifiers input {
-      display: inline-block;
-      float: left;
-    }
-    #screen {
-      position: absolute;
-      left: 0;
-      top: 0;
-      background: #000;
-    }
+ }
+ canvas#minimap {
+   position : absolute;
+ }
+ canvas#minimapobjects {
+   position : absolute;
+ }
+ canvas#levelmap {
+   position : absolute;
+ }
+ .sprite{
+  display:none;
+}
+
+#main_menu{
+  position:absolute;
+  top:350px;
+  left:175px;
+  z-index:9999;
+  width:100px;
+  opacity:0.7;
+}
+#sub-menu{
+  position:absolute;
+  display:none;
+  top:300px;
+  left:175px;
+  z-index:9999;
+  width:100px;
+  opacity:0.7;
+}
+
+#gamemodifiers{
+  position:absolute;
+  left:680px;
+  width:px;
+}
+#gamemodifiers label{
+  display: inline-block;
+  float: left;
+  clear: left;
+  width: 160px;
+  text-align: left;
+}
+#gamemodifiers input {
+  display: inline-block;
+  float: left;
+}
+#screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #000;
+}
+
+.small_buttons{
+  -moz-box-shadow:inset 0px 0px 0px 0px #ffffff;
+  width:140px;
+  -webkit-box-shadow:inset 0px 0px 0px 0px #ffffff;
+  box-shadow:inset 0px 0px 0px 0px #ffffff;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+  background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+  background-color:#ededed;
+  -moz-border-radius:12px;
+  -webkit-border-radius:12px;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  display:inline-block;
+  color:#777777;
+  font-family:arial;
+  font-size:12px;
+  text-align:center;
+  padding-top:3px;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #aaaaaa;
+}
+
+.small_buttons:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #880000), color-stop(1, #440000) );
+  position:relative;
+  top:1px;
+  outline:none;
+}
+.small_buttons:focus {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #880000), color-stop(1, #440000) );
+  position:relative;
+  top:1px;
+  outline:none;
+}
+
+.button_class {
+  -moz-box-shadow:inset 0px 0px 0px 0px #ffffff;
+  width:350px;
+  -webkit-box-shadow:inset 0px 0px 0px 0px #ffffff;
+  box-shadow:inset 0px 0px 0px 0px #ffffff;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+  background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+  background-color:#ededed;
+  -moz-border-radius:12px;
+  -webkit-border-radius:12px;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  display:inline-block;
+  color:#777777;
+  font-family:arial;
+  font-size:40px;
+  font-weight:bold;
+  text-align:center;
+  padding-top:6px;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #aaaaaa;
+}
+.button_class:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #880000), color-stop(1, #440000) );
+  position:relative;
+  top:1px;
+  outline:none;
+}
+.button_class:focus {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #880000), color-stop(1, #440000) );
+  position:relative;
+  top:1px;
+  outline:none;
+}
