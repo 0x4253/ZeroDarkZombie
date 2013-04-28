@@ -1,26 +1,26 @@
 <html>
 <head>
-  <img id="marine" class="sprite" src="marinez.png" alt="Marines" width="1088" height="896">
-  <img id="zombie" class="sprite" src="zombie.png" alt="Zombie" width="640" height="480">
-  <img id="guide" class="sprite" src="guide.gif" alt="Guide" width="798" height="2828">
+  <img id="marine" class="sprite" src="images/marinez.png" alt="Marines" width="1088" height="896">
+  <img id="zombie" class="sprite" src="images/zombie.png" alt="Zombie" width="640" height="480">
+  <img id="guide" class="sprite" src="images/guide.gif" alt="Guide" width="798" height="2828">
 <title>-Follow My Voice-</title>
 
 
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
 
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
   <script src="jquery.rest.js" type="text/javascript"></script>
 
-  <script src="AudioManager.js" type="text/javascript"></script>
-  <script src="global_config.js" type="text/javascript"></script>
-  <script src="zombieClass.js" type="text/javascript"></script>
-  <script src="playerClass.js" type="text/javascript"></script>
-  <script src="guideClass.js" type="text/javascript"></script>
-  <script src="KeypressListeners.js" type="text/javascript"></script>
-  <script src="Levels.js" type="text/javascript"></script>
-  <script src="GameEngine.js" type="text/javascript"></script>
-  <script src="LevelEngine.js" type="text/javascript"></script>
+  <script src="scripts/AudioManager/AudioManager.js" type="text/javascript"></script>
+  <script src="scripts/global_config.js" type="text/javascript"></script>
+  <script src="scripts/zombieClass.js" type="text/javascript"></script>
+  <script src="scripts/playerClass.js" type="text/javascript"></script>
+  <script src="scripts/guideClass.js" type="text/javascript"></script>
+  <script src="scripts/KeypressListeners.js" type="text/javascript"></script>
+  <script src="scripts/Levels.js" type="text/javascript"></script>
+  <script src="scripts/GameEngine.js" type="text/javascript"></script>
+  <script src="scripts/LevelEngine.js" type="text/javascript"></script>
 
   <script type="text/javascript">
     document.onload = startGame();
@@ -46,7 +46,7 @@
 <img id="bg_skull" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_skull.gif" alt="Title Text" style="display:none" width="700" height="271">
 <img id="bg_start" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_start.gif" alt="Title Text" style="display:none" width="700" height="67">
 
-<img id="loading" src="ajax-loader.gif" width="50" height="50" style="display:none">
+<img id="loading" src="images/ajax-loader.gif" width="50" height="50" style="display:none">
 
   <div id="minimapcontainer">
     <canvas id="minimap" width="700" height="700"></canvas>
