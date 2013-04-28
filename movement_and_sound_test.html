@@ -45,16 +45,16 @@
 
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+  <script src="jquery.rest.js" type="text/javascript"></script>
 
   <script src="AudioManager.js" type="text/javascript"></script>
-  <script scr="globalSoundObjects.js" type="text/javascript"></script>
   <script src="global_config.js" type="text/javascript"></script>
   <script src="zombieClass.js" type="text/javascript"></script>
   <script src="playerClass.js" type="text/javascript"></script>
   <script src="guideClass.js" type="text/javascript"></script>
+  <script src="KeypressListeners.js" type="text/javascript"></script>
   <script src="Levels.js" type="text/javascript"></script>
   <script src="circleCasting.js" type="text/javascript"></script>
-  <script src="KeypressListeners.js" type="text/javascript"></script>
   <script src="LevelEngine.js" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -161,6 +161,7 @@
       <br>
       -->
       <input type="button" id="level1" name="sel" value="Menu" onclick="reload()">
+      <input type="button" id="tutorial" name="sel" value="Play Tutorial" onclick="startLevel(0)">
       <input type="button" id="level1" name="sel" value="Play Level 1 [#1]" onclick="startLevel(1)">
       <input type="button" id="level2" name="sel" value="Play Level 2 [#2]" onclick="startLevel(2)">
 		</form>

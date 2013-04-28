@@ -17,10 +17,10 @@ function Player(startx, starty, initRot) {
 Player.prototype.move = function() {
   if (player.speed == 1){
     this.moveForward();
-  } 
+  }
   if (player.speed == -1){
     this.moveBackward();
-  } 
+  }
   if (player.dir == 1) {
     this.turnLeft();
   }
@@ -32,8 +32,6 @@ Player.prototype.move = function() {
 }
 
 Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1 then turn left
-  if (playing == false) return;
-
   this.rot += dir * this.rotSpeed;
 
   // make sure the angle is between 0 and 360 degrees
@@ -43,8 +41,6 @@ Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1
 
 // called by moveForward and moveBackward Player methods, not to be used by the client
 Player.prototype.walk = function(dir) { // dir == 1 then walk forward, dir == -1 then walk backward
-  if (playing == false) return;
-
   if ((Math.round(this.rot * 180 / Math.PI) / 45) % 2 == 0){ // If the player is looking straight up, down, left, or right
     var newX = this.x + Math.cos(this.rot) * this.moveSpeed * dir;  // calculate new player position with simple trigonometry
     var newY = this.y + Math.sin(this.rot) * this.moveSpeed * dir;

@@ -7,15 +7,15 @@ function MenuKeypressListener(event) {
 		event.preventDefault();
 		switch (event.which) {
 			case 32:
-				// Pause/Resume Game
-				startLevel(1);
+				// start the tutorial level
+				startLevel(0);
 				break;
 			case 49:
 				// Play Level 1
 				startLevel(1);
 				break;
 			case 50:
-				// Play Level 1
+				// Play Level 2
 				startLevel(2);
 				break;
 			case 113:
