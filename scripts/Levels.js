@@ -65,7 +65,7 @@ var Tutorial = {
 	  name: "epilogTutorial",
 	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/tutorial_epilog.ogg'
 	},
-	option: 5
+	option: 1
 }
 Tutorial.prologUrls =	[ Tutorial.tutorial1.url,
 											  Tutorial.tutorial2.url,
