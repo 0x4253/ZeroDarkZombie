@@ -65,11 +65,11 @@ function gameCycle() {
   gameGuide.move();
   //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
   if(!playProlog){
-  if (NUMBER_OF_ZOMBIES > 0) {
-    zombie.move(player.x, player.y);
-    detectZombieCollision();
+    if (NUMBER_OF_ZOMBIES > 0) {
+      zombie.move(player.x, player.y);
+      detectZombieCollision();
+    }
   }
-}
 
   audioManager.updateAllPositions(toUpdate);
 
@@ -297,6 +297,14 @@ function drawMiniMap() {
       }
       if (wall == 4) { // if there is a wall block at this (x,y) ...
         ctx.fillStyle = "rgb(255, 255, 100)";
+        ctx.fillRect(       // ... then draw a block on the minimap
+          x * miniMapScale,
+          y * miniMapScale,
+          miniMapScale,miniMapScale
+        );
+      }
+      if (wall == 5) { // if there is a wall block at this (x,y) ...
+        ctx.fillStyle = "rgb(180, 180, 180))";
         ctx.fillRect(       // ... then draw a block on the minimap
           x * miniMapScale,
           y * miniMapScale,
