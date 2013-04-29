@@ -364,8 +364,8 @@ var Level3 = {
 	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level3_epilog.ogg'
 	}
 }
-Level3.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
-Level3.prologNames = [ Level2.prolog1.name, Level2.epilog.name ];
+Level3.prologUrls =	[ Level3.prolog1.url, Level3.epilog.url ];
+Level3.prologNames = [ Level3.prolog1.name, Level3.epilog.name ];
 Level3.prolog = function( option, callback ) {
 	var level = Level3;
 	RemoveAllListeners();
