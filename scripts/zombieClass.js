@@ -13,6 +13,7 @@ function Zombie(number, startx, starty, startNumCycles, audioUrl) {
   this.panner = true;
   this.coneOuterGain = 0.005;
   this.rolloffFactor = 4;
+  this.alive = true;
   this.isZombie = true;
 }
 

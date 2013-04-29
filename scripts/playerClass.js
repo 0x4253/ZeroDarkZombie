@@ -31,15 +31,26 @@ Player.prototype.hitZombie = function(){
     return;
   }
   console.log("Hit Zombie");
+  audioManager.stop(zombie.zombie2SoundObjs.scream);
+  audioManager.stop(zombie.zombie2SoundObjs.old);
+  zombie.soundPlaying = false;
+  zombie.alive = false;
+  setTimeout(function(){
+    zombie.alive = true;
+  },1000);
+
   audioManager.play(globalLevel.soundObjZombieHit);
   setTimeout(function(){
     audioManager.play(globalLevel.soundObjZombieDeath);
+  }, 200);
+
+  setTimeout(function(){
     do {
       zombie.x = Math.floor( Math.random() * map[0].length + 2 );
       zombie.y = Math.floor( Math.random() * map.length + 2 );
     } while ( zombie.x > map[0].length - 2 || zombie.y > map.length - 2 ||
-      Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 8 )
-  }, 200);
+      Math.sqrt( Math.pow( player.x - zombie.x , 2 ) + Math.pow( player.y - zombie.y , 2 ) ) < 8 )
+  }, 800);
     
 }
 
