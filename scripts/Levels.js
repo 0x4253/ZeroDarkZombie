@@ -383,6 +383,42 @@ Level3.prolog = function( option, callback ) {
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 
+//////////////////////////////////////
+//        Survival Mode
+//////////////////////////////////////
+var Survival_Mode = {
+	randomizeMap: function() {
+		//do nothing
+	},
+	map: getBlankMap(),
+	player: new Player(19.5, 22, (270 * Math.PI / 180)),
+	NUMBER_OF_ZOMBIES: 0,
+	gameGuide: new Guide(15.5,
+											 2.5,
+											 (-90 * Math.PI / 180),
+											 'http://cs.unc.edu/~stancill/comp585/overhere.ogg'),
+	option: 0,
+	prolog1: {
+	  name: "prolog1Lvl1",
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level1_prolog.ogg"
+	},
+	epilog: {
+	  name: "epilogLvl1",
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level1_epilog.ogg'
+	}
+}
+Level1.prologUrls =	[ Level1.prolog1.url, Level1.epilog.url ];
+Level1.prologNames = [ Level1.prolog1.name, Level1.epilog.name ];
+Level1.prolog = function( option, callback ) {
+	var level = Level1;
+	RemoveAllListeners();
+  audioManager.play(level.prolog1);
+  setTimeout(function() {
+		LevelKeypressListener();
+  	callback();
+    }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
+};
+
 
 
 function getBlankMap() {
