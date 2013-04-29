@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // 					variables used
 ////////////////////////////////////////////////////////
 var gameAlive = false;
@@ -91,11 +91,12 @@ function loadLevel( lvlNum ) {
 	initLevel( levels[ lvlNum ] );
 }
 
-function update(totalTime) {
+function update( totalTime, lvlNum ) {
   $.create("http://followmyvoice.herokuapp.com/leaderboards/", {
     leaderboard: {
       name: "tester",
-      time: totalTime
+      time: totalTime,
+      level_number: lvlNum
       }
     }, function(response) {
       console.log(response);
@@ -117,7 +118,7 @@ function levelCycle() {
         document.location.reload();
       }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
 	  } else if ( player.winner ) {
-	  	update( totalTime );
+	  	update( totalTime, startLevelNumber );
       if (narrativeOn) {
         audioManager.backgroundGainChanged( 1 ); // set background gain level
         audioManager.play( levels[ startLevelNumber ].epilog );
