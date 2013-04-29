@@ -15,14 +15,32 @@ function Player(startx, starty, initRot) {
 }
 
 Player.prototype.hitZombie = function(){
-  if ( Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 4 ){
-    console.log("Kill Zombie");
+
+  // if the player is too far away from the zombie, don't hit him
+  if ( Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) >= 4 ){
+    console.log("Zombie is too far away to hit");
+    audioManager.play(globalLevel.soundObjWoosh);
+    return;
+  }
+
+  // if the zombie is behind the player, don't hit him
+  var angle = Math.atan2( zombie.y - player.y , zombie.x - player.x );
+  if ( Math.abs( angle - player.rot ) > twoPI / 4 && Math.abs( angle - player.rot ) < 3 * twoPI / 4) {
+    console.log("Zombie is behind you.");
+    audioManager.play(globalLevel.soundObjWoosh);
+    return;
+  }
+  console.log("Hit Zombie");
+  audioManager.play(globalLevel.soundObjZombieHit);
+  setTimeout(function(){
+    audioManager.play(globalLevel.soundObjZombieDeath);
     do {
       zombie.x = Math.floor( Math.random() * map[0].length + 2 );
       zombie.y = Math.floor( Math.random() * map.length + 2 );
     } while ( zombie.x > map[0].length - 2 || zombie.y > map.length - 2 ||
       Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 8 )
-  }
+  }, 200);
+    
 }
 
 Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1 then turn left

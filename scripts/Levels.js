@@ -393,7 +393,7 @@ var Survival_Level = {
 	map: getBlankMap(),
 	player: new Player(15, 15, (90 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	zombie: new Zombie(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
+	zombie: new Zombie2(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
       Math.random() * (getBlankMap().length - 4) + 3,
       Math.floor(Math.random() * 3)),
 	gameGuide: new Guide(15.5,
@@ -403,7 +403,7 @@ var Survival_Level = {
 	option: 0,
 	prolog1: {
 	  name: "survival_prolog",
-	  url: "http://cs.unc.edu/~stancill/comp585/overhere.ogg"
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/survival_prolog.ogg"
 	},
 	
 }
