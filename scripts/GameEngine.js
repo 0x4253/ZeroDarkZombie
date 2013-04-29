@@ -180,6 +180,11 @@ function initLevel( lvl ) {
   if (NUMBER_OF_ZOMBIES > 0) {
 		toPlayUrl.push( zombie.audioUrl );
 		toPlayNames.push( zombie.name );
+
+		for ( var soundObjKey in zombie.zombie2SoundObjs ) {
+			toPlayUrl.push( zombie.zombie2SoundObjs[ soundObjKey ].url );
+			toPlayNames.push( zombie.zombie2SoundObjs[ soundObjKey ].name );
+		}
 	}
 
 	// tell audioManager to load sounds
@@ -221,9 +226,9 @@ function startProlog( lvl ) {
   PrologPlay();
 	LevelKeypressListener(); // rebind keys to level inputs
   if (narrativeOn) {
-	 lvl.prolog( lvl.option, playLevel );
+	 lvl.prolog( lvl.option, function(){ playLevel( lvl ) } );
   } else {
-    playLevel();
+    playLevel( lvl );
   }
 }
 
@@ -236,7 +241,7 @@ function PrologPlay() {
 }
 
 // start the level officially
-function playLevel() {
+function playLevel( lvl ) {
 	// stop the gameCycle() for the prolog
 	playProlog = false;
 
@@ -246,11 +251,11 @@ function playLevel() {
 	gameGuide.play = true;
 	gameGuide.start( gameGuide );
 
-  if (NUMBER_OF_ZOMBIES > 0)
+  if (NUMBER_OF_ZOMBIES > 0 && lvl.zombieStart)
 		audioManager.play(zombie);
 
 	// add zombie to the update array
-	if (NUMBER_OF_ZOMBIES > 0)
+	if (NUMBER_OF_ZOMBIES > 0 )
   	toUpdate.push(zombie);
 	audioManager.updateAllPositions(toUpdate);
 
