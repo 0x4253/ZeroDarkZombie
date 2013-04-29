@@ -283,7 +283,7 @@ var Level2 = {
 		map[height-2][width-3] = 2;
 		map[height-3][width-3] = 2;
 	},
-	player: new Player(30, 22, (0 * Math.PI / 180)),
+	player: new Player(30, 22, (210 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
 	zombieStart: true,
 	zombie: new Zombie(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
@@ -351,7 +351,7 @@ var Level3 = {
 		map[height-2][width-3] = 2;
 		map[height-3][width-3] = 2;
 	},
-	player: new Player(30, 22, (0 * Math.PI / 180)),
+	player: new Player(30, 22, (210 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
 	zombieStart: false,
 	zombie: new Zombie2(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
