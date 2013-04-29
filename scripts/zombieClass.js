@@ -19,9 +19,15 @@ function Zombie(number, startx, starty, startNumCycles, audioUrl) {
 Zombie.prototype.move = function(playerX, playerY){
 	z = this;
 	z.numCycles = (z.numCycles + 1) % z.moveTime;
-		//console.log(z.numCycles);
-	if (z.numCycles == 0) {   // only move every once in a while
-    var randChase = Math.floor(Math.random() * z.intelligence);
+	
+  var intelligence;
+  if (map[player.y][player.x] == 2) {
+    intelligence = 1000; // move randomly
+  } else {
+    intelligence = this.intelligence;
+  }
+  if (z.numCycles == 0) {   // only move every once in a while
+    var randChase = Math.floor(Math.random() * intelligence);
     if (randChase == 0)
       z.rot = Math.round(Math.atan2(playerY - z.y, playerX - z.x) * 10) / 10.0;
     else
@@ -33,13 +39,21 @@ Zombie.prototype.move = function(playerX, playerY){
     while (z.rot >= twoPI) z.rot -= twoPI;
 
     var newX = z.x + Math.cos(z.rot) * moveStep;  // calculate new zombie position with simple trigonometry
-		var newY = z.y + Math.sin(z.rot) * moveStep;
+    var newY = z.y + Math.sin(z.rot) * moveStep;
 
-		if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
-		  return; // no, bail out.
-		}
+    if (isBlocking(newX, newY)) { // Is the zombie allowed to move to the new position?
+      z.rot += twoPI / 2; // no, turn him around
+      return; // bail out.
+    }
+
+    // don't move the zombie if he is moving into a safe zone
+    if (map[Math.floor(newY)][Math.floor(newX)] == 2){
+      z.rot += twoPI / 2;
+      return;
+    }
 
     z.x = newX;
     z.y = newY;
-	}
+  }
+	
 }

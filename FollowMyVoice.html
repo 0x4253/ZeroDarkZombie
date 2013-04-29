@@ -27,38 +27,44 @@
     document.onload = startGame();
 
     $(document).ready(function() {
-    $('#start').focus();
-    console.log("set focus");
+      $('#start').focus();
     });
 
-    function showSubMenu(){
+    function showSubMenu() {
       $('#main_menu').hide();
       $('#sub-menu').show();
       $('#tutorial').focus();
+      readMenu(document.getElementById('tutorial'));
     }
-    function showMainMenu(){
+    function showMainMenu() {
       $('#main_menu').show();
       $('#sub-menu').hide();
       $('#start').focus();
+      readMenu(document.getElementById('start'));
     }
-    function hideMenus(){
+    function hideMenus() {
       $('#main_menu').hide();
       $('#sub-menu').hide();
     }
-    function downMenu(){
-      if($("#main_menu").is(":visible"))
+    function downMenu() {
+      audioManager.stop( lastSoundObj );
+      audioManager.stop( globalMenu.menu_intro );
+      if($("#main_menu").is(":visible")) {
         list = ['start','select_level'];
-      else
+        playlist = [ globalMenu.startgame, globalMenu.selectlevel ];
+      } else {
         list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+      }
 
       var selectedMenu = $('.button_class:focus').attr('id');
       var num = -1;
-      for(var i = 0; i < list.length; i++){
-        if(selectedMenu==list[i]){
+      for (var i = 0; i < list.length; i++){
+        if (selectedMenu == list[i]){
           num = i;
         }
       }
-      if(num == list.length - 1)
+      if (num == list.length - 1)
         num = 0;
       else if(num >= 0)
         num = num + 1;
@@ -66,18 +72,29 @@
         num = list.length -1;
       var newMenu = list[num];
       $(document.getElementById(newMenu)).focus();
+      lastSoundObj.name = list[num];
+      audioManager.play( playlist[num] );
     }
-  
-     function upMenu(){
-      if($("#main_menu").is(":visible"))
+
+    var lastSoundObj = {
+      name: ""
+    }
+
+     function upMenu() {
+      audioManager.stop( lastSoundObj );
+      audioManager.stop( globalMenu.menu_intro );
+      if ($("#main_menu").is(":visible")) {
         list = ['start','select_level'];
-      else
+        playlist = [ globalMenu.startgame, globalMenu.selectlevel ];
+      } else {
         list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+      }
 
       var selectedMenu = $('.button_class:focus').attr('id');
       var num = -1;
-      for(var i = 0; i < list.length; i++){
-        if(selectedMenu==list[i]){
+      for (var i = 0; i < list.length; i++){
+        if (selectedMenu == list[i]){
           num = i;
         }
       }
@@ -89,8 +106,34 @@
         num = 0;
       var newMenu = list[num];
       $(document.getElementById(newMenu)).focus();
+      lastSoundObj.name = list[num];
+      audioManager.play( playlist[num] );
     }
-  
+
+    function readMenu(x) {
+      audioManager.stop( lastSoundObj );
+      audioManager.stop( globalMenu.menu_intro );
+      if ($("#main_menu").is(":visible")) {
+        list = ['start','select_level'];
+        playlist = [ globalMenu.startgame, globalMenu.selectlevel ];
+      } else {
+        list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+      }
+
+      var selectedMenu = x.id;
+      var num = -1;
+      for (var i = 0; i < list.length; i++){
+        if (selectedMenu == list[i]){
+          num = i;
+        }
+      }
+      var newMenu = list[num];
+      $(document.getElementById(newMenu)).focus();
+      lastSoundObj.name = list[num];
+      audioManager.play( playlist[num] );
+    }
+
   </script>
 
 
@@ -98,27 +141,25 @@
 <body bgcolor="#000000">
 	<div id="main_menu">
 		<form>
-      <input type="button" id="start" class="button_class" name="sel" value="Start" onclick="startLevel(0)">
-      <input type="button" id="select_level" class="button_class" name="sel" value="Select Level" onclick="showSubMenu()">
-      <!--
-      <input type="button" id="options" name="sel" class="button_class" value="Options" onclick="startLevel(2)">
-    -->
+      <input type="button" id="start" class="button_class" name="sel" value="Start" onclick="startLevel(0)" onmouseover="readMenu(this)">
+      <input type="button" id="select_level" class="button_class" name="sel" value="Select Level" onclick="showSubMenu()" onmouseover="readMenu(this)">
 		</form>
 	</div>
   <div id="sub-menu">
     <form>
-      <input type="button" id="back_to_menu" class="button_class" name="sel" value="Main Menu" onclick="showMainMenu()">
-      <input type="button" id="tutorial" class="button_class" name="sel" value="Tutorial" onclick="startLevel(0)">
-      <input type="button" id="level1" class="button_class" name="sel" value="Level 1" onclick="startLevel(1)">
-      <input type="button" id="level2" class="button_class" name="sel" value="Level 2" onclick="startLevel(2)">
-      <input type="button" id="level3" class="button_class" name="sel" value="Level 3" onclick="startLevel(3)">
-      <input type="button" id="level4" class="button_class" name="sel" value="Level 4" onclick="startLevel(4)">
+      <input type="button" id="back_to_menu" class="button_class" name="sel" value="Main Menu" onclick="showMainMenu()" onmouseover="readMenu(this)">
+      <input type="button" id="tutorial" class="button_class" name="sel" value="Tutorial" onclick="startLevel(0)" onmouseover="readMenu(this)">
+      <input type="button" id="level1" class="button_class" name="sel" value="Level 1" onclick="startLevel(1)" onmouseover="readMenu(this)">
+      <input type="button" id="level2" class="button_class" name="sel" value="Level 2" onclick="startLevel(2)" onmouseover="readMenu(this)">
+      <input type="button" id="level3" class="button_class" name="sel" value="Level 3" onclick="startLevel(3)" onmouseover="readMenu(this)">
+      <input type="button" id="level4" class="button_class" name="sel" value="Level 4" onclick="startLevel(4)" onmouseover="readMenu(this)">
     </form>
   </div>
 
 <div id="screen"></div>
 <input type='button' class="small_buttons" value='Main Menu' id='main_menu_master' onclick="document.location.reload()"/>
 <input type='button' class="small_buttons" value='Curtain Mode: Off' id='curtain' onclick="curtainMode()"/>
+<input type='button' class="small_buttons" value='Narrative: Off' id='narrative' onclick="narrativeMode()"/>
 
 
 <img id="bg" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_bg.jpg" alt="Title Picture" style="display:none" width="700" height="700">

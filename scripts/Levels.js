@@ -65,7 +65,7 @@ var Tutorial = {
 	  name: "epilogTutorial",
 	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/tutorial_epilog.ogg'
 	},
-	option: 5
+	option: 1
 }
 Tutorial.prologUrls =	[ Tutorial.tutorial1.url,
 											  Tutorial.tutorial2.url,
@@ -149,7 +149,7 @@ Tutorial.prolog = function( option, callback ) {
 	      }, 31000);
 	    break;
 	  case 4:
-	    LevelKeypressListener();
+	    TutorialKeypressListener();
 	    gameGuide.x = 3.5;
 	    gameGuide.y = 5.5;
 	    globalGuide.overHere.move(gameGuide);
@@ -165,6 +165,7 @@ Tutorial.prolog = function( option, callback ) {
 		  }
 	    break;
 	  case 5:
+	  	LevelKeypressListener();
 	    Tutorial.tutorial4.move(gameGuide);
 	    audioManager.updatePosition(Tutorial.tutorial4);
 	    audioManager.play(Tutorial.tutorial4);
@@ -191,8 +192,8 @@ var Level1 = {
 	},
 	map: [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -211,11 +212,11 @@ var Level1 = {
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	],
-	player: new Player(15.5, 2, (90 * Math.PI / 180)),
+	player: new Player(19.5, 22, (270 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 0,
 	gameGuide: new Guide(15.5,
 											 2.5,
@@ -242,6 +243,9 @@ Level1.prolog = function( option, callback ) {
   	callback();
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
+Level1.gameGuide.move = function () {
+
+}
 
 
 //////////////////////////////////////
@@ -251,28 +255,39 @@ var Level2 = {
 	map: getBlankMap(),
 	randomizeMap: function() {
 		var map = this.map;
-		map[1][1] = 2; // starting position for player
-		var i = 1;
-		var j = 1;
-		var totalSpots = map.length + map[0].length - 4;
+		var height = map.length;
+		var width = map[0].length;
+		map[height-2][width-2] = 2; // starting position for player
+		map[height-3][width-2] = 2;
+		map[height-2][width-3] = 2;
+		map[height-3][width-3] = 2;
+		var i = height - 3;
+		var j = width - 3;
+		var totalSpots = map.length + map[0].length - 6;
 
-		while (i < map.length - 2 && j < map[0].length - 2) {
+		while (i > 1 && j > 1) {
 			var rand = Math.floor(Math.random() * totalSpots);
 			// if rand is 1 increase i, if rand is 0 increase j
-			i += rand < map.length - 2 ? 1 : 0;
-			j += rand >= map.length - 2 ? 1 : 0;
+			i -= rand < map.length - 2 ? 1 : 0;
+			j -= rand >= map.length - 2 ? 1 : 0;
+			// set map tile to concrete road
 			map[i][j] = 3;
-			if (i+1 != map.length-1 && j+1 != map[0].length-1)
+			if (i + 1 != map.length - 1 && j + 1 != map[0].length - 1)
 				map[i+1][j+1] = 3;
 		}
 
-		map[i][j] = 4;
+		map[i][j] = 4; // ending spot for the player
 		map[i + 1][j] = map[i + 1][j] == 1 ? map[i + 1][j] : 4;
 		map[i - 1][j] = map[i - 1][j] == 1 ? map[i - 1][j] : 4;
 		map[i][j + 1] = map[i][j + 1] == 1 ? map[i][j + 1] : 4;
 		map[i][j - 1] = map[i][j - 1] == 1 ? map[i][j - 1] : 4;
+
+		map[height-2][width-2] = 2; // starting position for player
+		map[height-3][width-2] = 2;
+		map[height-2][width-3] = 2;
+		map[height-3][width-3] = 2;
 	},
-	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
+	player: new Player(30, 22, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
 	zombie: new Zombie(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
       Math.random() * (getBlankMap().length - 4) + 3,

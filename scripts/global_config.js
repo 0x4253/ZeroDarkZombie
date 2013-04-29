@@ -3,10 +3,6 @@ var audioManager = new AudioManager();
 
 // variable that stores references to all global menu sound objects
 var globalMenu = {
-  menuStartSound: {
-    url: 'http://www.cs.unc.edu/~stancill/comp585/Blaine_intro.ogg',
-    name: "menuStartSound"
-  },
   menuBgNoise: {
     url: 'http://cs.unc.edu/~stancill/comp585/Drone_Dark_1.ogg',
     name: "menuBgNoise",
@@ -15,6 +11,46 @@ var globalMenu = {
   loading: {
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/loading.ogg',
     name: "loading"
+  },
+  menu_intro: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/menu_intro.ogg',
+    name: "menu_intro"
+  },
+  menu_intro: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/menu_intro.ogg',
+    name: "menu_intro"
+  },
+  startgame: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/startgame.ogg',
+    name: "startgame"
+  },
+  selectlevel: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/selectlevel.ogg',
+    name: "selectlevel"
+  },
+  mainmenu: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/mainmenu.ogg',
+    name: "mainmenu"
+  },
+  tutorial: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/tutorial.ogg',
+    name: "tutorial"
+  },
+  level1: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/level1.ogg',
+    name: "level1"
+  },
+  level2: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/level2.ogg',
+    name: "level2"
+  },
+  level3: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/level3.ogg',
+    name: "level3"
+  },
+  level4: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/level4.ogg',
+    name: "level4"
   }
 }
 
@@ -68,7 +104,7 @@ var globalLevel = {
   },
   soundObjLose: {
     name: "lose",
-    url: 'http://cs.unc.edu/~stancill/comp585/gameover.ogg',
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/gameover.ogg',
     background: true
   }
 }

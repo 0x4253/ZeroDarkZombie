@@ -104,6 +104,7 @@ AudioManager.prototype.stop = function( soundObj ) {
      " have an attribute: 'name' defined." );
     return;
   }
+  console.log("stopping: " + soundObj.name);
   var sound = this.sounds[ soundObj.name ];
   if ( typeof sound != 'undefined' && sound.source != null ) {
     sound.source.loop = false;

@@ -40,23 +40,22 @@ Guide.prototype.move = function() {
 
   var minDist = Math.min(this.x - newX, this.y - newY);
   var maxDist = Math.max(this.x - newX, this.y - newY);
-  //console.log("min: " + minDist + "; max: " + maxDist);
   var gx = Math.floor(this.x);
   var gy = Math.floor(this.y);
-  if ((minDist < 0 && maxDist < 8) || (minDist < 3 && maxDist < 3)  ){
+  if ((minDist < 0 && maxDist < 7) || (minDist < 3 && maxDist < 3)  ){
+    if (map[gy][gx-1] >= 4){
+      this.x -= 1;
+    }
+    else if (map[gy-1][gx] >= 4){
+      this.y -= 1;
+    }
+  }
+  else if (minDist > 5 && maxDist > 5){
     if (map[gy][gx+1] >= 3){
       this.x += 1;
     }
     else if (map[gy+1][gx] >= 3){
       this.y += 1;
-    }
-  }
-  else if (minDist > 7 && maxDist > 7){
-    if (map[gy][gx-1] >= 3){
-      this.x -= 1;
-    }
-    else if (map[gy-1][gx] >= 3){
-      this.y -= 1;
     }
   }
 
@@ -65,4 +64,20 @@ Guide.prototype.move = function() {
     globalGuide[ soundObjKey ].move( this );
   }
 }
+
+Guide.prototype.move2 = function() {
+  for (var i = 0 ; i < map[0].length ; i++){
+    if ( player.y - 3 > 0 && map[Math.round(player.y - 3)][i] >= 2 ){
+      this.x = i;
+      this.y = player.y - 3;
+      break;
+    }
+  }
+
+  // move all the global guide sound objects
+  for ( var soundObjKey in globalGuide ) {
+    globalGuide[ soundObjKey ].move( this );
+  }
+}
+
 
