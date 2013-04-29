@@ -16,6 +16,7 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.isZombie = true;
   this.soundPlaying = false;
   this.rageMode = false;
+  this.alive = true;
   this.zombie2SoundObjs = {
     scream: {
       name: "scream",
@@ -45,11 +46,11 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
 Zombie2.prototype.move = function(playerX, playerY){
   z = this;
 
+  if(!z.alive)
+    return;
+
   z.numCycles = (z.numCycles + 1) % z.moveTime;
-    //console.log(z.numCycles);
-    z.intelligence = z.intelligence / 1.005;
-    console.log(z.intelligence);
- // z.moveSpeed = z.moveSpeed * 1.001;
+  z.intelligence = z.intelligence / 1.005;
 
  var intelligence = z.intelligence;
  var moveSpeed = z.moveSpeed;
@@ -59,7 +60,7 @@ Zombie2.prototype.move = function(playerX, playerY){
 }
 var distance = Math.sqrt((playerX - z.x)*(playerX - z.x)+(playerY - z.y)*(playerY - z.y));
 
-if (map[Math.floor(player.y)][Math.floor(player.x)] == 2) {
+if (map[Math.floor(player.y)][Math.floor(player.x)] == 2 || map[Math.floor(player.y)][Math.floor(player.x)] == 5) {
     intelligence = 1000; // move randomly
   } else {
     intelligence = this.intelligence;

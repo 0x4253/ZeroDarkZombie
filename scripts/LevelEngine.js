@@ -194,7 +194,7 @@ function isBlocking(x, y, play) {
 }
 
 function detectZombieCollision(){
-	if (Math.abs(zombie.x - player.x) < 1 && Math.abs(zombie.y - player.y) < 1){
+	if (Math.abs(zombie.x - player.x) < 1 && Math.abs(zombie.y - player.y) < 1 && zombie.alive){
 		player.eaten=true;
 	}
 }
