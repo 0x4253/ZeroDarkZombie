@@ -60,7 +60,7 @@ Zombie2.prototype.move = function(playerX, playerY){
 }
 var distance = Math.sqrt((playerX - z.x)*(playerX - z.x)+(playerY - z.y)*(playerY - z.y));
 
-if (map[Math.floor(player.y)][Math.floor(player.x)] == 2) {
+if (map[Math.floor(player.y)][Math.floor(player.x)] == 2 || map[Math.floor(player.y)][Math.floor(player.x)] == 5) {
     intelligence = 1000; // move randomly
   } else {
     intelligence = this.intelligence;
