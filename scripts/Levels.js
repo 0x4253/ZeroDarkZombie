@@ -272,11 +272,16 @@ var Level2 = {
 				map[i+1][j+1] = 3;
 		}
 
-		map[i][j] = 4;
+		map[i][j] = 4; // ending spot for the player
 		map[i + 1][j] = map[i + 1][j] == 1 ? map[i + 1][j] : 4;
 		map[i - 1][j] = map[i - 1][j] == 1 ? map[i - 1][j] : 4;
 		map[i][j + 1] = map[i][j + 1] == 1 ? map[i][j + 1] : 4;
 		map[i][j - 1] = map[i][j - 1] == 1 ? map[i][j - 1] : 4;
+
+		map[height-2][width-2] = 2; // starting position for player
+		map[height-3][width-2] = 2;
+		map[height-2][width-3] = 2;
+		map[height-3][width-3] = 2;
 	},
 	player: new Player(30, 22, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
