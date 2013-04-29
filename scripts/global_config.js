@@ -104,7 +104,7 @@ var globalLevel = {
   },
   soundObjLose: {
     name: "lose",
-    url: 'http://cs.unc.edu/~stancill/comp585/gameover.ogg',
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/gameover.ogg',
     background: true
   }
 }

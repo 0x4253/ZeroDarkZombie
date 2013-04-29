@@ -112,6 +112,9 @@ function levelCycle() {
 
 	  if ( player.eaten ) {
 	  	loseSound();
+      setTimeout( function() {
+        document.location.reload();
+      }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
 	  } else if ( player.winner ) {
 	  	update( totalTime );
       audioManager.backgroundGainChanged( 1 ); // set background gain level
@@ -175,7 +178,7 @@ function initLevel( lvl ) {
 	// the level's prolog
 	var urlMap = [ toPlayNames, toPlayUrl ];
 	audioManager.masterGainChanged( 1 ); // set master gain level
-	audioManager.backgroundGainChanged( 0.3 ); // set background gain level
+	audioManager.backgroundGainChanged( 0.2 ); // set background gain level
 	setTimeout( function() {
 		audioManager.load( urlMap, function () { startProlog( lvl ) } );
 	}, 2000);
