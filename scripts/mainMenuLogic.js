@@ -25,8 +25,8 @@ $(document).ready(function() {
         list = ['start','select_level', 'survival_mode'];
         playlist = [ globalMenu.startgame, globalMenu.selectlevel, globalMenu.survival_mode ];
       } else {
-        list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
-        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+        list = ['back_to_menu','tutorial','level1','level2','level3'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3];
       }
 
       var selectedMenu = $('.button_class:focus').attr('id');
@@ -59,8 +59,8 @@ $(document).ready(function() {
         list = ['start','select_level', 'survival_mode'];
         playlist = [ globalMenu.startgame, globalMenu.selectlevel, globalMenu.survival_mode ];
       } else {
-        list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
-        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+        list = ['back_to_menu','tutorial','level1','level2','level3'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3];
       }
 
       var selectedMenu = $('.button_class:focus').attr('id');
@@ -89,8 +89,8 @@ $(document).ready(function() {
         list = ['start','select_level', 'survival_mode'];
         playlist = [ globalMenu.startgame, globalMenu.selectlevel, globalMenu.survival_mode ];
       } else {
-        list = ['back_to_menu','tutorial','level1','level2','level3','level4'];
-        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3, globalMenu.level4 ];
+        list = ['back_to_menu','tutorial','level1','level2','level3'];
+        playlist = [ globalMenu.mainmenu, globalMenu.tutorial, globalMenu.level1, globalMenu.level2, globalMenu.level3];
       }
 
       var selectedMenu = x.id;
