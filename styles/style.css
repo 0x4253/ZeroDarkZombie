@@ -1,19 +1,29 @@
  body{
   overflow:hidden;
-  top:0;
  }
 
+#screen{
+  width:700px;
+  position:relative;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:0px;
+  background: #000;
 
+}
+
+.clear { clear: both; }
  div#minimapcontainer {
  }
  canvas#minimap {
-   position : absolute;
+  position:absolute;
  }
  canvas#minimapobjects {
-   position : absolute;
+   position:absolute;
  }
  canvas#levelmap {
-   position : absolute;
+  position:absolute;
+   
  }
  .sprite{
   display:none;
@@ -53,12 +63,7 @@
   display: inline-block;
   float: left;
 }
-#screen {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: #000;
-}
+
 
 .small_buttons{
   -moz-box-shadow:inset 0px 0px 0px 0px #ffffff;

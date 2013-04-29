@@ -3,7 +3,7 @@
   <img id="marine" class="sprite" src="images/marinez.png" alt="Marines" width="1088" height="896">
   <img id="zombie" class="sprite" src="images/zombie.png" alt="Zombie" width="640" height="480">
   <img id="guide" class="sprite" src="images/guide.gif" alt="Guide" width="798" height="2828">
-<title>-Follow My Voice-</title>
+  <title>-Follow My Voice-</title>
 
 
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -31,8 +31,9 @@
 
 </head>
 <body bgcolor="#000000">
-	<div id="main_menu">
-		<form>
+  <div id="screen">
+   <div id="main_menu">
+    <form>
       <input type="button" id="start" class="button_class" name="sel" value="Start" onclick="startLevel(0)" onmouseover="readMenu(this)">
       <input type="button" id="select_level" class="button_class" name="sel" value="Select Level" onclick="showSubMenu()" onmouseover="readMenu(this)">
       <input type="button" id="survival_mode" class="button_class" name="sel" value="Survival Mode" onclick="startLevel(4)" onmouseover="readMenu(this)">
@@ -49,18 +50,18 @@
     </form>
   </div>
 
-<div id="screen"></div>
-<input type='button' class="small_buttons" value='Main Menu' id='main_menu_master' onclick="document.location.reload()"/>
-<input type='button' class="small_buttons" value='Curtain Mode: Off' id='curtain' onclick="curtainMode()"/>
-<input type='button' class="small_buttons" value='Narrative: On' id='narrative' onclick="narrativeMode()"/>
+
+  <input type='button' class="small_buttons" value='Main Menu' id='main_menu_master' onclick="document.location.reload()"/>
+  <input type='button' class="small_buttons" value='Curtain Mode: Off' id='curtain' onclick="curtainMode()"/>
+  <input type='button' class="small_buttons" value='Narrative: On' id='narrative' onclick="narrativeMode()"/>
 
 
-<img id="bg" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_bg.jpg" alt="Title Picture" style="display:none" width="700" height="700">
-<img id="bg_title" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_text.gif" alt="Title Text" style="display:none" width="700" height="78">
-<img id="bg_skull" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_skull.gif" alt="Title Text" style="display:none" width="700" height="271">
-<img id="bg_start" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_start.gif" alt="Title Text" style="display:none" width="700" height="67">
+  <img id="bg" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_bg.jpg" alt="Title Picture" style="display:none" width="700" height="700">
+  <img id="bg_title" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_text.gif" alt="Title Text" style="display:none" width="700" height="78">
+  <img id="bg_skull" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_intro_skull.gif" alt="Title Text" style="display:none" width="700" height="271">
+  <img id="bg_start" src="http://www.cs.unc.edu/~stancill/comp585/ZDZ_start.gif" alt="Title Text" style="display:none" width="700" height="67">
 
-<img id="loading" src="images/ajax-loader.gif" width="50" height="50" style="display:none">
+  <img id="loading" src="images/ajax-loader.gif" width="50" height="50" style="display:none">
 
   <div id="minimapcontainer">
     <canvas id="minimap" width="700" height="700"></canvas>
@@ -68,7 +69,8 @@
     <canvas id="minimapobjects"></canvas>
 
   </div>
-
+  <br class="clear"/>
+</div>
 
 </body>
 </html>

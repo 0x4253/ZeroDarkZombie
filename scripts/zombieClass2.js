@@ -5,10 +5,10 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.x = startx;
   this.y = starty;
   this.rot = 0;
-  this.moveSpeed = 0.3; // How far zombie moves in one move
+  this.moveSpeed = 1.5; // How far zombie moves in one move
   this.moveTime = 1; //How many game cycles it takes for the zombie to move
   this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
-  this.intelligence = 25; //A ratio of how much the zombie follows the player, >1 required
+  this.intelligence = 5; //A ratio of how much the zombie follows the player, >1 required
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
   this.coneOuterGain = 0.005;
@@ -55,20 +55,26 @@ Zombie2.prototype.move = function(playerX, playerY){
  var moveSpeed = z.moveSpeed;
  if(z.rageMode){
   intelligence = 5;
-  moveSpeed = 1;
+  moveSpeed = 0.6;
 }
+if (map[Math.floor(player.y)][Math.floor(player.x)] == 2) {
+    intelligence = 1000; // move randomly
+  } else {
+    intelligence = this.intelligence;
+  }
 
 var distance = Math.sqrt((playerX - z.x)*(playerX - z.x)+(playerY - z.y)*(playerY - z.y));
 console.log( distance );
+if( distance < 5){
+  setTimeout( function() {
+    z.rageMode = false;
+  }, 1000);
+  z.rageMode = true;
+}
 
 if(!z.soundPlaying){
-  if ( distance < 9 ) {
-    if( distance < 5){
-      setTimeout( function() {
-        z.rageMode = false;
-      }, audioManager.sounds[ z.zombie2SoundObjs.scream.name ].buffer.duration * 1000 );
-      z.rageMode = true;
-    }
+  if ( distance < 7 ) {
+
     setTimeout( function() {
       z.soundPlaying = false;
     }, audioManager.sounds[ z.zombie2SoundObjs.scream.name ].buffer.duration * 1000 );
@@ -101,6 +107,12 @@ if(!z.soundPlaying){
 
     if (isBlocking(newX, newY)) { // is the zombie allowed to move to the new position?
       return; // no, bail out.
+    }
+
+    // don't move the zombie if he is moving into a safe zone
+    if (map[Math.floor(newY)][Math.floor(newX)] == 2){
+      z.rot += twoPI / 2;
+      return;
     }
 
     z.x = newX;
