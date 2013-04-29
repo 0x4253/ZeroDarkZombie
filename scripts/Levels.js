@@ -320,28 +320,39 @@ var Level3 = {
 	map: getBlankMap(),
 	randomizeMap: function() {
 		var map = this.map;
-		map[1][1] = 2; // starting position for player
-		var i = 1;
-		var j = 1;
-		var totalSpots = map.length + map[0].length - 4;
+		var height = map.length;
+		var width = map[0].length;
+		map[height-2][width-2] = 2; // starting position for player
+		map[height-3][width-2] = 2;
+		map[height-2][width-3] = 2;
+		map[height-3][width-3] = 2;
+		var i = height - 3;
+		var j = width - 3;
+		var totalSpots = map.length + map[0].length - 6;
 
-		while (i < map.length - 2 && j < map[0].length - 2) {
+		while (i > 1 && j > 1) {
 			var rand = Math.floor(Math.random() * totalSpots);
 			// if rand is 1 increase i, if rand is 0 increase j
-			i += rand < map.length - 2 ? 1 : 0;
-			j += rand >= map.length - 2 ? 1 : 0;
+			i -= rand < map.length - 2 ? 1 : 0;
+			j -= rand >= map.length - 2 ? 1 : 0;
+			// set map tile to concrete road
 			map[i][j] = 3;
-			if (i+1 != map.length-1 && j+1 != map[0].length-1)
+			if (i + 1 != map.length - 1 && j + 1 != map[0].length - 1)
 				map[i+1][j+1] = 3;
 		}
 
-		map[i][j] = 4;
+		map[i][j] = 4; // ending spot for the player
 		map[i + 1][j] = map[i + 1][j] == 1 ? map[i + 1][j] : 4;
 		map[i - 1][j] = map[i - 1][j] == 1 ? map[i - 1][j] : 4;
 		map[i][j + 1] = map[i][j + 1] == 1 ? map[i][j + 1] : 4;
 		map[i][j - 1] = map[i][j - 1] == 1 ? map[i][j - 1] : 4;
+
+		map[height-2][width-2] = 2; // starting position for player
+		map[height-3][width-2] = 2;
+		map[height-2][width-3] = 2;
+		map[height-3][width-3] = 2;
 	},
-	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
+	player: new Player(30, 22, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
 	zombie: new Zombie2(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
       Math.random() * (getBlankMap().length - 4) + 3,
