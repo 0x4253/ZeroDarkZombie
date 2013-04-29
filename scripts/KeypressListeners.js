@@ -8,37 +8,55 @@ function MenuKeypressListener(event) {
 		arrow = {left: 37, up: 38, right: 39, down: 40 };
 
 		switch (keyCode) {
-			case arrow.left:
-      		//..
-      		break;
-      		case arrow.up:
-      		upMenu();
+    	case 27: //escape key. back to main menu
+    	document.location.reload();
+    	break;
 
-      		//..
-      		break;
-      		case arrow.right:
-      		//..
-      		break;
-      		case arrow.down:
-      		downMenu();
-      		//..
-      		break;
-      	}
-      });
+    	case 67: //c key. curtain mode
+    	curtainMode();
+    	break;
+
+    	case arrow.left:
+  		//..
+  		break;
+
+  		case arrow.up:
+  		upMenu();
+
+  		//..
+  		break;
+
+  		case arrow.right:
+  		//..
+  		break;
+
+  		case arrow.down:
+  		downMenu();
+  		//..
+  		break;
+  	}
+  });
 	$(document).keypress(function(event) {
 		console.log(event.which);
 		event.preventDefault();
 		switch (event.which) {
-			case 32:
+	    	case 27: //escape key. back to main menu
+	    	document.location.reload();
+	    	break;
+
+	    	case 67: //c key. curtain mode
+	    	curtainMode();
+	    	break;
+
+	    	case 32:
 				// select focused button
 				$('.button_class:focus').click();
 				break;
-				case 49:
 
+				case 49:
 
 				break;
 				case 50:
-
 
 				break;
 				case 113:
@@ -104,9 +122,9 @@ function LevelKeypressListener() {
 			}
 		});
 
-	$(document).keyup(function(event) {
-		keyCurrentlyDown = false;
-	});
+$(document).keyup(function(event) {
+	keyCurrentlyDown = false;
+});
 }
 
 // bind keyboard events to game functions (movement, etc)
@@ -129,11 +147,11 @@ function TutorialKeypressListener() {
 	    	curtainMode();
 	    	break;
 
-      	case 38:
-        break;
+	    	case 38:
+	    	break;
 
-	      case 40:
-	      break;
+	    	case 40:
+	    	break;
 
 	      case 37: // left, rotate player left
 	      player.turnLeft();
@@ -160,4 +178,31 @@ function RemoveAllListeners() {
 	$(document).unbind('keydown');
 	$(document).unbind('keyup');
 	$(document).unbind('keypress');
+
+	$(document).keydown(function (e) {
+		var keyCode = e.keyCode || e.which,
+		arrow = {left: 37, up: 38, right: 39, down: 40 };
+
+		switch (keyCode) {
+	    	case 27: //escape key. back to main menu
+	    	document.location.reload();
+	    	break;
+
+	    	case 67: //c key. curtain mode
+	    	curtainMode();
+    	}
+  });
+	$(document).keypress(function(event) {
+		console.log(event.which);
+		event.preventDefault();
+		switch (event.which) {
+	    	case 27: //escape key. back to main menu
+	    	document.location.reload();
+	    	break;
+
+	    	case 67: //c key. curtain mode
+	    	curtainMode();
+	    	break;
+		}
+	});
 }
