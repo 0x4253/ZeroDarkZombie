@@ -60,7 +60,7 @@ function gameCycle() {
     player.winner = true;
   }
 
-  gameGuide.move();
+  gameGuide.move2();
   //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
   if (NUMBER_OF_ZOMBIES > 0) {
     zombie.move(player.x, player.y);
