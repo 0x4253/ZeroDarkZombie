@@ -243,9 +243,7 @@ Level1.prolog = function( option, callback ) {
   	callback();
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
-Level1.gameGuide.move = function () {
 
-}
 
 
 //////////////////////////////////////
@@ -289,6 +287,9 @@ var Level2 = {
 	},
 	player: new Player(30, 22, (0 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
+	zombie: new Zombie(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
+      Math.random() * (getBlankMap().length - 4) + 3,
+      Math.floor(Math.random() * 3)),
 	gameGuide: new Guide(2,
 											 1.5,
 											 (-120 * Math.PI / 180),
@@ -307,6 +308,62 @@ Level2.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
 Level2.prologNames = [ Level2.prolog1.name, Level2.epilog.name ];
 Level2.prolog = function( option, callback ) {
 	var level = Level2;
+	RemoveAllListeners();
+  audioManager.play(level.prolog1);
+  setTimeout(function() {
+		LevelKeypressListener();
+  	callback();
+    }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
+};
+
+var Level3 = {
+	map: getBlankMap(),
+	randomizeMap: function() {
+		var map = this.map;
+		map[1][1] = 2; // starting position for player
+		var i = 1;
+		var j = 1;
+		var totalSpots = map.length + map[0].length - 4;
+
+		while (i < map.length - 2 && j < map[0].length - 2) {
+			var rand = Math.floor(Math.random() * totalSpots);
+			// if rand is 1 increase i, if rand is 0 increase j
+			i += rand < map.length - 2 ? 1 : 0;
+			j += rand >= map.length - 2 ? 1 : 0;
+			map[i][j] = 3;
+			if (i+1 != map.length-1 && j+1 != map[0].length-1)
+				map[i+1][j+1] = 3;
+		}
+
+		map[i][j] = 4;
+		map[i + 1][j] = map[i + 1][j] == 1 ? map[i + 1][j] : 4;
+		map[i - 1][j] = map[i - 1][j] == 1 ? map[i - 1][j] : 4;
+		map[i][j + 1] = map[i][j + 1] == 1 ? map[i][j + 1] : 4;
+		map[i][j - 1] = map[i][j - 1] == 1 ? map[i][j - 1] : 4;
+	},
+	player: new Player(1.5, 1.5, (0 * Math.PI / 180)),
+	NUMBER_OF_ZOMBIES: 1,
+	zombie: new Zombie2(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
+      Math.random() * (getBlankMap().length - 4) + 3,
+      Math.floor(Math.random() * 3)),
+	gameGuide: new Guide(2,
+											 1.5,
+											 (-120 * Math.PI / 180),
+										   'http://cs.unc.edu/~stancill/comp585/overhere.ogg'),
+	option: 0,
+	prolog1: {
+	  name: "prolog1Lvl2",
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level2_prolog.ogg"
+	},
+	epilog: {
+	  name: "epilogLvl2",
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level2_epilog.ogg'
+	}
+}
+Level3.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
+Level3.prologNames = [ Level2.prolog1.name, Level2.epilog.name ];
+Level3.prolog = function( option, callback ) {
+	var level = Level3;
 	RemoveAllListeners();
   audioManager.play(level.prolog1);
   setTimeout(function() {
@@ -348,4 +405,4 @@ function getBlankMap() {
 }
 
 // store an array of all levels
-var levels = [ Tutorial, Level1, Level2 ];
+var levels = [ Tutorial, Level1, Level2, Level3];

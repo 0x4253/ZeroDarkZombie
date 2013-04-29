@@ -153,6 +153,8 @@ function initLevel( lvl ) {
 	player = lvl.player;
 	gameGuide = lvl.gameGuide;
 	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
+	zombie = lvl.zombie;
+	//console.log(lvl.zombie);
 
 	// load global guide sounds
 	for ( var soundObjKey in globalGuide ) {

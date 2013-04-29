@@ -3,12 +3,12 @@
 // basic global entities
 var player = new Player();
 var gameGuide = new Guide();
+var zombie = new Zombie();
+var zombie = new Zombie2();
 
 // create one zombie
 var NUMBER_OF_ZOMBIES = 0;
-var zombie = new Zombie(1, Math.random() * (map[0].length - 4) + 3,
-      Math.random() * (map.length - 4) + 3,
-      Math.floor(Math.random() * 3));
+
 
 // arrays to hold variables that need sound and sound updating
 var toPlayUrl = [];
@@ -62,10 +62,12 @@ function gameCycle() {
 
   gameGuide.move2();
   //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
+  if(!playProlog){
   if (NUMBER_OF_ZOMBIES > 0) {
     zombie.move(player.x, player.y);
     detectZombieCollision();
   }
+}
 
   audioManager.updateAllPositions(toUpdate);
 
@@ -205,7 +207,7 @@ function updateMiniMap() {
   //draw player sprite
   var img = $("#marine")[0];
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
-  
+
   // draw the player's vision cone
   // castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
   objectCtx.fillStyle = "rgba(0,0,100,0.3)";
