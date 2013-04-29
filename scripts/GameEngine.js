@@ -15,38 +15,36 @@ var map = getBlankMap();;
 ////////////////////////////////////////////////////////
 function startGame() {
 	setTimeout( function() {
-		// bind keys for menu
-		MenuKeypressListener();
-
-		// render menu visuals
+    // render menu visuals
 		drawMenu();
 		drawSkull();
-		setTimeout( function() { drawText() }, 500);
 
 		// load and play menu sounds
-		var menuToPlayURLs = [ globalMenu.menuStartSound.url,
-													 globalMenu.menuBgNoise.url,
-													 globalMenu.loading.url ];
-		var menuToPlayNames = [ globalMenu.menuStartSound.name,
-														globalMenu.menuBgNoise.name,
-														globalMenu.loading.name ];
+    var menuToPlayURLs = [];
+    var menuToPlayNames = [];
+    for ( var soundObjKey in globalMenu ) {
+      menuToPlayURLs.push( globalMenu[ soundObjKey ].url );
+      menuToPlayNames.push( globalMenu[ soundObjKey ].name );
+    }
 		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
 		audioManager.load( menuUrlMap, function() {
-			audioManager.play(globalMenu.menuBgNoise);
-			setTimeout( function() { startMenuSound(); }, 3000 );
+      // bind keys for menu
+      MenuKeypressListener();
+			audioManager.play( globalMenu.menuBgNoise );
+      audioManager.play( globalMenu.menu_intro );
 		});
 	}, 100);
 }
 
-function startMenuSound() {
-	if ( !levelAlive ) {
-		audioManager.play( globalMenu.menuStartSound );
-		setTimeout( function() { startMenuSound(); }, 20000 );
-	}
-}
-
 function startLevel( num ) {
+  // hide the menus and remove focus from button
+  // that last had focus
 	hideMenus();
+  var selectedMenu = $('.button_class:focus');
+  selectedMenu.blur();
+  RemoveAllListeners();
+
+  // assign level number
 	startLevelNumber = num;
 
 	// load loading sound as it gets destroyed in clearMap()
@@ -286,14 +284,6 @@ function drawSkull(){
 	ctx.globalAlpha = 0.1; //sets opacity. 0 = transparent
 	var img = document.getElementById("bg_skull");
 	ctx.drawImage(img, -30, 300, img.width, img.height);
-}
-
-function drawText(){
-	var miniMap = $("#minimap")[0]; // the actual map
-	var ctx = miniMap.getContext("2d");
-	ctx.globalAlpha = 1; //sets opacity. 0 = transparent
-	var img = document.getElementById("bg_start");
-	ctx.drawImage(img, -5, 170, img.width, img.height);
 }
 
 function curtainMode () {
