@@ -21,7 +21,7 @@ Zombie.prototype.move = function(playerX, playerY){
 	z.numCycles = (z.numCycles + 1) % z.moveTime;
 	
   var intelligence;
-  if (map[player.y][player.x] == 2) {
+  if (map[Math.floor(player.y)][Math.floor(player.x)] == 2) {
     intelligence = 1000; // move randomly
   } else {
     intelligence = this.intelligence;
