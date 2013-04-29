@@ -14,10 +14,33 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.coneOuterGain = 0.005;
   this.rolloffFactor = 1;
   this.isZombie = true;
+  this.zombie2SoundObjs = {
+    scream: {
+      name: "hay",
+      url: 'http://www.cs.unc.edu/~stancill/comp585/Hay_steps_2.ogg',
+      x: 0,
+      y: 0,
+      panner: true,
+      move: function( zombie ) {
+        this.x = zombie.x;
+        this.y = zombie.y;
+      }
+    },
+    scream: {
+      name: "hay",
+      url: 'http://www.cs.unc.edu/~stancill/comp585/Hay_steps_2.ogg',
+      x: 0,
+      y: 0,
+      panner: true,
+      move: function( zombie ) {
+        this.x = zombie.x;
+        this.y = zombie.y;
+      }
+    },
+  }
 }
 
 Zombie2.prototype.move = function(playerX, playerY){
-  
   z = this;
 
   z.numCycles = (z.numCycles + 1) % z.moveTime;
@@ -27,6 +50,8 @@ Zombie2.prototype.move = function(playerX, playerY){
   if(z.intelligence < 20)
     z.audioUrl = "http://cs.unc.edu/~stancill/comp585/zombie-17.wav"
  // z.moveSpeed = z.moveSpeed * 1.001;
+
+  audioManager.play( zombie2SoundObjs.scream );
 
   if (z.numCycles == 0) {   // only move every once in a while
     var randChase = Math.floor(Math.random() * z.intelligence);
@@ -49,5 +74,10 @@ Zombie2.prototype.move = function(playerX, playerY){
 
     z.x = newX;
     z.y = newY;
+
+    // move all the sound objects
+    for ( var soundObjKey in zombie2SoundObjs ) {
+      zombie2SoundObjs[ soundObjKey ].move( this );
+    }
   }
 }
