@@ -17,8 +17,8 @@ var narrativeOn = true;
 function startGame() {
 	setTimeout( function() {
     // render menu visuals
-		drawMenu();
-		drawSkull();
+    drawMenu();
+    drawSkull();
 
 		// load and play menu sounds
     var menuToPlayURLs = [];
@@ -27,26 +27,27 @@ function startGame() {
       menuToPlayURLs.push( globalMenu[ soundObjKey ].url );
       menuToPlayNames.push( globalMenu[ soundObjKey ].name );
     }
-		var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
-		audioManager.load( menuUrlMap, function() {
+    var menuUrlMap = [ menuToPlayNames, menuToPlayURLs ];
+    audioManager.load( menuUrlMap, function() {
       // bind keys for menu
       MenuKeypressListener();
-			audioManager.play( globalMenu.menuBgNoise );
+      audioManager.masterGainChanged( 0.5 ); // set master gain level
+      audioManager.play( globalMenu.menuBgNoise );
       audioManager.play( globalMenu.menu_intro );
-		});
-	}, 100);
+    });
+  }, 100);
 }
 
 function startLevel( num ) {
   // hide the menus and remove focus from button
   // that last had focus
-	hideMenus();
+  hideMenus();
   var selectedMenu = $('.button_class:focus');
   selectedMenu.blur();
   RemoveAllListeners();
 
   // assign level number
-	startLevelNumber = num;
+  startLevelNumber = num;
 
 	// load loading sound as it gets destroyed in clearMap()
 	var menuToPlayURLs = [ globalMenu.loading.url ];
@@ -57,8 +58,8 @@ function startLevel( num ) {
 			gameAlive = true;
 			clearMap();
 			levelAlive = false;
-	  	GameEngineLoop();
-		} , 300);
+      GameEngineLoop();
+    } , 300);
 	});
 }
 
@@ -97,10 +98,10 @@ function update( totalTime, lvlNum, win ) {
       name: (win ? "win" : "lose"),
       time: totalTime,
       level_number: lvlNum
-      }
-    }, function(response) {
-      console.log(response);
     }
+  }, function(response) {
+    console.log(response);
+  }
   );
 }
 
@@ -112,15 +113,15 @@ function levelCycle() {
 		endTime = new Date();
 		totalTime = endTime - startTime;
 
-	  if ( player.eaten ) {
-	  	loseSound();
-      update( totalTime, startLevelNumber, false );
-      setTimeout( function() {
-        document.location.reload();
-      }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
-	  } else if ( player.winner ) {
-	  	update( totalTime, startLevelNumber, true );
-      if (narrativeOn) {
+   if ( player.eaten ) {
+    loseSound();
+    update( totalTime, startLevelNumber, false );
+    setTimeout( function() {
+      document.location.reload();
+    }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
+  } else if ( player.winner ) {
+    update( totalTime, startLevelNumber, true );
+    if (narrativeOn) {
         audioManager.backgroundGainChanged( 1 ); // set background gain level
         audioManager.play( levels[ startLevelNumber ].epilog );
         audioManager.backgroundGainChanged( 0.3 ); // set background gain level
@@ -130,11 +131,11 @@ function levelCycle() {
       } else {
         newLevel();
       }
-	  }
-	} else {
-		gameCycle();
-		setTimeout(function() { levelCycle(); }, 100);
-	}
+    }
+  } else {
+    gameCycle();
+    setTimeout(function() { levelCycle(); }, 100);
+  }
 }
 
 function newLevel() {
@@ -178,14 +179,14 @@ function initLevel( lvl ) {
 
 	// load zombie sounds
   if (NUMBER_OF_ZOMBIES > 0) {
-		toPlayUrl.push( zombie.audioUrl );
-		toPlayNames.push( zombie.name );
+    toPlayUrl.push( zombie.audioUrl );
+    toPlayNames.push( zombie.name );
 
-		for ( var soundObjKey in zombie.zombie2SoundObjs ) {
-			toPlayUrl.push( zombie.zombie2SoundObjs[ soundObjKey ].url );
-			toPlayNames.push( zombie.zombie2SoundObjs[ soundObjKey ].name );
-		}
-	}
+    for ( var soundObjKey in zombie.zombie2SoundObjs ) {
+     toPlayUrl.push( zombie.zombie2SoundObjs[ soundObjKey ].url );
+     toPlayNames.push( zombie.zombie2SoundObjs[ soundObjKey ].name );
+   }
+ }
 
 	// tell audioManager to load sounds
 	// after loading all sounds it will perform
@@ -197,14 +198,16 @@ function initLevel( lvl ) {
 		audioManager.load( urlMap, function () { startProlog( lvl ) } );
 	}, 2000);
 
-	// start the loading gif and sound
+	// start the loading gif and sound and make the sound quieter
 	document.getElementById("loading").style.display="block";
-	audioManager.play( globalMenu.loading );
+  audioManager.masterGainChanged( 0.5 ); // set master gain level
+  audioManager.play( globalMenu.loading );
 }
 
 function startProlog( lvl ) {
-	// stop the loading gif
+	// stop the loading gif and up the sound again
 	document.getElementById("loading").style.display="none";
+  audioManager.masterGainChanged( 1 ); // set master gain level
 
 	// update the guides position and all of
 	// the guide's global sounds
@@ -226,7 +229,7 @@ function startProlog( lvl ) {
   PrologPlay();
 	LevelKeypressListener(); // rebind keys to level inputs
   if (narrativeOn) {
-	 lvl.prolog( lvl.option, function(){ playLevel( lvl ) } );
+    lvl.prolog( lvl.option, function(){ playLevel( lvl ) } );
   } else {
     playLevel( lvl );
   }
@@ -246,18 +249,18 @@ function playLevel( lvl ) {
 	playProlog = false;
 
  	// start playing all sounds
-	console.log("Starting sounds");
-	console.log("Start gameGuide sound");
-	gameGuide.play = true;
-	gameGuide.start( gameGuide );
+   console.log("Starting sounds");
+   console.log("Start gameGuide sound");
+   gameGuide.play = true;
+   gameGuide.start( gameGuide );
 
-  if (NUMBER_OF_ZOMBIES > 0 && lvl.zombieStart)
-		audioManager.play(zombie);
+   if (NUMBER_OF_ZOMBIES > 0 && lvl.zombieStart)
+    audioManager.play(zombie);
 
 	// add zombie to the update array
 	if (NUMBER_OF_ZOMBIES > 0 )
-  	toUpdate.push(zombie);
-	audioManager.updateAllPositions(toUpdate);
+   toUpdate.push(zombie);
+ audioManager.updateAllPositions(toUpdate);
 
 	// once all the sounds are loaded allow player to play
 	startTime = new Date();
