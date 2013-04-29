@@ -5,7 +5,7 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.x = startx;
   this.y = starty;
   this.rot = 0;
-  this.moveSpeed = 0.4; // How far zombie moves in one move
+  this.moveSpeed = 0.2; // How far zombie moves in one move
   this.moveTime = 1; //How many game cycles it takes for the zombie to move
   this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
   this.intelligence = 15; //A ratio of how much the zombie follows the player, >1 required
