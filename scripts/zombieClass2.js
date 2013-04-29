@@ -12,7 +12,7 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
   this.coneOuterGain = 0.005;
-  this.rolloffFactor = 1;
+  this.rolloffFactor = 10;
   this.isZombie = true;
   this.soundPlaying = false;
   this.rageMode = false;
