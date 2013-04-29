@@ -357,11 +357,11 @@ var Level3 = {
 	option: 0,
 	prolog1: {
 	  name: "prolog1Lvl2",
-	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level2_prolog.ogg"
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level3_prolog.ogg"
 	},
 	epilog: {
 	  name: "epilogLvl2",
-	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level2_epilog.ogg'
+	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level3_epilog.ogg'
 	}
 }
 Level3.prologUrls =	[ Level2.prolog1.url, Level2.epilog.url ];
