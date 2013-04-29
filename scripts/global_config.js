@@ -28,6 +28,10 @@ var globalMenu = {
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/selectlevel.ogg',
     name: "selectlevel"
   },
+  survival_mode: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/survivalmode.ogg',
+    name: "survival_mode"
+  },
   mainmenu: {
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/mainmenu.ogg',
     name: "mainmenu"
@@ -105,6 +109,21 @@ var globalLevel = {
   soundObjLose: {
     name: "lose",
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/gameover.ogg',
+    background: true
+  },
+  soundObjWoosh: {
+    name: "woosh",
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/woosh.ogg',
+    background: true
+  },
+  soundObjZombieHit: {
+    name: "zombiehit",
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/zombiehit.ogg',
+    background: true
+  },
+  soundObjZombieDeath: {
+    name: "zombiedeath",
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/zombiedeath.ogg',
     background: true
   }
 }

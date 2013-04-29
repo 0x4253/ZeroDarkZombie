@@ -11,24 +11,36 @@ function Player(startx, starty, initRot) {
   this.eaten = false; //Whether or not the player has been attacked by a zombie
   this.winner = false; //Whether the player has made it to the level's goal
   this.circleColor = "rgba(0,0,100,0.3)";
+  this.fighter = false;
 }
 
-// obsolete function, keep for reference
-Player.prototype.move = function() {
-  if (player.speed == 1){
-    this.moveForward();
-  }
-  if (player.speed == -1){
-    this.moveBackward();
-  }
-  if (player.dir == 1) {
-    this.turnLeft();
-  }
-  if (player.dir == -1) {
-    this.turnRight();
+Player.prototype.hitZombie = function(){
+
+  // if the player is too far away from the zombie, don't hit him
+  if ( Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) >= 4 ){
+    console.log("Zombie is too far away to hit");
+    audioManager.play(globalLevel.soundObjWoosh);
+    return;
   }
 
-  // * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+  // if the zombie is behind the player, don't hit him
+  var angle = Math.atan2( zombie.y - player.y , zombie.x - player.x );
+  if ( Math.abs( angle - player.rot ) > twoPI / 4 && Math.abs( angle - player.rot ) < 3 * twoPI / 4) {
+    console.log("Zombie is behind you.");
+    audioManager.play(globalLevel.soundObjWoosh);
+    return;
+  }
+  console.log("Hit Zombie");
+  audioManager.play(globalLevel.soundObjZombieHit);
+  setTimeout(function(){
+    audioManager.play(globalLevel.soundObjZombieDeath);
+    do {
+      zombie.x = Math.floor( Math.random() * map[0].length + 2 );
+      zombie.y = Math.floor( Math.random() * map.length + 2 );
+    } while ( zombie.x > map[0].length - 2 || zombie.y > map.length - 2 ||
+      Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 8 )
+  }, 200);
+    
 }
 
 Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1 then turn left
@@ -81,3 +93,21 @@ Player.prototype.castCircle = function(objectContext) {
 
 
 
+
+// obsolete function, keep for reference
+Player.prototype.move = function() {
+  if (player.speed == 1){
+    this.moveForward();
+  }
+  if (player.speed == -1){
+    this.moveBackward();
+  }
+  if (player.dir == 1) {
+    this.turnLeft();
+  }
+  if (player.dir == -1) {
+    this.turnRight();
+  }
+
+  // * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+}

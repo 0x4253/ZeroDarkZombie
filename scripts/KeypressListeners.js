@@ -97,12 +97,14 @@ function LevelKeypressListener() {
 	      break;
 
 	      case 32:
-					// Pause/Resume Game
-					togglePause();
-					break;
-				}
+			if (player.fighter){
+				console.log("Hit Zombie");
+				player.hitZombie();
 			}
-		});
+			break;
+		}
+	}
+});
 
 	$(document).keyup(function(event) {
 		keyCurrentlyDown = false;

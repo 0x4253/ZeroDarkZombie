@@ -8,12 +8,13 @@ function Guide(startx, starty, initRot, audioUrl) {
   this.circleColor = "rgba(0,100,0,0.3)";
   this.panner = true;
   this.play = false;
+  this.alive = true;
 }
 
 // makes guide say random sounds that are in globalGuide
 // guide will continue to say random sounds until guide.play is false
 Guide.prototype.start = function( guide ) {
-  if (guide.play) {
+  if (guide.play && guide.alive) {
     setTimeout( function() {
       var size = 0, key;
       for ( key in globalGuide ) {
@@ -34,7 +35,25 @@ Guide.prototype.start = function( guide ) {
   }
 }
 
+
 Guide.prototype.move = function() {
+  for (var i = 0 ; i < map[0].length ; i++){
+    if ( player.y - 3 > 0 && map[Math.round(player.y - 3)][i] >= 2 ){
+      this.x = i;
+      this.y = player.y - 3;
+      break;
+    }
+  }
+
+  // move all the global guide sound objects
+  for ( var soundObjKey in globalGuide ) {
+    globalGuide[ soundObjKey ].move( this );
+  }
+}
+
+
+// deprecated function, its the old move function
+Guide.prototype.move2 = function() {
   var newX = player.x;
   var newY = player.y;
 
@@ -64,20 +83,4 @@ Guide.prototype.move = function() {
     globalGuide[ soundObjKey ].move( this );
   }
 }
-
-Guide.prototype.move2 = function() {
-  for (var i = 0 ; i < map[0].length ; i++){
-    if ( player.y - 3 > 0 && map[Math.round(player.y - 3)][i] >= 2 ){
-      this.x = i;
-      this.y = player.y - 3;
-      break;
-    }
-  }
-
-  // move all the global guide sound objects
-  for ( var soundObjKey in globalGuide ) {
-    globalGuide[ soundObjKey ].move( this );
-  }
-}
-
 
