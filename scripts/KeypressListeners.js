@@ -104,9 +104,56 @@ function LevelKeypressListener() {
 			}
 		});
 
-$(document).keyup(function(event) {
-	keyCurrentlyDown = false;
-});
+	$(document).keyup(function(event) {
+		keyCurrentlyDown = false;
+	});
+}
+
+// bind keyboard events to game functions (movement, etc)
+function TutorialKeypressListener() {
+
+	$(document).keydown(function(event) {
+
+		console.log(event.which);
+
+		if (keyCurrentlyDown == false){
+	  	keyCurrentlyDown = true; // disables more than one key from being pressed and from the keydown action from being fired multiple times
+
+	    switch (event.which) { // which key was pressed?
+
+	    	case 27: //escape key. back to main menu
+	    	document.location.reload();
+	    	break;
+
+	    	case 67: //c key. curtain mode
+	    	curtainMode();
+	    	break;
+
+      	case 38:
+        break;
+
+	      case 40:
+	      break;
+
+	      case 37: // left, rotate player left
+	      player.turnLeft();
+	      break;
+
+	      case 39: // right, rotate player right
+	      player.turnRight();
+	      break;
+
+	      case 32:
+					// Pause/Resume Game
+					togglePause();
+					break;
+				}
+			}
+		});
+
+	$(document).keyup(function(event) {
+		keyCurrentlyDown = false;
+	});
 }
 
 function RemoveAllListeners() {

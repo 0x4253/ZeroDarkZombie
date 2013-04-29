@@ -290,17 +290,27 @@ function drawSkull(){
 }
 
 function curtainMode () {
-      curtain = document.getElementById("curtain");
-      if (curtain.value == "Curtain Mode: On"){
-        curtain.value = "Curtain Mode: Off";
-        document.getElementById("minimap").style.display="block";
-        document.getElementById("levelmap").style.display="block";
-        document.getElementById("minimapobjects").style.display="block";
-      }
-      else {
-        curtain.value = "Curtain Mode: On";
-        document.getElementById("minimap").style.display="none";
-        document.getElementById("levelmap").style.display="none";
-        document.getElementById("minimapobjects").style.display="none";
-      }
-    }
+  curtain = document.getElementById("curtain");
+  if (curtain.value == "Curtain Mode: On"){
+    curtain.value = "Curtain Mode: Off";
+    document.getElementById("minimap").style.display="block";
+    document.getElementById("levelmap").style.display="block";
+    document.getElementById("minimapobjects").style.display="block";
+  }
+  else {
+    curtain.value = "Curtain Mode: On";
+    document.getElementById("minimap").style.display="none";
+    document.getElementById("levelmap").style.display="none";
+    document.getElementById("minimapobjects").style.display="none";
+  }
+}
+
+function narrativeMode () {
+  narrative = document.getElementById("narrative");
+  if (narrative.value == "Narrative Mode: On"){
+    narrative.value = "Narrative Mode: Off";
+  }
+  else {
+    narrative.value = "Narrative Mode: On";
+  }
+}

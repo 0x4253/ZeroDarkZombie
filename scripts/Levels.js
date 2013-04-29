@@ -149,7 +149,7 @@ Tutorial.prolog = function( option, callback ) {
 	      }, 31000);
 	    break;
 	  case 4:
-	    LevelKeypressListener();
+	    TutorialKeypressListener();
 	    gameGuide.x = 3.5;
 	    gameGuide.y = 5.5;
 	    globalGuide.overHere.move(gameGuide);
@@ -165,6 +165,7 @@ Tutorial.prolog = function( option, callback ) {
 		  }
 	    break;
 	  case 5:
+	  	LevelKeypressListener();
 	    Tutorial.tutorial4.move(gameGuide);
 	    audioManager.updatePosition(Tutorial.tutorial4);
 	    audioManager.play(Tutorial.tutorial4);
@@ -242,6 +243,9 @@ Level1.prolog = function( option, callback ) {
   	callback();
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
+Level1.gameGuide.move = function () {
+
+}
 
 
 //////////////////////////////////////
