@@ -244,8 +244,6 @@ Level1.prolog = function( option, callback ) {
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 
-
-
 //////////////////////////////////////
 //        Level2
 //////////////////////////////////////
