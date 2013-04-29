@@ -8,7 +8,8 @@ var playProlog = false;
 var gameOver = false;
 var playing = false;
 var startTime, endTime; // variables to keep time
-var map = getBlankMap();;
+var map = getBlankMap();
+var narrativeOn = true;
 
 ////////////////////////////////////////////////////////
 // 					functions used
@@ -117,12 +118,16 @@ function levelCycle() {
       }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
 	  } else if ( player.winner ) {
 	  	update( totalTime );
-      audioManager.backgroundGainChanged( 1 ); // set background gain level
-      audioManager.play( levels[ startLevelNumber ].epilog );
-      audioManager.backgroundGainChanged( 0.3 ); // set background gain level
-      setTimeout( function() {
+      if (narrativeOn) {
+        audioManager.backgroundGainChanged( 1 ); // set background gain level
+        audioManager.play( levels[ startLevelNumber ].epilog );
+        audioManager.backgroundGainChanged( 0.3 ); // set background gain level
+        setTimeout( function() {
+          newLevel();
+        }, audioManager.sounds[ levels[ startLevelNumber ].epilog.name ].buffer.duration * 1000 );
+      } else {
         newLevel();
-      }, audioManager.sounds[ levels[ startLevelNumber ].epilog.name ].buffer.duration * 1000 );
+      }
 	  }
 	} else {
 		gameCycle();
@@ -213,7 +218,11 @@ function startProlog( lvl ) {
   playProlog = true;
   PrologPlay();
 	LevelKeypressListener(); // rebind keys to level inputs
-	lvl.prolog( lvl.option, playLevel );
+  if (narrativeOn) {
+	 lvl.prolog( lvl.option, playLevel );
+  } else {
+    playLevel();
+  }
 }
 
 // allows prolog to have the gameCycle() running
@@ -309,10 +318,12 @@ function curtainMode () {
 
 function narrativeMode () {
   narrative = document.getElementById("narrative");
-  if (narrative.value == "Narrative Mode: On"){
-    narrative.value = "Narrative Mode: Off";
+  if (narrative.value == "Narrative Mode: Off"){
+    narrative.value = "Narrative Mode: On";
+    narrativeOn = true;
   }
   else {
-    narrative.value = "Narrative Mode: On";
+    narrative.value = "Narrative Mode: Off";
+    narrativeOn = false;
   }
 }
