@@ -92,6 +92,11 @@ var globalLevel = {
     url: 'http://www.cs.unc.edu/~stancill/comp585/Concrete_Steps_2.ogg',
     background: true
   },
+  soundObjMud: {
+    name: "mud",
+    url: 'http://www.cs.unc.edu/~stancill/comp585/sounds/mudstep.ogg',
+    background: true
+  },
   soundObjWallBump: {
     name: "wallBump",
     url: 'http://cs.unc.edu/~stancill/comp585/bump.mp3',

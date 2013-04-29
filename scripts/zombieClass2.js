@@ -5,10 +5,10 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
   this.x = startx;
   this.y = starty;
   this.rot = 0;
-  this.moveSpeed = 1.5; // How far zombie moves in one move
+  this.moveSpeed = 0.4; // How far zombie moves in one move
   this.moveTime = 1; //How many game cycles it takes for the zombie to move
   this.numCycles = startNumCycles ? startNumCycles : 0; //The number of cycles since the zombie last moved
-  this.intelligence = 5; //A ratio of how much the zombie follows the player, >1 required
+  this.intelligence = 15; //A ratio of how much the zombie follows the player, >1 required
   this.circleColor = "rgba(100,0,0,0.3)";
   this.panner = true;
   this.coneOuterGain = 0.005;
@@ -57,38 +57,45 @@ Zombie2.prototype.move = function(playerX, playerY){
   intelligence = 5;
   moveSpeed = 0.6;
 }
+var distance = Math.sqrt((playerX - z.x)*(playerX - z.x)+(playerY - z.y)*(playerY - z.y));
+
 if (map[Math.floor(player.y)][Math.floor(player.x)] == 2) {
     intelligence = 1000; // move randomly
   } else {
     intelligence = this.intelligence;
+    if( distance < 5){
+      setTimeout( function() {
+        z.rageMode = false;
+      }, 1000);
+      z.rageMode = true;
+    }
+    if(!z.soundPlaying){
+      if ( distance < 7 ) {
+
+        setTimeout( function() {
+          z.soundPlaying = false;
+        }, audioManager.sounds[ z.zombie2SoundObjs.scream.name ].buffer.duration * 1000 );
+        z.soundPlaying = true;
+        audioManager.play( z.zombie2SoundObjs.scream );
+      }
+      else{
+        setTimeout( function() {
+          z.soundPlaying = false;
+        }, audioManager.sounds[ z.zombie2SoundObjs.old.name ].buffer.duration * 1000 );
+        z.soundPlaying = true;
+        audioManager.play( z.zombie2SoundObjs.old );
+      }
+    }
   }
 
-var distance = Math.sqrt((playerX - z.x)*(playerX - z.x)+(playerY - z.y)*(playerY - z.y));
-console.log( distance );
-if( distance < 5){
-  setTimeout( function() {
-    z.rageMode = false;
-  }, 1000);
-  z.rageMode = true;
-}
+  if(!z.soundPlaying){
+        setTimeout( function() {
+          z.soundPlaying = false;
+        }, audioManager.sounds[ z.zombie2SoundObjs.old.name ].buffer.duration * 1000 );
+        z.soundPlaying = true;
+        audioManager.play( z.zombie2SoundObjs.old );
+    }
 
-if(!z.soundPlaying){
-  if ( distance < 7 ) {
-
-    setTimeout( function() {
-      z.soundPlaying = false;
-    }, audioManager.sounds[ z.zombie2SoundObjs.scream.name ].buffer.duration * 1000 );
-    z.soundPlaying = true;
-    audioManager.play( z.zombie2SoundObjs.scream );
-  }
-  else{
-    setTimeout( function() {
-      z.soundPlaying = false;
-    }, audioManager.sounds[ z.zombie2SoundObjs.old.name ].buffer.duration * 1000 );
-    z.soundPlaying = true;
-    audioManager.play( z.zombie2SoundObjs.old );
-  }
-}
 
   if (z.numCycles == 0) {   // only move every once in a while
     var randChase = Math.floor(Math.random() * intelligence);

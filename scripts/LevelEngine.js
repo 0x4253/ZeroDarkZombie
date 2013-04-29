@@ -33,6 +33,8 @@ function footStep() {
   var floorType = map[yblock][xblock];
   if(floorType == 3)
     audioManager.play(globalLevel.soundObjConcrete);
+  else if( floorType == 2)
+    audioManager.play(globalLevel.soundObjMud);
   else
     audioManager.play(globalLevel.soundObjHay);
 }
