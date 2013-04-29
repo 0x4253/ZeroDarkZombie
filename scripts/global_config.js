@@ -28,6 +28,10 @@ var globalMenu = {
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/selectlevel.ogg',
     name: "selectlevel"
   },
+  survival_mode: {
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/startgame.ogg',
+    name: "survival_mode"
+  },
   mainmenu: {
     url: 'http://cs.unc.edu/~stancill/comp585/sounds/mainmenu.ogg',
     name: "mainmenu"

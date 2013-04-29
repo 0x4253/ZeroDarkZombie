@@ -11,24 +11,18 @@ function Player(startx, starty, initRot) {
   this.eaten = false; //Whether or not the player has been attacked by a zombie
   this.winner = false; //Whether the player has made it to the level's goal
   this.circleColor = "rgba(0,0,100,0.3)";
+  this.fighter = false;
 }
 
-// obsolete function, keep for reference
-Player.prototype.move = function() {
-  if (player.speed == 1){
-    this.moveForward();
+Player.prototype.hitZombie = function(){
+  if ( Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 4 ){
+    console.log("Kill Zombie");
+    do {
+      zombie.x = Math.floor( Math.random() * map[0].length + 2 );
+      zombie.y = Math.floor( Math.random() * map.length + 2 );
+    } while ( zombie.x > map[0].length - 2 || zombie.y > map.length - 2 ||
+      Math.sqrt( Math.pow( this.x - zombie.x , 2 ) + Math.pow( this.y - zombie.y , 2 ) ) < 8 )
   }
-  if (player.speed == -1){
-    this.moveBackward();
-  }
-  if (player.dir == 1) {
-    this.turnLeft();
-  }
-  if (player.dir == -1) {
-    this.turnRight();
-  }
-
-  // * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
 }
 
 Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1 then turn left
@@ -81,3 +75,21 @@ Player.prototype.castCircle = function(objectContext) {
 
 
 
+
+// obsolete function, keep for reference
+Player.prototype.move = function() {
+  if (player.speed == 1){
+    this.moveForward();
+  }
+  if (player.speed == -1){
+    this.moveBackward();
+  }
+  if (player.dir == 1) {
+    this.turnLeft();
+  }
+  if (player.dir == -1) {
+    this.turnRight();
+  }
+
+  // * player.rotSpeed; // add rotation if player is rotating (player.dir != 0)
+}
