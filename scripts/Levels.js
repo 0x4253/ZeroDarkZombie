@@ -243,9 +243,7 @@ Level1.prolog = function( option, callback ) {
   	callback();
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
-Level1.gameGuide.move = function () {
 
-}
 
 
 //////////////////////////////////////

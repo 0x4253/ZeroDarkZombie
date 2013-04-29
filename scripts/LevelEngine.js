@@ -205,7 +205,7 @@ function updateMiniMap() {
   //draw player sprite
   var img = $("#marine")[0];
   objectCtx.drawImage(img,17,17,35,35,player.x*miniMapScale-10,player.y*miniMapScale-10,35,35);
-  
+
   // draw the player's vision cone
   // castCircle(player, 3, 90, "rgba(0,0,100,0.3)");
   objectCtx.fillStyle = "rgba(0,0,100,0.3)";
