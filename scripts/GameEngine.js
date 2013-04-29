@@ -113,6 +113,7 @@ function levelCycle() {
 		endTime = new Date();
 		totalTime = endTime - startTime;
 
+   RemoveAllListeners();
    if ( player.eaten ) {
     loseSound();
     update( totalTime, startLevelNumber, false );
@@ -157,13 +158,14 @@ function initLevel( lvl ) {
 	gameGuide = lvl.gameGuide;
 	NUMBER_OF_ZOMBIES = lvl.NUMBER_OF_ZOMBIES;
 	zombie = lvl.zombie;
-	//console.log(lvl.zombie);
 
 	// load global guide sounds
 	for ( var soundObjKey in globalGuide ) {
 		toPlayUrl.push( globalGuide[ soundObjKey ].url );
 		toPlayNames.push( globalGuide[ soundObjKey ].name );
 	}
+  toPlayUrl.push( globalGuideLevel3.patch.url );
+  toPlayNames.push( globalGuideLevel3.patch.name );
 
 	// load global level sounds
 	for ( var soundObjKey in globalLevel ) {

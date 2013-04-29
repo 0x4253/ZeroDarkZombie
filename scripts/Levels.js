@@ -350,8 +350,8 @@ var Level3 = {
 	zombieStart: false,
 	zombie: new Zombie2(1, 20, 15,
       Math.floor(Math.random() * 3)),
-	gameGuide: new Guide(30,
-											 22,
+	gameGuide: new Guide(25,
+											 18,
 											 (-120 * Math.PI / 180),
 										   'http://cs.unc.edu/~stancill/comp585/overhere.ogg'),
 	option: 0,
@@ -375,37 +375,63 @@ Level3.prolog = function( option, callback ) {
   	callback();
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
+Level3.gameGuide.start = function( guide ) {
+  if (guide.play) {
+    setTimeout( function() {
+      audioManager.play( globalGuide.overHere );
+      guide.start( guide );
+    }, 2000 );
+  } else {
+  	audioManager.stop( globalGuide.overHere );
+  }
+}
 Level3.gameGuide.move = function() {
-	var distance = Math.sqrt(Math.pow((this.x - player.x), 2) + Math.pow((this.y - player.y), 2));
+	if (!playProlog) {
+		var distance = Math.sqrt(Math.pow((this.x - player.x), 2) + Math.pow((this.y - player.y), 2));
 
-	if ( distance < 3 || distance > 10) {
-		var max_i = 0;
-		var max_j = 0;
-	  for (var i = 0 ; i < player.x ; i++) {
-	  	for (var j = 0 ; j < player.y ; j++){
-	  		var dist = Math.sqrt(Math.pow((i - player.x), 2) + Math.pow((j - player.y), 2));
-		    if ( Level3.map[j][i] == 5 ) {
-		    	if ( max_i < i && max_j < j ) {
-		    		max_i = i;
-		    		max_j = j;
-		    	}
-		    }
+		if ( distance < 3 || distance > 10) {
+			if (distance < 3) {
+				this.play = false;
+				this.levelplay = true;
+				audioManager.play( globalGuideLevel3.patch );
+			}
+			var max_i = 0;
+			var max_j = 0;
+		  for (var i = 0 ; i < player.x - 1 ; i++) {
+		  	for (var j = 0 ; j < player.y - 1 ; j++){
+		  		var dist = Math.sqrt(Math.pow((i - player.x), 2) + Math.pow((j - player.y), 2));
+			    if ( Level3.map[j][i] == 5 ) {
+			    	if ( max_i < i && max_j < j ) {
+			    		max_i = i;
+			    		max_j = j;
+			    	}
+			    }
+			  }
 		  }
-	  }
 
-		if ( Level3.map[max_j][max_i] == 5 ) {
-		  console.log("Min i: " + max_i + ", Min j: " +
-		   max_j + ", Tile: " + Level3.map[max_j][max_i]);
+			if ( Level3.map[max_j][max_i] == 5 ) {
+			  this.x = max_i;
+			  this.y = max_j;
+			}
+		}
 
-		  this.x = max_i;
-		  this.y = max_j;
+		if (this.levelplay && !Level3.gameGuide.play) {
+			setTimeout( function() {
+				Level3.gameGuide.play = true;
+				this.play = true;
+				this.levelplay = false;
+				Level3.gameGuide.start( Level3.gameGuide );
+			}, audioManager.sounds[ globalGuideLevel3.patch.name ].buffer.duration * 1000);
+
 		}
 	}
 
-	  // move all the global guide sound objects
-  for ( var soundObjKey in globalGuide ) {
-    globalGuide[ soundObjKey ].move( this );
-  }
+		// move all the global guide sound objects
+	  for ( var soundObjKey in globalGuide ) {
+	    globalGuide[ soundObjKey ].move( this );
+	  }
+	  globalGuideLevel3.patch.move( this );
+
 }
 
 //////////////////////////////////////

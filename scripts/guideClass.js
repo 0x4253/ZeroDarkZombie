@@ -9,6 +9,7 @@ function Guide(startx, starty, initRot, audioUrl) {
   this.panner = true;
   this.play = false;
   this.alive = true;
+  this.levelplay = false;
 }
 
 // makes guide say random sounds that are in globalGuide

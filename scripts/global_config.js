@@ -84,6 +84,20 @@ var globalGuide = {
   }
 }
 
+var globalGuideLevel3 = {
+  patch: {
+    name: "patch",
+    url: 'http://cs.unc.edu/~stancill/comp585/sounds/level3_patch.ogg',
+    x: 0,
+    y: 0,
+    panner: true,
+    move: function( guide ) {
+      this.x = guide.x;
+      this.y = guide.y;
+    }
+  }
+}
+
 // create soundObjs that are always used
 var globalLevel = {
   soundObjHay: {

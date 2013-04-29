@@ -1,6 +1,9 @@
 var keyCurrentlyDown = false;
 
 function MenuKeypressListener(event) {
+	$(document).unbind('keydown');
+	$(document).unbind('keyup');
+	$(document).unbind('keypress');
 	//$(document).unbind('keypress');
 
 	$(document).keydown(function (e) {
@@ -70,6 +73,9 @@ var twoPI = Math.PI * 2;
 
 // bind keyboard events to game functions (movement, etc)
 function LevelKeypressListener() {
+	$(document).unbind('keydown');
+	$(document).unbind('keyup');
+	$(document).unbind('keypress');
 
 	$(document).keydown(function(event) {
 
@@ -131,6 +137,9 @@ $(document).keyup(function(event) {
 
 // bind keyboard events to game functions (movement, etc)
 function TutorialKeypressListener() {
+	$(document).unbind('keydown');
+	$(document).unbind('keyup');
+	$(document).unbind('keypress');
 
 	$(document).keydown(function(event) {
 
