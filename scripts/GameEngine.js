@@ -197,14 +197,16 @@ function initLevel( lvl ) {
 		audioManager.load( urlMap, function () { startProlog( lvl ) } );
 	}, 2000);
 
-	// start the loading gif and sound
+	// start the loading gif and sound and make the sound quieter
 	document.getElementById("loading").style.display="block";
+  audioManager.masterGainChanged( 0.5 ); // set master gain level
 	audioManager.play( globalMenu.loading );
 }
 
 function startProlog( lvl ) {
-	// stop the loading gif
+	// stop the loading gif and up the sound again
 	document.getElementById("loading").style.display="none";
+  audioManager.masterGainChanged( 1 ); // set master gain level
 
 	// update the guides position and all of
 	// the guide's global sounds
