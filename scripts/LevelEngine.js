@@ -62,7 +62,7 @@ function gameCycle() {
     player.winner = true;
   }
 
-  gameGuide.move2();
+  gameGuide.move();
   //gameGuide.rot = Math.round(Math.atan2(newY - gameGuide.y, newX - gameGuide.x) * 10) / 10.0; // Guide faces the player
   if(!playProlog){
   if (NUMBER_OF_ZOMBIES > 0) {
@@ -230,8 +230,10 @@ function updateMiniMap() {
   }
 
   //draw guide sprite
-  var img = $("#guide")[0];
+  if (gameGuide.alive){
+    var img = $("#guide")[0];
     objectCtx.drawImage(img,377,3,21,59,gameGuide.x*miniMapScale-5,gameGuide.y*miniMapScale-20,21/1.2,59/1.2);
+  }
 }
 
 function drawMiniMap() {

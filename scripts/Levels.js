@@ -377,6 +377,44 @@ Level3.prolog = function( option, callback ) {
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 
+//////////////////////////////////////
+//        Survival Mode
+//////////////////////////////////////
+var Survival_Level = {
+	randomizeMap: function() {
+		//do nothing
+	},
+	map: getBlankMap(),
+	player: new Player(15, 15, (90 * Math.PI / 180)),
+	NUMBER_OF_ZOMBIES: 1,
+	zombie: new Zombie2(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
+      Math.random() * (getBlankMap().length - 4) + 3,
+      Math.floor(Math.random() * 3)),
+	gameGuide: new Guide(15.5,
+						 2.5,
+						 (-90 * Math.PI / 180),
+						 'http://cs.unc.edu/~stancill/comp585/overhere.ogg'),
+	option: 0,
+	prolog1: {
+	  name: "survival_prolog",
+	  url: "http://cs.unc.edu/~stancill/comp585/sounds/survival_prolog.ogg"
+	},
+	
+}
+Survival_Level.gameGuide.alive = false;
+Survival_Level.player.fighter = true;
+Survival_Level.prologUrls =	[ Survival_Level.prolog1.url ];
+Survival_Level.prologNames = [ Survival_Level.prolog1.name ];
+Survival_Level.prolog = function( option, callback ) {
+	var level = Survival_Level;
+	RemoveAllListeners();
+  audioManager.play(level.prolog1);
+  setTimeout(function() {
+		LevelKeypressListener();
+  	callback();
+    }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
+};
+
 
 
 function getBlankMap() {
@@ -410,4 +448,4 @@ function getBlankMap() {
 }
 
 // store an array of all levels
-var levels = [ Tutorial, Level1, Level2, Level3];
+var levels = [ Tutorial, Level1, Level2, Level3, Survival_Level ];
