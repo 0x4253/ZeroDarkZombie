@@ -33,16 +33,17 @@ Player.prototype.hitZombie = function(){
   console.log("Hit Zombie");
   audioManager.stop(zombie.zombie2SoundObjs.scream);
   audioManager.stop(zombie.zombie2SoundObjs.old);
-  zombie.soundPlaying = false;
+  zombie.soundPlaying = true;
   zombie.alive = false;
   setTimeout(function(){
     zombie.alive = true;
-  },1000);
+    zombie.soundPlaying = false;
+  }, 1000);
 
   audioManager.play(globalLevel.soundObjZombieHit);
   setTimeout(function(){
     audioManager.play(globalLevel.soundObjZombieDeath);
-  }, 200);
+  }, 100);
 
   setTimeout(function(){
     do {
@@ -50,8 +51,8 @@ Player.prototype.hitZombie = function(){
       zombie.y = Math.floor( Math.random() * map.length + 2 );
     } while ( zombie.x > map[0].length - 2 || zombie.y > map.length - 2 ||
       Math.sqrt( Math.pow( player.x - zombie.x , 2 ) + Math.pow( player.y - zombie.y , 2 ) ) < 8 )
-  }, 800);
-    
+  }, 300);
+
 }
 
 Player.prototype.turn = function(dir){ // dir == 1 then turn right, if dir == -1 then turn left

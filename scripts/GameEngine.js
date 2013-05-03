@@ -101,8 +101,7 @@ function update( totalTime, lvlNum, win ) {
     }
   }, function(response) {
     console.log(response);
-  }
-  );
+  });
 }
 
 function levelCycle() {
@@ -110,6 +109,8 @@ function levelCycle() {
 		// playing = false;
 		audioManager.stopAll();
 		gameGuide.play = false;
+    Level3.gameGuide.play = false;
+    audioManager.stop( globalGuide.overHere );
 		endTime = new Date();
 		totalTime = endTime - startTime;
 
@@ -122,6 +123,8 @@ function levelCycle() {
     }, audioManager.sounds[ globalLevel.soundObjLose.name ].buffer.duration * 1000 );
   } else if ( player.winner ) {
     update( totalTime, startLevelNumber, true );
+
+    // turn off narrative if desired
     if (narrativeOn) {
         audioManager.backgroundGainChanged( 1 ); // set background gain level
         audioManager.play( levels[ startLevelNumber ].epilog );
@@ -230,8 +233,10 @@ function startProlog( lvl ) {
   playProlog = true;
   PrologPlay();
 	LevelKeypressListener(); // rebind keys to level inputs
+
+  // only play narrative if desired
   if (narrativeOn) {
-    lvl.prolog( lvl.option, function(){ playLevel( lvl ) } );
+    lvl.prolog( lvl.option, function() { playLevel( lvl ) } );
   } else {
     playLevel( lvl );
   }
@@ -256,11 +261,11 @@ function playLevel( lvl ) {
    gameGuide.play = true;
    gameGuide.start( gameGuide );
 
-   if (NUMBER_OF_ZOMBIES > 0 && lvl.zombieStart)
+   if ( NUMBER_OF_ZOMBIES > 0 )
     audioManager.play(zombie);
 
 	// add zombie to the update array
-	if (NUMBER_OF_ZOMBIES > 0 )
+	if ( NUMBER_OF_ZOMBIES > 0 )
    toUpdate.push(zombie);
  audioManager.updateAllPositions(toUpdate);
 
@@ -312,7 +317,7 @@ function drawSkull(){
 	ctx.drawImage(img, -30, 300, img.width, img.height);
 }
 
-function curtainMode () {
+function curtainMode() {
   curtain = document.getElementById("curtain");
   if (curtain.value == "Curtain Mode: On"){
     curtain.value = "Curtain Mode: Off";
@@ -328,7 +333,7 @@ function curtainMode () {
   }
 }
 
-function narrativeMode () {
+function narrativeMode() {
   narrative = document.getElementById("narrative");
   if (narrative.value == "Narrative Mode: Off"){
     narrative.value = "Narrative Mode: On";

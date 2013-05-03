@@ -285,7 +285,6 @@ var Level2 = {
 	},
 	player: new Player(30, 22, (225 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	zombieStart: true,
 	zombie: new Zombie(1, Math.random() * (getBlankMap()[0].length - 4) + 3,
       Math.random() * (getBlankMap().length - 4) + 3,
       Math.floor(Math.random() * 3)),
@@ -347,20 +346,19 @@ var Level3 = {
 	},
 	player: new Player(30, 22, (225 * Math.PI / 180)),
 	NUMBER_OF_ZOMBIES: 1,
-	zombieStart: false,
 	zombie: new Zombie2(1, 20, 15,
       Math.floor(Math.random() * 3)),
-	gameGuide: new Guide(25,
-											 18,
+	gameGuide: new Guide(26,
+											 19,
 											 (-120 * Math.PI / 180),
 										   'http://cs.unc.edu/~stancill/comp585/overhere.ogg'),
 	option: 0,
 	prolog1: {
-	  name: "prolog1Lvl2",
+	  name: "prolog1Lvl3",
 	  url: "http://cs.unc.edu/~stancill/comp585/sounds/level3_prolog.ogg"
 	},
 	epilog: {
-	  name: "epilogLvl2",
+	  name: "epilogLvl3",
 	  url: 'http://cs.unc.edu/~stancill/comp585/sounds/level3_epilog.ogg'
 	}
 }
@@ -376,25 +374,14 @@ Level3.prolog = function( option, callback ) {
     }, audioManager.sounds[level.prolog1.name].buffer.duration * 1000);
 };
 Level3.gameGuide.start = function( guide ) {
-  if (guide.play) {
-    setTimeout( function() {
-      audioManager.play( globalGuide.overHere );
-      guide.start( guide );
-    }, 2000 );
-  } else {
-  	audioManager.stop( globalGuide.overHere );
-  }
+
 }
+Level3.gameGuide.found = false;
 Level3.gameGuide.move = function() {
 	if (!playProlog) {
 		var distance = Math.sqrt(Math.pow((this.x - player.x), 2) + Math.pow((this.y - player.y), 2));
 
-		if ( distance < 3 || distance > 10) {
-			if (distance < 3) {
-				this.play = false;
-				this.levelplay = true;
-				audioManager.play( globalGuideLevel3.patch );
-			}
+		if ( distance < 1.5 ) {
 			var max_i = 0;
 			var max_j = 0;
 		  for (var i = 0 ; i < player.x - 1 ; i++) {
@@ -410,27 +397,28 @@ Level3.gameGuide.move = function() {
 		  }
 
 			if ( Level3.map[max_j][max_i] == 5 ) {
-			  this.x = max_i;
-			  this.y = max_j;
+			  gameGuide.x = max_i;
+			  gameGuide.y = max_j;
 			}
+
+	    audioManager.stop( globalGuide.overHere );
+      audioManager.play( globalGuideLevel3.patch );
+      this.found = true;
+      setTimeout( function() {
+          gameGuide.found = false;
+ 	    }, audioManager.sounds[ globalGuideLevel3.patch.name ].buffer.duration * 1000);
 		}
 
-		if (this.levelplay && !Level3.gameGuide.play) {
-			setTimeout( function() {
-				Level3.gameGuide.play = true;
-				this.play = true;
-				this.levelplay = false;
-				Level3.gameGuide.start( Level3.gameGuide );
-			}, audioManager.sounds[ globalGuideLevel3.patch.name ].buffer.duration * 1000);
-
-		}
+	  if ( !this.found ) {
+    	audioManager.play( globalGuide.overHere );
+	  }
 	}
 
-		// move all the global guide sound objects
-	  for ( var soundObjKey in globalGuide ) {
-	    globalGuide[ soundObjKey ].move( this );
-	  }
-	  globalGuideLevel3.patch.move( this );
+	// move all the global guide sound objects
+  for ( var soundObjKey in globalGuide ) {
+    globalGuide[ soundObjKey ].move( this );
+  }
+  globalGuideLevel3.patch.move( this );
 
 }
 

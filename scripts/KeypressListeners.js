@@ -10,39 +10,10 @@ function MenuKeypressListener(event) {
 		var keyCode = e.keyCode || e.which,
 		arrow = {left: 37, up: 38, right: 39, down: 40 };
 
-		switch (keyCode) {
-    	case 27: //escape key. back to main menu
-    	document.location.reload();
-    	break;
+		if (keyCurrentlyDown == false){
+	  	keyCurrentlyDown = true; // disables more than one key from being pressed and from the keydown action from being fired multiple times
 
-    	case 67: //c key. curtain mode
-    	curtainMode();
-    	break;
-
-    	case arrow.left:
-  		//..
-  		break;
-
-  		case arrow.up:
-  		upMenu();
-
-  		//..
-  		break;
-
-  		case arrow.right:
-  		//..
-  		break;
-
-  		case arrow.down:
-  		downMenu();
-  		//..
-  		break;
-  	}
-  });
-	$(document).keypress(function(event) {
-		console.log(event.which);
-		event.preventDefault();
-		switch (event.which) {
+			switch (keyCode) {
 	    	case 27: //escape key. back to main menu
 	    	document.location.reload();
 	    	break;
@@ -51,22 +22,71 @@ function MenuKeypressListener(event) {
 	    	curtainMode();
 	    	break;
 
-	    	case 32:
-				// select focused button
-				$('.button_class:focus').click();
-				break;
+	    	case 78: //n key. narrative mode
+	    	narrativeMode();
+	    	break;
 
-				case 49:
+	    	case arrow.left:
+	  		//..
+	  		break;
 
-				break;
-				case 50:
+	  		case arrow.up:
+	  		upMenu();
 
-				break;
-				case 113:
+	  		//..
+	  		break;
 
-				break;
+	  		case arrow.right:
+	  		//..
+	  		break;
+
+	  		case arrow.down:
+	  		downMenu();
+	  		//..
+	  		break;
+	  	}
+  	}
+  });
+	$(document).keypress(function(event) {
+		console.log(event.which);
+		event.preventDefault();
+
+		if (keyCurrentlyDown == false){
+	  	keyCurrentlyDown = true; // disables more than one key from being pressed and from the keydown action from being fired multiple times
+
+			switch (event.which) {
+		    	case 27: //escape key. back to main menu
+		    	document.location.reload();
+		    	break;
+
+		    	case 67: //c key. curtain mode
+		    	curtainMode();
+		    	break;
+
+		    	case 78: //n key. narrative mode
+		    	narrativeMode();
+		    	break;
+
+		    	case 32:
+					// select focused button
+					$('.button_class:focus').click();
+					break;
+
+					case 49:
+					break;
+
+					case 50:
+					break;
+
+					case 113:
+					break;
+				}
 			}
 		});
+
+	$(document).keyup(function(event) {
+		keyCurrentlyDown = false;
+	});
 }
 
 var twoPI = Math.PI * 2;
@@ -92,6 +112,10 @@ function LevelKeypressListener() {
 
 	    	case 67: //c key. curtain mode
 	    	curtainMode();
+	    	break;
+
+	    	case 78: //n key. narrative mode
+	    	narrativeMode();
 	    	break;
 
       	case 38: // up, move player forward, ie. increase speed
@@ -121,18 +145,18 @@ function LevelKeypressListener() {
 	      break;
 
 	      case 32:
-			if (player.fighter){
-				console.log("Hit Zombie");
-				player.hitZombie();
+				if (player.fighter){
+					console.log("Hit Zombie");
+					player.hitZombie();
+				}
+				break;
 			}
-			break;
 		}
-	}
-});
+	});
 
-$(document).keyup(function(event) {
-	keyCurrentlyDown = false;
-});
+	$(document).keyup(function(event) {
+		keyCurrentlyDown = false;
+	});
 }
 
 // bind keyboard events to game functions (movement, etc)
@@ -158,6 +182,10 @@ function TutorialKeypressListener() {
 	    	curtainMode();
 	    	break;
 
+	    	case 78: //n key. narrative mode
+	    	narrativeMode();
+	    	break;
+
 	    	case 38:
 	    	break;
 
@@ -173,9 +201,9 @@ function TutorialKeypressListener() {
 	      break;
 
 	      case 32:
-					// Pause/Resume Game
-					togglePause();
-					break;
+				// Pause/Resume Game
+				togglePause();
+				break;
 				}
 			}
 		});
@@ -201,6 +229,11 @@ function RemoveAllListeners() {
 
 	    	case 67: //c key. curtain mode
 	    	curtainMode();
+	    	break;
+
+	    	case 78: //n key. narrative mode
+	    	narrativeMode();
+	    	break;
     	}
   });
 	$(document).keypress(function(event) {
@@ -213,6 +246,10 @@ function RemoveAllListeners() {
 
 	    	case 67: //c key. curtain mode
 	    	curtainMode();
+	    	break;
+
+	    	case 78: //n key. narrative mode
+	    	narrativeMode();
 	    	break;
 		}
 	});

@@ -1,4 +1,4 @@
-function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
+function Zombie2(number, startx, starty, startNumCycles, audioUrl, rolloffFactor) {
   this.name = "zombie" + number;
   this.audioUrl = audioUrl || "http://cs.unc.edu/~stancill/comp585/sounds/female_scream.ogg";
   this.loop = false;
@@ -45,6 +45,11 @@ function Zombie2(number, startx, starty, startNumCycles, audioUrl) {
 
 Zombie2.prototype.move = function(playerX, playerY){
   z = this;
+
+  // move all the sound objects
+  for ( var soundObjKey in z.zombie2SoundObjs ) {
+    z.zombie2SoundObjs[ soundObjKey ].move( this );
+  }
 
   if(!z.alive)
     return;
@@ -126,9 +131,6 @@ if (map[Math.floor(player.y)][Math.floor(player.x)] == 2 || map[Math.floor(playe
     z.x = newX;
     z.y = newY;
 
-    // move all the sound objects
-    for ( var soundObjKey in z.zombie2SoundObjs ) {
-      z.zombie2SoundObjs[ soundObjKey ].move( this );
-    }
+
   }
 }
